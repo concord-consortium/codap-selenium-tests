@@ -4,7 +4,8 @@ require 'selenium-webdriver'
 
 def setup
   @browser = Selenium::WebDriver.for :firefox
-  @wait= Selenium::WebDriver::Wait.new(:timeout=>60)
+  @wait= Selenium::WebDriver::Wait.new(:timeout=>30)
+  @browser.manage.window.maximize
 end
 
 def teardown
@@ -14,7 +15,7 @@ end
 def run
   setup
   yield
- teardown
+  teardown
 end
 
 def getURL(url)
@@ -23,6 +24,7 @@ def getURL(url)
   #Checks if correct document is on screen
   if @browser.title == "Untitled Document - CODAP"
     puts "Got right document"
+
   else
     puts "Got wrong page"
   end
@@ -30,21 +32,24 @@ end
 
 def testStandAlone(url)
   getURL(url)
+  @wait.until{@browser.find_element(:css=>'.focus')}.click
   createNewDocTest
 end
 
 def testWithDataInteractive(url)
   getURL(url)
-  @wait.until {@browser.find_element(:xpath=> "//canvas[@alt='Graph']")}.click
-  @wait.until {@browser.find_element(:xpath=> "//canvas[@alt='Tables']")}.click
+  @wait.until{@browser.find_element(:css=>'.focus')}.click
+  @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
+  @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
   runPerformanceHarness
 end
 
 def testWithDocumentServer(url)
   getURL(url)
   loginAsGuestTest
-  @wait.until {@browser.find_element(:xpath=> "//canvas[@alt='Graph']")}.click
-  @wait.until {@browser.find_element(:xpath=> "//canvas[@alt='Tables']")}.click
+  @wait.until{@browser.find_element(:css=>'.focus')}.click
+  @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
+  @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
   runPerformanceHarness
   loginToolshelfButtonTest
   loginTest
@@ -52,8 +57,8 @@ end
 
 def createNewDocTest
   #Send document name to text field
-  @wait.until {@browser.find_element(:class=>"field")}.send_keys "testDoc"
-  @browser.find_element(:xpath=>"//label[@title='Create a new document with the specified title']").click
+  @wait.until {@browser.find_element(:css=>"input.field")}.send_keys "testDoc"
+  @browser.find_element(:css=>"[title='Create a new document with the specified title']").click
 
   #Validate that the document is created
   if @browser.title.include?("testDoc")
@@ -67,10 +72,10 @@ end
 def loginAsGuestTest
   #Click on Login as Guest button
 
- @loginGuestButton = @browser.find_element(:xpath, "//label[contains(.,'Login as guest')]")
-  if @loginGuestButton.text.include?("Login as guest")
+  @loginGuestButton = @wait.until{@browser.find_element(:css=> ".dg-loginguest-button")}
+  if @loginGuestButton
     puts "Found Login in as guest button"
-    @wait.until {@loginGuestButton}.click
+    @loginGuestButton.click
   else
     puts "Login as guest button not found"
   end
@@ -79,12 +84,12 @@ end
 
 def loginTest
   #Click on Login button
- #@loginButton = @browser.find_element(:xpath, "//label[contains(.,'Login')]")
- @loginButton = @browser.find_element(:class, "def")
+  #@loginButton = @browser.find_element(:xpath, "//label[contains(.,'Login')]")
+  @loginButton = @browser.find_element(:css=> ".dg-login-button")
+  puts @loginButton
   if @loginButton
     puts "Found Login button"
-    puts @loginButton.text
-    @wait.until {@loginButton}.click
+    @loginButton.click
   else
     puts "Login button not found"
   end
@@ -93,13 +98,13 @@ end
 
 def loginToolshelfButtonTest
   #Click on Login as Guest button
-  @loginToolshelfButton = @browser.find_element(:xpath, '//div[@title="Login"]')
+  @loginToolshelfButton = @wait.until{@browser.find_element(:css=> '.dg-toolshelflogin-button')}
 
-  if @loginToolshelfButton.text.include?("Login")
+  if @loginToolshelfButton
     puts "Found Login button on Toolshelf"
     @loginToolshelfButton.click
     puts "Just clicked the Login on Toolshelf button"
-  #  loginTest
+    #  loginTest
   else
     puts "Login button on Toolshelf not found"
   end
@@ -107,10 +112,10 @@ end
 
 def runPerformanceHarness
 
-  $counter=0
-  $totalTrials=3
+  counter=0
+  total_trials=3
 
-  frame = @browser.find_element(:css, "iframe")
+  frame = @browser.find_element(:css=> "iframe")
 
   @browser.switch_to.frame(frame)
 
@@ -119,45 +124,47 @@ def runPerformanceHarness
   trials.send_keys('20')
 
 
-  while $counter < $totalTrials do
+  while counter < total_trials do
+    counter=counter+1
+    run_button_enabled = @wait.until{@browser.find_element(:name=>'run')}
+    run_button_enabled.click if run_button_enabled.enabled?
 
-
-    runButtonEnabled = @wait.until{
-      runButton = @browser.find_element(:name=>'run')
-      runButton.click if runButton.enabled?
-    }
 
     timeResult=@wait.until{
       timeElement = @browser.find_element(:id=>'time')
       timeElement if timeElement.displayed?
     }
-
     puts "Time result is #{timeResult.text} ms"
     rateResult=@browser.find_element(:id=>'rate')
     puts "Rate result is #{rateResult.text} cases/sec"
-
-    $counter+=1
   end
 
   @browser.switch_to.default_content
 end
 
 
+
+=begin
 run do
   testStandAlone("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html")
 end
 
-run do
-  testWithDataInteractive("http://codap.concord.org/releases/build_0292/static/dg/en/cert/index.html?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-end
+
 
 run do
-  testWithDocumentServer("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  testWithDataInteractive("localhost:4020/dg?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+end
+=end
+
+
+run do
+  testWithDocumentServer("localhost:4020/dg?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
 
-  #@url = "http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/"
-  #@url="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html"
-  #@url = "http://codap.concord.org/releases/build_0292/static/dg/en/cert/index.html?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html"
+
+#@url = "http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/"
+#@url="http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html"
+#@url = "http://codap.concord.org/releases/build_0292/static/dg/en/cert/index.html?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html"
 
 
 
