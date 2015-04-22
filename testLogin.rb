@@ -1,9 +1,43 @@
 require 'rspec'
 require 'selenium-webdriver'
+require 'optparse'
 
+#$ROOT_DIR = 'http://codap.concord.org/releases/'
+
+def parse_args
+  opt = {}
+  opt_parser = OptionParser.new do |opts|
+    opts.banner = "Usage: testLogin.rb [options]"
+    opts.separator('')
+    opts.on('-b', '--browser BROWSER') do |driver|
+      opt[:browser] = driver
+    end
+    opts.on('-v', '--version BUILDNO') do |build|
+      opt[:version] = build
+    end
+    opts.on('-r', '--root_dir ROOTDIR') do |root|
+      opt[:root]=root
+    end
+  end
+  opt_parser.parse!(ARGV)
+  return opt
+end
 
 def setup
-  @browser = Selenium::WebDriver.for :firefox
+  opt = parse_args
+  if opt[:browser]=="firefox"
+    @browser = Selenium::WebDriver.for :firefox
+  elsif opt[:browser]=="chrome"
+    @browser = Selenium::WebDriver.for :chrome
+  end
+  $ROOT_DIR = opt[:root]
+  if opt[:version]!=""
+    $build = "http://#{$ROOT_DIR}#{opt[:version]}"
+  else
+    $build=$ROOT_DIR
+  end
+  puts $build
+
   @wait= Selenium::WebDriver::Wait.new(:timeout=>30)
   @browser.manage.window.maximize
 end
@@ -18,7 +52,7 @@ def run
   teardown
 end
 
-def getURL(url)
+def get_website(url)
   @browser.get(url)
   puts "Page title is #{@browser.title}"
   #Checks if correct document is on screen
@@ -31,21 +65,23 @@ def getURL(url)
 end
 
 def testStandAlone(url)
-  getURL(url)
+  get_website(url)
   @wait.until{@browser.find_element(:css=>'.focus')}.click
   createNewDocTest
 end
 
 def testWithDataInteractive(url)
-  getURL(url)
-  @wait.until{@browser.find_element(:css=>'.focus')}.click
+  get_website(url)
+  if @browser.find_element(:css=>'.focus')
+    @wait.until{@browser.find_element(:css=>'.focus')}.click
+  end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
   runPerformanceHarness
 end
 
 def testWithDocumentServer(url)
-  getURL(url)
+  get_website(url)
   loginAsGuestTest
   @wait.until{@browser.find_element(:css=>'.focus')}.click
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
@@ -104,7 +140,6 @@ def loginToolshelfButtonTest
     puts "Found Login button on Toolshelf"
     @loginToolshelfButton.click
     puts "Just clicked the Login on Toolshelf button"
-    #  loginTest
   else
     puts "Login button on Toolshelf not found"
   end
@@ -142,24 +177,15 @@ def runPerformanceHarness
   @browser.switch_to.default_content
 end
 
-
-
-=begin
 run do
-  testStandAlone("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html")
+  #testStandAlone("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html")
+  testStandAlone("#{$build}")
+  testWithDataInteractive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  testWithDocumentServer("#{$build}?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
 
 
 
-run do
-  testWithDataInteractive("localhost:4020/dg?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-end
-=end
-
-
-run do
-  testWithDocumentServer("localhost:4020/dg?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-end
 
 
 #@url = "http://codap.concord.org/releases/latest/static/dg/en/cert/index.html?documentServer=http://document-store.herokuapp.com/"
