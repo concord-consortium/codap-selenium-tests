@@ -2,8 +2,7 @@ require 'rspec'
 require 'selenium-webdriver'
 require 'optparse'
 
-#$ROOT_DIR = 'http://codap.concord.org/releases/'
-
+#Parses the options entered in command line. Syntax is -b = [firefox, chrome]; -v = [build_nnnn], -r = [localhost:4020/dg, codap.concord.org/releases/]
 def parse_args
   opt = {}
   opt_parser = OptionParser.new do |opts|
@@ -23,6 +22,7 @@ def parse_args
   return opt
 end
 
+#Sets up which browser to test on, and which CODAP server to test against
 def setup
   opt = parse_args
   if opt[:browser]=="firefox"
@@ -42,37 +42,43 @@ def setup
   @browser.manage.window.maximize
 end
 
+#Closes browser at end of test
 def teardown
   @browser.quit
 end
 
+#Main function
 def run
   setup
   yield
   teardown
 end
 
+#Fetches the website
 def get_website(url)
   @browser.get(url)
   puts "Page title is #{@browser.title}"
   #Checks if correct document is on screen
   if @browser.title == "Untitled Document - CODAP"
     puts "Got right document"
-
   else
     puts "Got wrong page"
   end
 end
 
+#Opens CODAP and creates a new document
 def testStandAlone(url)
   get_website(url)
-  @wait.until{@browser.find_element(:css=>'.focus')}.click
+  if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
+    @wait.until{@browser.find_element(:css=>'.focus')}.click
+  end
   createNewDocTest
 end
 
+#Opens CODAP with specified data interactive in url
 def testWithDataInteractive(url)
   get_website(url)
-  if @browser.find_element(:css=>'.focus')
+  if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
@@ -80,10 +86,13 @@ def testWithDataInteractive(url)
   runPerformanceHarness
 end
 
+#Opens CODAP with document server, logged in as guest.
 def testWithDocumentServer(url)
   get_website(url)
   loginAsGuestTest
-  @wait.until{@browser.find_element(:css=>'.focus')}.click
+  if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
+    @wait.until{@browser.find_element(:css=>'.focus')}.click
+  end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
   runPerformanceHarness
@@ -107,7 +116,7 @@ end
 
 def loginAsGuestTest
   #Click on Login as Guest button
-
+  sleep(1) #Sleep to slow down when testing on Chrome
   @loginGuestButton = @wait.until{@browser.find_element(:css=> ".dg-loginguest-button")}
   if @loginGuestButton
     puts "Found Login in as guest button"
@@ -120,7 +129,6 @@ end
 
 def loginTest
   #Click on Login button
-  #@loginButton = @browser.find_element(:xpath, "//label[contains(.,'Login')]")
   @loginButton = @browser.find_element(:css=> ".dg-login-button")
   puts @loginButton
   if @loginButton
@@ -145,6 +153,7 @@ def loginToolshelfButtonTest
   end
 end
 
+#Run the Performance Harness data interactive
 def runPerformanceHarness
 
   counter=0
@@ -156,14 +165,12 @@ def runPerformanceHarness
 
   trials = @browser.find_element(:name=>'numTrials')
   trials.clear
-  trials.send_keys('20')
-
+  trials.send_keys('50')
 
   while counter < total_trials do
     counter=counter+1
     run_button_enabled = @wait.until{@browser.find_element(:name=>'run')}
     run_button_enabled.click if run_button_enabled.enabled?
-
 
     timeResult=@wait.until{
       timeElement = @browser.find_element(:id=>'time')
@@ -178,7 +185,6 @@ def runPerformanceHarness
 end
 
 run do
-  #testStandAlone("http://codap.concord.org/releases/latest/static/dg/en/cert/index.html")
   testStandAlone("#{$build}")
   testWithDataInteractive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   testWithDocumentServer("#{$build}?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
