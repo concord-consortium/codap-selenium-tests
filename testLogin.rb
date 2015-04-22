@@ -1,6 +1,7 @@
 require 'rspec'
 require 'selenium-webdriver'
 require 'optparse'
+require 'date'
 
 #Parses the options entered in command line. Syntax is -b = [firefox, chrome]; -v = [build_nnnn], -r = [localhost:4020/dg, codap.concord.org/releases/]
 def parse_args
@@ -36,6 +37,12 @@ def setup
   else
     $build=$ROOT_DIR
   end
+
+  @time = (Time.now+1*24*3600).strftime("%m-%d-%Y %H:%M")
+  @platform = @browser.capabilities.platform
+  @browser_name = @browser.capabilities.browser_name
+  @browser_version = @browser.capabilities.version
+  puts "Time: #{@time}; Platform: #{@platform}; Browser: #{@browser_name} v.#{@browser_version}"
   puts $build
 
   @wait= Selenium::WebDriver::Wait.new(:timeout=>30)
@@ -75,14 +82,43 @@ def testStandAlone(url)
   createNewDocTest
 end
 
-#Opens CODAP with specified data interactive in url
-def testWithDataInteractive(url)
+#Opens CODAP with specified data interactive in url with graph and table
+def testWithDataInteractiveGT(url)
   get_website(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
+  runPerformanceHarness
+end
+
+#Opens CODAP with specified data interactive in url with graph
+def testWithDataInteractiveG(url)
+  get_website(url)
+  if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
+    @wait.until{@browser.find_element(:css=>'.focus')}.click
+  end
+  @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
+  runPerformanceHarness
+end
+
+#Opens CODAP with specified data interactive in url with table
+def testWithDataInteractiveT(url)
+  get_website(url)
+  if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
+    @wait.until{@browser.find_element(:css=>'.focus')}.click
+  end
+  @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
+  runPerformanceHarness
+end
+
+#Opens CODAP with specified data interactive in url with no other components
+def testWithDataInteractive(url)
+  get_website(url)
+  if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
+    @wait.until{@browser.find_element(:css=>'.focus')}.click
+  end
   runPerformanceHarness
 end
 
@@ -130,7 +166,6 @@ end
 def loginTest
   #Click on Login button
   @loginButton = @browser.find_element(:css=> ".dg-login-button")
-  puts @loginButton
   if @loginButton
     puts "Found Login button"
     @loginButton.click
@@ -186,8 +221,11 @@ end
 
 run do
   testStandAlone("#{$build}")
-  testWithDataInteractive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-  testWithDocumentServer("#{$build}?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  # testWithDataInteractive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  # testWithDataInteractiveG("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  # testWithDataInteractiveT("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  # testWithDataInteractiveGT("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  # testWithDocumentServer("#{$build}?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
 
 
