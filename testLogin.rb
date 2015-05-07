@@ -1,6 +1,7 @@
 require 'rspec'
 require 'selenium-webdriver'
 require 'optparse'
+require 'ostruct'
 require 'date'
 require 'csv'
 
@@ -10,47 +11,85 @@ def parse_args
   opt_parser = OptionParser.new do |opts|
     opts.banner = "Usage: testLogin.rb [options]"
     opts.separator('')
-    opts.on('-b', '--browser BROWSER') do |driver|
+    opts.on('-b', '--browser [BROWSER]') do |driver|
       opt[:browser] = driver
     end
-    opts.on('-v', '--version BUILDNO') do |build|
+    opts.on('-v', '--version [BUILDNO]') do |build|
       opt[:version] = build
     end
-    opts.on('-r', '--root_dir ROOTDIR') do |root|
+    opts.on('-r', '--root_dir [ROOTDIR]') do |root|
       opt[:root]=root
+    end
+    opts.on('-t', '--trials [NUMBER OF TRIALS]') do |num_trials|
+      opt[:num_trials]=num_trials
+    end
+    opts.on('-c', '--cases [NUMBER OF CASES]') do |cases|
+      opt[:num_cases]=cases
     end
   end
   opt_parser.parse!(ARGV)
   return opt
 end
 
-def write_to_csv (time, platform, browser_name, browser_version, build, counter, num_cases, duration, rate)
-  if counter<1
+def write_to_csv (time, platform, browser_name, browser_version, build, counter, num_cases, duration, rate, test_name)
+  googledrive_path="~/GoogleDrive/CODAP@Concord/Software Development/QA/"
+  localdrive_path="~/development/test-experiments/"
+  # if counter<1 || !File.exist?("testLoginResult.csv")
+  if !File.exist?("testLoginResult.csv")
     CSV.open("testLoginResult.csv", "wb") do |csv|
-      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP Build", "Counter", "Num of Cases", "Time Result", "Rate"]
-      csv << [time, platform, browser_name, browser_version, build, counter, num_cases, duration, rate]
+      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP Build", "Test Name", "Counter", "Num of Cases", "Time Result", "Rate"]
+      csv << [time, platform, browser_name, browser_version, build, test_name, counter, num_cases, duration, rate]
     end
   else
     CSV.open("testLoginResult.csv", "a") do |csv|
-      csv << [time, platform, browser_name, browser_version, build, counter, num_cases, duration, rate]
+      csv << [time, platform, browser_name, browser_version, build, test_name, counter, num_cases, duration, rate]
     end
   end
 end
 
 #Sets up which browser to test on, and which CODAP server to test against
 def setup
+
   opt = parse_args
-  if opt[:browser]=="firefox"
-    @browser = Selenium::WebDriver.for :firefox
-  elsif opt[:browser]=="chrome"
-    @browser = Selenium::WebDriver.for :chrome
+  puts "before defaults #{opt}"
+  #Set default values
+  if opt[:browser].nil?
+    opt[:browser]="chrome"
   end
+  if opt[:root].nil?
+    opt[:root]="localhost:4020/dg"
+  end
+  if opt[:num_trials].nil?
+    opt[:num_trials]="3"
+  end
+  if opt[:num_cases].nil?
+    opt[:num_cases]="5"
+  end
+
+  puts "after defaults #{opt}"
+
+  if opt[:browser]=="chrome"
+    @browser = Selenium::WebDriver.for :chrome
+  elsif opt[:browser]=="firefox"
+    @browser = Selenium::WebDriver.for :firefox
+  end
+
   $ROOT_DIR = opt[:root]
+
   if opt[:version]!=""
+    $build = "http://#{$ROOT_DIR}#{opt[:version]}"
+  elsif opt[:version].nil?
+    opt[:version]="latest"
     $build = "http://#{$ROOT_DIR}#{opt[:version]}"
   else
     $build=$ROOT_DIR
   end
+
+  puts "#{opt[:num_trials]} in setup"
+  puts opt[:num_cases]
+
+  @input_trials = opt[:num_trials]
+  @input_cases = opt[:num_cases]
 
   @time = (Time.now+1*24*3600).strftime("%m-%d-%Y %H:%M")
   @platform = @browser.capabilities.platform
@@ -88,7 +127,8 @@ end
 
 #Opens CODAP and creates a new document
 def test_standalone(url)
-  puts "Test Standalone"
+  test_name = "Test Standalone"
+  puts test_name
   get_website(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
@@ -98,51 +138,56 @@ end
 
 #Opens CODAP with specified data interactive in url with graph and table
 def test_data_interactive_gt(url)
-  puts "Test Data Interactive with Graph and Table"
+  test_name = "Test Data Interactive with Graph and Table"
+  puts test_name
   get_website(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
-  run_performance_harness
+  run_performance_harness(test_name)
 end
 
 #Opens CODAP with specified data interactive in url with graph
 def test_data_interactive_g(url)
-  puts "Test Data Interactive with Graph"
+  test_name =  "Test Data Interactive with Graph"
+  puts test_name
   get_website(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
-  run_performance_harness
+  run_performance_harness(test_name)
 end
 
 #Opens CODAP with specified data interactive in url with table
 def test_data_interactive_t(url)
-  puts "Test Data Interactive with Table"
+  test_name = "Test Data Interactive with Table"
+  puts test_name
   get_website(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
   @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
-  run_performance_harness
+  run_performance_harness(test_name)
 end
 
 #Opens CODAP with specified data interactive in url with no other components
 def test_data_interactive(url)
-  puts "Test Data Interactive"
+  test_name = "Test Data Interactive"
+  puts test_name
   get_website(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
-  run_performance_harness
+  run_performance_harness(test_name)
 end
 
 #Opens CODAP with document server, logged in as guest.
 def test_document_server(url)
-  puts "Test Document Server Connection"
+  test_name = "Test Document Server Connection"
+  puts test_name
   get_website(url)
   login_as_guest_test
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
@@ -150,7 +195,7 @@ def test_document_server(url)
   end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
-  run_performance_harness
+  run_performance_harness(test_name)
   login_toolshelf_button_test
   login_test
 end
@@ -255,12 +300,14 @@ def find_component(component)
 end
 
 #Run the Performance Harness data interactive
-def run_performance_harness
+def run_performance_harness(test_name)
 
   counter=0
-  total_trials=20
-  num_cases = 100
+  total_trials=@input_trials.to_f
+  num_cases = @input_cases.to_f
 
+  # total_trials=300
+  # num_cases = 2
 
   frame = @browser.find_element(:css=> "iframe")
 
@@ -286,7 +333,7 @@ def run_performance_harness
       rate = rate_result.text
       puts "Time:#{@time}, Platform: #{@platform}, Browser: #{@browser_name} v.#{@browser_version}, Testing: #{$build},
             Trial no. #{counter}, Number of cases: #{num_cases}, Time result: #{time_result.text} ms, Rate result: #{rate_result.text} cases/sec \n"
-      write_to_csv(@time, @platform, @browser_name, @browser_version, $build, counter, num_cases, duration, rate)
+      write_to_csv(@time, @platform, @browser_name, @browser_version, $build, counter, num_cases, duration, rate, test_name)
       counter=counter+1
       @browser.switch_to.default_content
 
