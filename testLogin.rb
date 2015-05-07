@@ -1,7 +1,6 @@
 require 'rspec'
 require 'selenium-webdriver'
 require 'optparse'
-require 'ostruct'
 require 'date'
 require 'csv'
 
@@ -26,23 +25,39 @@ def parse_args
     opts.on('-c', '--cases [NUMBER OF CASES]') do |cases|
       opt[:num_cases]=cases
     end
+    opts.on('-d', '--delay [DELAY BETWEEN TRIALS (ms)]') do |delay|
+      opt[:delay]=delay
+    end
+    opts.on('-f', '--filename [FILENAME where to save results]') do |filename|
+      opt[:filename]=filename
+    end
+    opts.on('-p', '--path [PATH where to save results, do not include home in path]') do |path|
+      opt[:path]=path
+    end
+    opts.on('-s', '--sleep [SLEEP time between runs (s)]') do |sleep_time|
+      opt[:sleep_time]=sleep_time
+    end
+    opts.on('-w', '--[no-]write [WRITE]', 'write to a new file-> must specify filename, default is append (no-write). If no file name is specified, results will be appended.') do |write|
+      opt[:write]=write
+    end
+
   end
   opt_parser.parse!(ARGV)
   return opt
 end
 
-def write_to_csv (time, platform, browser_name, browser_version, build, counter, num_cases, duration, rate, test_name)
-  googledrive_path="~/GoogleDrive/CODAP@Concord/Software Development/QA/"
-  localdrive_path="~/development/test-experiments/"
-  # if counter<1 || !File.exist?("testLoginResult.csv")
-  if !File.exist?("testLoginResult.csv")
-    CSV.open("testLoginResult.csv", "wb") do |csv|
-      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP Build", "Test Name", "Counter", "Num of Cases", "Time Result", "Rate"]
+def write_to_csv (time, platform, browser_name, browser_version, build, counter, num_cases, delay, duration, rate, test_name)
+  googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
+  localdrive_path="Documents/CODAP data/"
+
+  if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
+    CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |csv|
+      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP Build", "Test Name", "Counter", "Num of Cases", "Delay", "Time Result", "Rate"]
       csv << [time, platform, browser_name, browser_version, build, test_name, counter, num_cases, duration, rate]
     end
   else
-    CSV.open("testLoginResult.csv", "a") do |csv|
-      csv << [time, platform, browser_name, browser_version, build, test_name, counter, num_cases, duration, rate]
+    CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "a") do |csv|
+      csv << [time, platform, browser_name, browser_version, build, test_name, counter, num_cases, delay, duration, rate]
     end
   end
 end
@@ -51,7 +66,7 @@ end
 def setup
 
   opt = parse_args
-  puts "before defaults #{opt}"
+
   #Set default values
   if opt[:browser].nil?
     opt[:browser]="chrome"
@@ -60,13 +75,26 @@ def setup
     opt[:root]="localhost:4020/dg"
   end
   if opt[:num_trials].nil?
-    opt[:num_trials]="3"
+    opt[:num_trials]="1"
   end
   if opt[:num_cases].nil?
-    opt[:num_cases]="5"
+    opt[:num_cases]="100"
   end
-
-  puts "after defaults #{opt}"
+  if opt[:delay].nil?
+    opt[:delay]="1000"
+  end
+  if opt[:filename].nil?
+    opt[:filename]="testLoginResultDefault.csv"
+  end
+  if opt[:path].nil?
+    opt[:path]="Google Drive/CODAP @ Concord/Software Development/QA"
+  end
+  if opt[:sleep_time].nil?
+    opt[:sleep_time]="1"
+  end
+  if opt[:write].nil?
+    opt[:write]=false
+  end
 
   if opt[:browser]=="chrome"
     @browser = Selenium::WebDriver.for :chrome
@@ -75,6 +103,9 @@ def setup
   end
 
   $ROOT_DIR = opt[:root]
+  $save_filename = opt[:filename]
+  $dir_path = opt[:path]
+  $new_file =opt[:write]
 
   if opt[:version]!=""
     $build = "http://#{$ROOT_DIR}#{opt[:version]}"
@@ -85,11 +116,11 @@ def setup
     $build=$ROOT_DIR
   end
 
-  puts "#{opt[:num_trials]} in setup"
-  puts opt[:num_cases]
 
   @input_trials = opt[:num_trials]
   @input_cases = opt[:num_cases]
+  @input_delay = opt[:delay]
+  @input_sleep = opt[:sleep_time]
 
   @time = (Time.now+1*24*3600).strftime("%m-%d-%Y %H:%M")
   @platform = @browser.capabilities.platform
@@ -110,7 +141,7 @@ end
 def run
   setup
   yield
-  #teardown
+#  teardown
 end
 
 #Fetches the website
@@ -303,11 +334,10 @@ end
 def run_performance_harness(test_name)
 
   counter=0
-  total_trials=@input_trials.to_f
-  num_cases = @input_cases.to_f
-
-  # total_trials=300
-  # num_cases = 2
+  total_trials=@input_trials.to_i
+  num_cases = @input_cases.to_i
+  delay = @input_delay.to_i
+  sleep_time = @input_sleep.to_i
 
   frame = @browser.find_element(:css=> "iframe")
 
@@ -316,24 +346,26 @@ def run_performance_harness(test_name)
   trials = @browser.find_element(:name=>'numTrials')
   trials.clear
   trials.send_keys(num_cases)
+  set_delay = @browser.find_element(:name=>'delay')
+  set_delay.clear
+  set_delay.send_keys(delay)
   run_button = @wait.until{@browser.find_element(:name=>'run')}
-
 
   while counter < total_trials do
 
     if run_button.enabled?
+      sleep(sleep_time)
       run_button.click
-      #sleep(3)
       time_result=@wait.until{
         time_element = @browser.find_element(:id=>'time')
         time_element if time_element.displayed?
       }
-      rate_result=@browser.find_element(:id=>'rate')
+      rate_result=@wait.until{@browser.find_element(:id=>'rate')}
       duration=time_result.text
       rate = rate_result.text
       puts "Time:#{@time}, Platform: #{@platform}, Browser: #{@browser_name} v.#{@browser_version}, Testing: #{$build},
-            Trial no. #{counter}, Number of cases: #{num_cases}, Time result: #{time_result.text} ms, Rate result: #{rate_result.text} cases/sec \n"
-      write_to_csv(@time, @platform, @browser_name, @browser_version, $build, counter, num_cases, duration, rate, test_name)
+            Trial no. #{counter}, Number of cases: #{num_cases}, Delay: #{delay}, Time result: #{time_result.text} ms, Rate result: #{rate_result.text} cases/sec \n"
+      write_to_csv(@time, @platform, @browser_name, @browser_version, $build, counter, num_cases, delay, duration, rate, test_name)
       counter=counter+1
       @browser.switch_to.default_content
 
