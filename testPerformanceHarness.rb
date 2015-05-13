@@ -10,13 +10,13 @@ def parse_args
   opt_parser = OptionParser.new do |opts|
     opts.banner = "Usage: testLogin.rb [options]"
     opts.separator('')
-    opts.on('-b', '--browser [BROWSER]') do |driver|
+    opts.on('-b', '--browser [BROWSER]', "Default is Chrome") do |driver|
       opt[:browser] = driver
     end
-    opts.on('-v', '--version [BUILDNO]') do |build|
+    opts.on('-v', '--version [BUILDNO]', 'CODAP build number (build_0xxx). Default is latest') do |build|
       opt[:version] = build
     end
-    opts.on('-r', '--root_dir [ROOTDIR]') do |root|
+    opts.on('-r', '--root_dir [ROOTDIR]', 'Root directory of CODAP. Default is localhost:4020/dg') do |root|
       opt[:root]=root
     end
     opts.on('-t', '--trials [NUMBER OF TRIALS]') do |num_trials|
@@ -28,7 +28,7 @@ def parse_args
     opts.on('-d', '--delay [DELAY BETWEEN TRIALS (ms)]') do |delay|
       opt[:delay]=delay
     end
-    opts.on('-f', '--filename [FILENAME where to save results]') do |filename|
+    opts.on('-f', '--filename [FILENAME where to save results]','Must be specified if writing to a new file') do |filename|
       opt[:filename]=filename
     end
     opts.on('-p', '--path [PATH where to save results, do not include home in path]') do |path|
@@ -81,10 +81,10 @@ def setup
     opt[:num_cases]="100"
   end
   if opt[:delay].nil?
-    opt[:delay]="1000"
+    opt[:delay]="1"
   end
   if opt[:filename].nil?
-    opt[:filename]="testLoginResultDefault.csv"
+    opt[:filename]="testLoginResultDefault"
   end
   if opt[:path].nil?
     opt[:path]="Google Drive/CODAP @ Concord/Software Development/QA"
@@ -103,19 +103,20 @@ def setup
   end
 
   $ROOT_DIR = opt[:root]
-  $save_filename = opt[:filename]
   $dir_path = opt[:path]
   $new_file =opt[:write]
 
-  if opt[:version]!=""
-    $build = "http://#{$ROOT_DIR}#{opt[:version]}"
-  elsif opt[:version].nil?
-    opt[:version]="latest"
-    $build = "http://#{$ROOT_DIR}#{opt[:version]}"
+  if opt[:root].include? "localhost"
+    $build = opt[:root]
   else
-    $build=$ROOT_DIR
+    if opt[:version].nil?
+      opt[:version]="latest"
+    end
+    $build = "http://#{opt[:root]}/#{opt[:version]}"
   end
 
+  $save_filename = "#{opt[:filename]}_#{opt[:version]}.csv"
+  puts $save_filename
 
   @input_trials = opt[:num_trials]
   @input_cases = opt[:num_cases]
@@ -128,7 +129,7 @@ def setup
   @browser_version = @browser.capabilities.version
   puts "Time:#{@time}; Platform: #{@platform}; Browser: #{@browser_name} v.#{@browser_version}; Testing: #{$build}"
 
-  @wait= Selenium::WebDriver::Wait.new(:timeout=>30)
+  @wait= Selenium::WebDriver::Wait.new(:timeout=>100)
   #@browser.manage.window.maximize
 end
 
@@ -141,7 +142,7 @@ end
 def run
   setup
   yield
-#  teardown
+  teardown
 end
 
 #Fetches the website
@@ -338,6 +339,10 @@ def run_performance_harness(test_name)
   num_cases = @input_cases.to_i
   delay = @input_delay.to_i
   sleep_time = @input_sleep.to_i
+  total_time = 0
+  total_rate = 0
+  average_duration = 0
+  average_rate = 0
 
   frame = @browser.find_element(:css=> "iframe")
 
@@ -352,7 +357,6 @@ def run_performance_harness(test_name)
   run_button = @wait.until{@browser.find_element(:name=>'run')}
 
   while counter < total_trials do
-
     if run_button.enabled?
       sleep(sleep_time)
       run_button.click
@@ -360,12 +364,16 @@ def run_performance_harness(test_name)
         time_element = @browser.find_element(:id=>'time')
         time_element if time_element.displayed?
       }
+
       rate_result=@wait.until{@browser.find_element(:id=>'rate')}
-      duration=time_result.text
-      rate = rate_result.text
+
+      duration=time_result.text.to_f
+      rate = rate_result.text.to_f
+      total_time=total_time+duration
+      total_rate = total_rate+rate
+
       puts "Time:#{@time}, Platform: #{@platform}, Browser: #{@browser_name} v.#{@browser_version}, Testing: #{$build},
             Trial no. #{counter}, Number of cases: #{num_cases}, Delay: #{delay}, Time result: #{time_result.text} ms, Rate result: #{rate_result.text} cases/sec \n"
-      write_to_csv(@time, @platform, @browser_name, @browser_version, $build, counter, num_cases, delay, duration, rate, test_name)
       counter=counter+1
       @browser.switch_to.default_content
 
@@ -374,6 +382,11 @@ def run_performance_harness(test_name)
 
   end
 
+  average_duration = total_time/total_trials
+  average_rate = total_rate/total_trials
+  puts "Average Duration: #{average_duration}"
+  puts "Average Rate: #{average_rate}"
+  write_to_csv(@time, @platform, @browser_name, @browser_version, $build, total_trials, num_cases, delay, average_duration, average_rate, test_name)
   @browser.switch_to.default_content
 
   #find_component('Graph')
