@@ -1,3 +1,5 @@
+#! /usr/bin/ruby
+
 require 'rspec'
 require 'selenium-webdriver'
 require 'optparse'
@@ -52,7 +54,7 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
 
   if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
     CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |csv|
-      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP Build", "Test Name", "Counter", "Num of Cases", "Delay", "Time Result", "Rate"]
+      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP directory", "Test Name", "Counter", "Num of Cases", "Delay (s)", "Time Result (ms)", "Rate (cases/sec)"]
       csv << [time, platform, browser_name, browser_version, build, test_name, counter, num_cases, duration, rate]
     end
   else
@@ -108,14 +110,16 @@ def setup
 
   if opt[:root].include? "localhost"
     $build = opt[:root]
+    $save_filename = "#{opt[:filename]}_localhost.csv"
   else
     if opt[:version].nil?
       opt[:version]="latest"
     end
     $build = "http://#{opt[:root]}/#{opt[:version]}"
+    $save_filename = "#{opt[:filename]}_#{opt[:version]}.csv"
   end
 
-  $save_filename = "#{opt[:filename]}_#{opt[:version]}.csv"
+  #$save_filename = "#{opt[:filename]}_#{opt[:version]}.csv"
   puts $save_filename
 
   @input_trials = opt[:num_trials]
