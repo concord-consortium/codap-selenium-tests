@@ -6,6 +6,18 @@ require 'optparse'
 require 'date'
 require 'csv'
 
+#Closes browser at end of test
+def teardown
+  @browser.quit
+end
+
+#Main function
+def run
+  setup
+  yield
+  teardown
+end
+
 #Parses the options entered in command line. Syntax is -b = [firefox, chrome]; -v = [build_nnnn], -r = [localhost:4020/dg, codap.concord.org/releases/]
 def parse_args
   opt = {}
@@ -48,23 +60,24 @@ def parse_args
   return opt
 end
 
+#Writes results from the performance harness to a csv file in the specified directory
 def write_to_csv (time, platform, browser_name, browser_version, build, counter, num_cases, delay, duration, rate, test_name)
   googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
   localdrive_path="Documents/CODAP data/"
 
   if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
     CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |csv|
-      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP directory", "Test Name", "Counter", "Num of Cases", "Delay (s)", "Time Result (ms)", "Rate (cases/sec)"]
-      csv << [time, platform, browser_name, browser_version, build, test_name, counter, num_cases, duration, rate]
+      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP directory", "CODAP Build Num", "Test Name", "Counter", "Num of Cases", "Delay (s)", "Time Result (ms)", "Rate (cases/sec)"]
+      csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
     end
   else
     CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "a") do |csv|
-      csv << [time, platform, browser_name, browser_version, build, test_name, counter, num_cases, delay, duration, rate]
+      csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
     end
   end
 end
 
-#Sets up which browser to test on, and which CODAP server to test against
+#Sets up default values for the command line options
 def setup
 
   opt = parse_args
@@ -119,7 +132,6 @@ def setup
     $save_filename = "#{opt[:filename]}_#{opt[:version]}.csv"
   end
 
-  #$save_filename = "#{opt[:filename]}_#{opt[:version]}.csv"
   puts $save_filename
 
   @input_trials = opt[:num_trials]
@@ -134,20 +146,8 @@ def setup
   puts "Time:#{@time}; Platform: #{@platform}; Browser: #{@browser_name} v.#{@browser_version}; Testing: #{$build}"
 
   @wait= Selenium::WebDriver::Wait.new(:timeout=>100)
-  #@browser.manage.window.maximize
 end
 
-#Closes browser at end of test
-def teardown
-  @browser.quit
-end
-
-#Main function
-def run
-  setup
-  yield
-  teardown
-end
 
 #Fetches the website
 def get_website(url)
@@ -159,6 +159,13 @@ def get_website(url)
   else
     puts "Got wrong page"
   end
+  get_buildno
+end
+
+#Gets the build number from the DOM
+def get_buildno
+  $buildno= @browser.execute_script("return window.DG.BUILD_NUM")
+  puts "CODAP build_num is #{$buildno}."
 end
 
 #Opens CODAP and creates a new document
@@ -195,6 +202,7 @@ def test_data_interactive_g(url)
   end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   run_performance_harness(test_name)
+  find_component("Graph")
 end
 
 #Opens CODAP with specified data interactive in url with table
@@ -250,6 +258,7 @@ def create_new_doc_test
 end
 
 
+#Clicks on the Login as Guest button in the Login dialog box
 def login_as_guest_test
   #Click on Login as Guest button
   sleep(1) #Sleep to slow down when testing on Chrome
@@ -262,7 +271,7 @@ def login_as_guest_test
   end
 end
 
-
+#Clicks on the Login button in the Login dialog box
 def login_test
   #Click on Login button
   @login_button = @browser.find_element(:css=> ".dg-login-button")
@@ -275,6 +284,7 @@ def login_test
 end
 
 
+#Clicks on the Login as Guest button in the toolshelf
 def login_toolshelf_button_test
   #Click on Login as Guest button
   @login_toolshelf_button = @wait.until{@browser.find_element(:css=> '.dg-toolshelflogin-button')}
@@ -288,24 +298,33 @@ def login_toolshelf_button_test
   end
 end
 
+#Find the parent component
 def find_parent(component)
   parent = component.find_element(:xpath=>'.')
 end
 
+#Find the gear menu in a parent component
 def find_gear_menu(parent)
   gear_menu=@wait.until{parent.find_element(:css=>'.dg-gear-view')}
-  puts "gear_menu location is #{gear_menu}"
   parent_text=parent.text
-  puts "parent text is #{parent_text}"
   gear_menu_parent = find_parent(gear_menu)
   if !gear_menu
     puts "No gear menu"
   else
     gear_menu.click
     puts 'Clicked on gear menu'
-    #show_count(gear_menu)
-    #@wait.until{gear_menu.find_element(:css=>'a.menu-item').text=='Show Count'}.click
+    find_gear_menu_item(gear_menu,"Show Count")
   end
+end
+
+#Find the gear menu item in a parent component
+def find_gear_menu_item(menu_name,menu_item)
+  puts "In find_gear_menu_item"
+  menu_item_loc = @wait.until{@browser.find_element(:css=>'a.menu-item')}
+  puts "menu_item_loc is #{menu_item_loc}"
+
+  menu_item_name = @wait.until{@browser.find_element(:css=>'a.menu-item').text}
+  puts "Menu item name is #{menu_item_name}"
 end
 
 def find_status(parent)
@@ -321,10 +340,10 @@ def find_component(component)
   @browser.switch_to.default_content # Always switch to main document when looking for a certain component
   component_views=@browser.find_elements(:css=>'div.component-view')
   component_title=component_views.find{|title| title.find_element(:css=>'div.dg-title-view').text==component}
-
+  puts "Component wanted is #{component}"
+  component_title_text = component_title.text
+  puts "Component found is #{component_title_text}"
   if component_title!=""
-    component_title_text = component_title.text
-    puts "Component title text is #{component_title_text}"
     @parent = find_parent(component_title)
     case component
       when 'Graph'
@@ -377,7 +396,7 @@ def run_performance_harness(test_name)
       total_rate = total_rate+rate
 
       puts "Time:#{@time}, Platform: #{@platform}, Browser: #{@browser_name} v.#{@browser_version}, Testing: #{$build},
-            Trial no. #{counter}, Number of cases: #{num_cases}, Delay: #{delay}, Time result: #{time_result.text} ms, Rate result: #{rate_result.text} cases/sec \n"
+            Trial no. #{counter}, Number of cases: #{num_cases}, Delay: #{delay} s, Time result: #{time_result.text} ms, Rate result: #{rate_result.text} cases/sec \n"
       counter=counter+1
       @browser.switch_to.default_content
 
@@ -393,17 +412,13 @@ def run_performance_harness(test_name)
   write_to_csv(@time, @platform, @browser_name, @browser_version, $build, total_trials, num_cases, delay, average_duration, average_rate, test_name)
   @browser.switch_to.default_content
 
-  #find_component('Graph')
-  #find_component('Performance Harness')
-
-
 end
 
 run do
   # test_standalone("#{$build}")
-  test_data_interactive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  # test_data_interactive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   # test_data_interactive_g("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-  # test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   # test_data_interactive_gt("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   # test_document_server("#{$build}?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
