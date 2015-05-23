@@ -15,7 +15,7 @@ end
 def run
   setup
   yield
-  teardown
+  #teardown
 end
 
 #Parses the options entered in command line. Syntax is -b = [firefox, chrome]; -v = [build_nnnn], -r = [localhost:4020/dg, codap.concord.org/releases/]
@@ -115,6 +115,8 @@ def setup
     @browser = Selenium::WebDriver.for :chrome
   elsif opt[:browser]=="firefox"
     @browser = Selenium::WebDriver.for :firefox
+  elsif opt[:browser]=='safari'
+    @browser = Selenium::WebDriver.for :safari
   end
 
   $ROOT_DIR = opt[:root]
@@ -122,7 +124,7 @@ def setup
   $new_file =opt[:write]
 
   if opt[:root].include? "localhost"
-    $build = opt[:root]
+    $build = "http://#{opt[:root]}"
     $save_filename = "#{opt[:filename]}_localhost.csv"
   else
     if opt[:version].nil?
@@ -145,7 +147,7 @@ def setup
   @browser_version = @browser.capabilities.version
   puts "Time:#{@time}; Platform: #{@platform}; Browser: #{@browser_name} v.#{@browser_version}; Testing: #{$build}"
 
-  @wait= Selenium::WebDriver::Wait.new(:timeout=>100)
+  @wait= Selenium::WebDriver::Wait.new(:timeout=>60)
 end
 
 
@@ -313,18 +315,16 @@ def find_gear_menu(parent)
   else
     gear_menu.click
     puts 'Clicked on gear menu'
-    find_gear_menu_item(gear_menu,"Show Count")
+    find_gear_menu_item("Show Count")
   end
 end
 
 #Find the gear menu item in a parent component
-def find_gear_menu_item(menu_name,menu_item)
-  puts "In find_gear_menu_item"
-  menu_item_loc = @wait.until{@browser.find_element(:css=>'a.menu-item')}
-  puts "menu_item_loc is #{menu_item_loc}"
-
-  menu_item_name = @wait.until{@browser.find_element(:css=>'a.menu-item').text}
-  puts "Menu item name is #{menu_item_name}"
+def find_gear_menu_item(menu_item)
+  menu_items=@wait.until{@browser.find_elements(:css=>'a.menu-item')}
+  menu_item_choice=menu_items.find{|name| name.text==menu_item}
+  puts "Menu item name is #{menu_item_choice.text}"
+  menu_item_choice.click
 end
 
 def find_status(parent)
@@ -349,7 +349,8 @@ def find_component(component)
       when 'Graph'
         find_gear_menu(@parent)
       when 'Performance Harness'
-        find_gear_menu(@parent)
+        puts "In Performance Harness"
+      #find_gear_menu(@parent)
     end
   end
 end
@@ -417,10 +418,10 @@ end
 run do
   # test_standalone("#{$build}")
   # test_data_interactive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-  # test_data_interactive_g("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-  test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  test_data_interactive_g("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  # test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   # test_data_interactive_gt("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-  # test_document_server("#{$build}?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  #  test_document_server("#{$build}?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
 
 
