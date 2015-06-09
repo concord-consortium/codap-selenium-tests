@@ -6,6 +6,20 @@ require 'optparse'
 require 'date'
 require 'csv'
 
+$test_one=true
+$keep_opt={}
+def which_test
+  puts "test_one is #{$test_one}"
+  if $test_one
+    opt=parse_args
+    $keep_opt=opt
+  end
+  if !$test_one
+    puts "test_one is false. keep_opt is #{$keep_opt}"
+    opt=$keep_opt
+  end
+  return opt
+end
 #Closes browser at end of test
 def teardown
   @browser.quit
@@ -15,7 +29,7 @@ end
 def run
   setup
   yield
-  #teardown
+  teardown
 end
 
 #Parses the options entered in command line. Syntax is -b = [firefox, chrome]; -v = [build_nnnn], -r = [localhost:4020/dg, codap.concord.org/releases/]
@@ -80,7 +94,9 @@ end
 #Sets up default values for the command line options
 def setup
 
-  opt = parse_args
+  opt=which_test
+  #opt = parse_args
+  puts "opt is #{opt}"
 
   #Set default values
   if opt[:browser].nil?
@@ -117,6 +133,8 @@ def setup
     @browser = Selenium::WebDriver.for :firefox
   elsif opt[:browser]=='safari'
     @browser = Selenium::WebDriver.for :safari
+  elsif opt[:browser]=='ie'
+    @browser = Selenium::WebDriver.for :ie
   end
 
   $ROOT_DIR = opt[:root]
@@ -204,7 +222,7 @@ def test_data_interactive_g(url)
   end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   run_performance_harness(test_name)
-  find_component("Graph")
+  #find_component("Graph")
 end
 
 #Opens CODAP with specified data interactive in url with table
@@ -417,10 +435,17 @@ end
 
 run do
   # test_standalone("#{$build}")
-  # test_data_interactive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  test_data_interactive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  $test_one=false
+end
+run do
   test_data_interactive_g("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-  # test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-  # test_data_interactive_gt("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+end
+run do
+  test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+end
+run do
+  test_data_interactive_gt("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   #  test_document_server("#{$build}?documentServer=http://document-store.herokuapp.com&di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
 
