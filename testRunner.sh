@@ -1,21 +1,21 @@
 #! /bin/bash
 
 RESULT_FILE="testrun.csv"
-printf "Browser\t Test No.\t Trials\t Cases\t Duration\t Duration(s)\n" >> $RESULT_FILE
 TRIALNUM=5
 CASESNUM=20
+TESTNUM=3
 BROWSER=("chrome", "firefox")
-
 i=1
 
+printf "Browser\t Test No.\t Trials\t Cases\t Duration\t Duration(s)\n" >> $RESULT_FILE
 tLen=${#BROWSER[@]}
-while [ $i -le 3 ]
+while [ $i -le $TESTNUM ]
 do
     for ((b=0; b<${tLen}; b++));
         do
             START=$(date)
             START_SEC=$(date +"%s")
-            ruby testLogin.rb -t $TRIALNUM -c $CASESNUM -b ${BROWSER[$b]}
+            ruby testPerformanceHarness.rb -t $TRIALNUM -c $CASESNUM -b ${BROWSER[$b]}
             END=$(date)
             END_SEC=$(date +"%s")
             DURATION=$(($END_SEC-$START_SEC))
