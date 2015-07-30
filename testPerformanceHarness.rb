@@ -79,6 +79,7 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
   googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
   localdrive_path="Documents/CODAP data/"
 
+=begin
   if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
     CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |csv|
       csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP directory", "CODAP Build Num", "Test Name", "Counter", "Num of Cases", "Delay (s)", "Time Result (ms)", "Rate (cases/sec)"]
@@ -86,6 +87,18 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
     end
   else
     CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "a") do |csv|
+      csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
+    end
+  end
+=end
+
+  if !File.exist?("#{$dir_path}/#{$save_filename}") || $new_file
+    CSV.open("#{$dir_path}/#{$save_filename}", "wb") do |csv| #changed from Mac version. Omitted Dir.home to the path.  Mac code is commented out above
+      csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP directory", "CODAP Build Num", "Test Name", "Counter", "Num of Cases", "Delay (s)", "Time Result (ms)", "Rate (cases/sec)"]
+      csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
+    end
+  else
+    CSV.open("#{$dir_path}/#{$save_filename}", "a") do |csv|#changed from Mac version. Omitted Dir.home to the path.  Mac code is commented out above
       csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
     end
   end
@@ -118,7 +131,7 @@ def setup
     opt[:filename]="testLoginResultDefault"
   end
   if opt[:path].nil?
-    opt[:path]="Google Drive/CODAP @ Concord/Software Development/QA"
+    opt[:path]="../../../Google Drive/CODAP @ Concord/Software Development/QA"
   end
   if opt[:sleep_time].nil?
     opt[:sleep_time]="1"
