@@ -23,6 +23,7 @@ end
 #Closes browser at end of test
 def teardown
   @browser.quit
+  print "\a"
 end
 
 #Main function
@@ -80,7 +81,7 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
   googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
   localdrive_path="Documents/CODAP data/"
 
-=begin
+
   if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
     CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |csv|
       csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP directory", "CODAP Build Num", "Test Name", "Counter", "Num of Cases", "Delay (s)", "Time Result (ms)", "Rate (cases/sec)"]
@@ -91,8 +92,8 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
       csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
     end
   end
-=end
 
+=begin
   if !File.exist?("#{$dir_path}/#{$save_filename}") || $new_file
     CSV.open("#{$dir_path}/#{$save_filename}", "wb") do |csv| #changed from Mac version. Omitted Dir.home to the path.  Mac code is commented out above
       csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP directory", "CODAP Build Num", "Test Name", "Counter", "Num of Cases", "Delay (s)", "Time Result (ms)", "Rate (cases/sec)"]
@@ -103,6 +104,7 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
       csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
     end
   end
+=end
 end
 
 #Sets up default values for the command line options
@@ -117,7 +119,7 @@ def setup
     opt[:browser]="chrome"
   end
   if opt[:root].nil?
-    opt[:root]="codap.concord.org/releases"
+    opt[:root]="codap.concord.org/releases/"
   end
   if opt[:num_trials].nil?
     opt[:num_trials]="1"
@@ -132,7 +134,8 @@ def setup
     opt[:filename]="testPerformanceInflectionResultDefault"
   end
   if opt[:path].nil?
-    opt[:path]="../../../Google Drive/CODAP @ Concord/Software Development/QA"
+    #opt[:path]="../../../Google Drive/CODAP @ Concord/Software Development/QA"
+    opt[:path]="Documents/CODAP Data/"
   end
   if opt[:sleep_time].nil?
     opt[:sleep_time]='1'
@@ -179,7 +182,7 @@ def setup
   @browser_version = @browser.capabilities.version
   puts "Time:#{@time}; Platform: #{@platform}; Browser: #{@browser_name} v.#{@browser_version}; Testing: #{$build}"
 
-  @wait= Selenium::WebDriver::Wait.new(:timeout=>60)
+  @wait= Selenium::WebDriver::Wait.new(:timeout=>600)
 end
 
 
@@ -387,6 +390,25 @@ def find_component(component)
   end
 end
 
+def delta_calc(x, threshhold)
+  if count == 0
+    old_x = x
+  else
+    new_x = x
+    delta_x = (new_x - old_x).abs
+    old_x=new_x
+  end
+
+  if delta_x <= threshold
+    sum_delta_x = sum_delta_x+delta_x
+    count=count+1
+    average_delta_x = sum_delta_x/count
+  end
+
+  return average_delta_x
+
+end
+
 #Run the Performance Harness data interactive
 def run_performance_harness(test_name)
 
@@ -399,10 +421,16 @@ def run_performance_harness(test_name)
   total_rate = 0
   total_cases = 0
   old_rate=0
+  old_duration=0
   average_duration = 0
   average_rate = 0
+  rate_change = 0
   rate_counter=0
-  average_rate_delta = 2
+  duration_counter = 0
+  rate_change_sum = 0
+  duration_change_sum = 0
+  average_rate_change = 2
+  average_duration_change = 550
 
   frame = @browser.find_element(:css=> "iframe")
 
@@ -416,9 +444,7 @@ def run_performance_harness(test_name)
   set_delay.send_keys(delay)
   run_button = @wait.until{@browser.find_element(:name=>'run')}
 
-  #rate=6
-
-  while average_rate_delta > 1 do
+  while average_rate_change > 1 || average_duration_change> 500 || rate_counter<10 || duration_counter < 10 do
     if run_button.enabled?
       sleep(sleep_time)
       run_button.click
@@ -434,18 +460,51 @@ def run_performance_harness(test_name)
       total_time=total_time+duration
       total_rate = total_rate+rate
       total_cases = total_cases+num_cases
-      rate_delta = rate-old_rate
+
+
+      #calculates rate change and finds the average rate change
+      rate_change = (rate-old_rate).abs
       old_rate=rate
-      if rate_delta<=1
-        rate_delta_sum = rate_delta_sum+rate_delta
-        rate_counter = rate_counter+1
-        average_rate_delta = rate_delta_sum/rate_counter
+      puts "Rate Change is #{rate_change}"
+      puts "Old Rate is #{old_rate}"
+      puts "Average rate change is #{average_rate_change}"
+
+       if rate_change<=1
+        rate_change_sum = rate_change_sum + rate_change
+        rate_counter = rate_counter + 1
+        if rate_counter>2
+          average_rate_change = rate_change_sum/rate_counter
+        end
       end
 
+      puts "Rate change sum is #{rate_change_sum}"
+      puts "Rate counter is #{rate_counter}"
+      puts "Average rate change after calc is #{average_rate_change}"
+
+      #Calculates the duration change and finds the average duration change
+      duration_change = (duration - old_duration).abs
+      old_duration=duration
+      puts "Duration Change is #{duration_change}"
+      puts "Old Duration is #{old_duration}"
+      puts "Average duration change is #{average_duration_change}"
+
+      if duration_change<=1000
+        duration_change_sum = duration_change_sum + duration_change
+        duration_counter = duration_counter + 1
+        if duration_counter>2
+          average_duration_change = duration_change_sum/duration_counter
+        end
+      end
+
+      puts "Duration change sum is #{duration_change_sum}"
+      puts "Duration counter is #{duration_counter}"
+      puts "Average duration change after calc is #{average_duration_change}"
+
+
       puts "Time:#{@time}, Platform: #{@platform}, Browser: #{@browser_name} v.#{@browser_version}, Testing: #{$build},
-            Trial no. #{counter}, Number of cases: #{num_cases}, Delay: #{delay} s, Time result: #{time_result.text} ms, Rate result: #{rate_result.text} cases/sec \n"
+            Trial no. #{counter}, Number of cases: #{total_cases}, Delay: #{delay} s, Time result: #{time_result.text} ms, Rate result: #{rate_result.text} cases/sec \n"
       counter=counter+1
-      write_to_csv(@time, @platform, @browser_name, @browser_version, $build, counter, total_cases, delay, time_result, rate, test_name)
+      write_to_csv(@time, @platform, @browser_name, @browser_version, $build, counter, total_cases, delay, duration, rate, test_name)
       @browser.switch_to.default_content
 
       @browser.switch_to.frame(frame)
@@ -466,16 +525,17 @@ run do
   test_data_interactive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   $test_one=false
 end
-=end
+
 
 run do
   test_data_interactive_g("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
-=begin
+
 run do
   test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
+=end
 run do
   test_data_interactive_gt("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
-=end
+
