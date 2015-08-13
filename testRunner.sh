@@ -1,13 +1,10 @@
 #! /bin/bash
 
-    RESULT_FILE="testruntest.csv"
-    TRIALNUM=100
-    CASESNUM=10
-    TESTNUM=5
-    BROWSER=("firefox" "chrome")
-    CODAP_ROOT="codap.concord.org/releases/"
-    CODAP_VERSION="latest"
+    . $HOME/.testRunnerrc
     i=0
+    echo "TRIALNUM IS $TRIALNUM"
+    echo "CASENUM IS $CASENUM"
+    echo "GOOGLE_PATH IS $GOOGLE_PATH"
     printf "Browser\t Test No.\t Trials\t Cases\t Duration\t Duration(s)\n" >> $RESULT_FILE
     tLen=${#BROWSER[@]}
     echo "$tLen number of browsers"
@@ -21,7 +18,7 @@
                 START=$(date)
                 START_SEC=$(date +"%s")
                 echo "Call testPerformanceHarness.rb"
-                ruby testPerformanceHarness.rb -t $TRIALNUM -c $CASESNUM -b ${BROWSER[$b]} -r $CODAP_ROOT -v $CODAP_VERSION
+                ruby testPerformanceHarness.rb -t $TRIALNUM -c $CASESNUM -b ${BROWSER[$b]} -r $CODAP_ROOT -v $CODAP_VERSION -p "$GOOGLE_PATH"
                 echo "End testPerformanceHarness.rb"
                 END=$(date)
                 END_SEC=$(date +"%s")
