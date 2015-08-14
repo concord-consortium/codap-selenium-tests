@@ -1,8 +1,10 @@
 #! /bin/bash
 
     . $HOME/.testRunnerrc
-
     i=0
+    echo "TRIALNUM IS $TRIALNUM"
+    echo "CASENUM IS $CASENUM"
+    echo "GOOGLE_PATH IS $GOOGLE_PATH"
     printf "Browser\t Test No.\t Trials\t Cases\t Duration\t Duration(s)\n" >> $RESULT_FILE
     tLen=${#BROWSER[@]}
     echo "$tLen number of browsers"
