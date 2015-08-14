@@ -81,6 +81,7 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
   googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
   localdrive_path="Documents/CODAP data/"
 
+=begin
 
   if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
     CSV.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |csv|
@@ -92,8 +93,8 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
       csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
     end
   end
+=end
 
-=begin
   if !File.exist?("#{$dir_path}/#{$save_filename}") || $new_file
     CSV.open("#{$dir_path}/#{$save_filename}", "wb") do |csv| #changed from Mac version. Omitted Dir.home to the path.  Mac code is commented out above
       csv<<["Time", "Platform", "Browser", "Browser Version", "CODAP directory", "CODAP Build Num", "Test Name", "Counter", "Num of Cases", "Delay (s)", "Time Result (ms)", "Rate (cases/sec)"]
@@ -104,7 +105,6 @@ def write_to_csv (time, platform, browser_name, browser_version, build, counter,
       csv << [time, platform, browser_name, browser_version, build, $buildno, test_name, counter, num_cases, delay, duration, rate]
     end
   end
-=end
 end
 
 #Sets up default values for the command line options
@@ -134,8 +134,7 @@ def setup
     opt[:filename]="testPerformanceInflectionResultDefault"
   end
   if opt[:path].nil?
-    #opt[:path]="../../../Google Drive/CODAP @ Concord/Software Development/QA"
-    opt[:path]="Documents/CODAP Data/"
+    opt[:path]="./"
   end
   if opt[:sleep_time].nil?
     opt[:sleep_time]='1'
@@ -182,7 +181,7 @@ def setup
   @browser_version = @browser.capabilities.version
   puts "Time:#{@time}; Platform: #{@platform}; Browser: #{@browser_name} v.#{@browser_version}; Testing: #{$build}"
 
-  @wait= Selenium::WebDriver::Wait.new(:timeout=>600)
+  @wait= Selenium::WebDriver::Wait.new(:timeout=>6000)
 end
 
 
@@ -203,17 +202,6 @@ end
 def get_buildno
   $buildno= @browser.execute_script("return window.DG.BUILD_NUM")
   puts "CODAP build_num is #{$buildno}."
-end
-
-#Opens CODAP and creates a new document
-def test_standalone(url)
-  test_name = "Test Standalone"
-  puts test_name
-  get_website(url)
-  if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
-    @wait.until{@browser.find_element(:css=>'.focus')}.click
-  end
-  create_new_doc_test
 end
 
 #Opens CODAP with specified data interactive in url with graph and table
@@ -265,131 +253,6 @@ def test_data_interactive(url)
   run_performance_harness(test_name)
 end
 
-#Opens CODAP with document server, logged in as guest.
-def test_document_server(url)
-  test_name = "Test Document Server Connection"
-  puts test_name
-  get_website(url)
-  login_as_guest_test
-  if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
-    @wait.until{@browser.find_element(:css=>'.focus')}.click
-  end
-  @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
-  @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
-  run_performance_harness(test_name)
-  login_toolshelf_button_test
-  login_test
-end
-
-def create_new_doc_test
-  #Send document name to text field
-  @wait.until {@browser.find_element(:css=>"input.field")}.send_keys "testDoc"
-  @browser.find_element(:css=>"[title='Create a new document with the specified title']").click
-
-  #Validate that the document is created
-  if @browser.title.include?("testDoc")
-    puts "Created new document"
-  else
-    puts "Did not create new document"
-  end
-end
-
-
-#Clicks on the Login as Guest button in the Login dialog box
-def login_as_guest_test
-  #Click on Login as Guest button
-  sleep(1) #Sleep to slow down when testing on Chrome
-  @login_guest_button = @wait.until{@browser.find_element(:css=> ".dg-loginguest-button")}
-  if @login_guest_button
-    puts "Found Login in as guest button"
-    @login_guest_button.click
-  else
-    puts "Login as guest button not found"
-  end
-end
-
-#Clicks on the Login button in the Login dialog box
-def login_test
-  #Click on Login button
-  @login_button = @browser.find_element(:css=> ".dg-login-button")
-  if @login_button
-    puts "Found Login button"
-    @login_button.click
-  else
-    puts "Login button not found"
-  end
-end
-
-
-#Clicks on the Login as Guest button in the toolshelf
-def login_toolshelf_button_test
-  #Click on Login as Guest button
-  @login_toolshelf_button = @wait.until{@browser.find_element(:css=> '.dg-toolshelflogin-button')}
-
-  if @login_toolshelf_button
-    puts "Found Login button on Toolshelf"
-    @login_toolshelf_button.click
-    puts "Just clicked the Login on Toolshelf button"
-  else
-    puts "Login button on Toolshelf not found"
-  end
-end
-
-#Find the parent component
-def find_parent(component)
-  parent = component.find_element(:xpath=>'.')
-end
-
-#Find the gear menu in a parent component
-def find_gear_menu(parent)
-  gear_menu=@wait.until{parent.find_element(:css=>'.dg-gear-view')}
-  parent_text=parent.text
-  gear_menu_parent = find_parent(gear_menu)
-  if !gear_menu
-    puts "No gear menu"
-  else
-    gear_menu.click
-    puts 'Clicked on gear menu'
-    find_gear_menu_item("Show Count")
-  end
-end
-
-#Find the gear menu item in a parent component
-def find_gear_menu_item(menu_item)
-  menu_items=@wait.until{@browser.find_elements(:css=>'a.menu-item')}
-  menu_item_choice=menu_items.find{|name| name.text==menu_item}
-  puts "Menu item name is #{menu_item_choice.text}"
-  menu_item_choice.click
-end
-
-def find_status(parent)
-  puts "In table find_status"
-  table_title = @wait.until{parent.find_element(:css=>'.dg-title-view')}
-  puts "Table title: #{table_title.text}"
-
-  table_status = @wait.until{parent.find_element(:css=>'div.dg-status-view')}
-  puts "Table status: #{table_status.text}"
-end
-
-def find_component(component)
-  @browser.switch_to.default_content # Always switch to main document when looking for a certain component
-  component_views=@browser.find_elements(:css=>'div.component-view')
-  component_title=component_views.find{|title| title.find_element(:css=>'div.dg-title-view').text==component}
-  puts "Component wanted is #{component}"
-  component_title_text = component_title.text
-  puts "Component found is #{component_title_text}"
-  if component_title!=""
-    @parent = find_parent(component_title)
-    case component
-      when 'Graph'
-        find_gear_menu(@parent)
-      when 'Performance Harness'
-        puts "In Performance Harness"
-      #find_gear_menu(@parent)
-    end
-  end
-end
-
 def delta_calc(x, threshhold)
   if count == 0
     old_x = x
@@ -431,6 +294,7 @@ def run_performance_harness(test_name)
   duration_change_sum = 0
   average_rate_change = 2
   average_duration_change = 550
+  rate = 2
 
   frame = @browser.find_element(:css=> "iframe")
 
@@ -444,7 +308,7 @@ def run_performance_harness(test_name)
   set_delay.send_keys(delay)
   run_button = @wait.until{@browser.find_element(:name=>'run')}
 
-  while average_rate_change > 1 || average_duration_change> 500 || rate_counter<10 || duration_counter < 10 do
+  while average_rate_change > 1 || average_duration_change > 500 || rate_counter < 10 || duration_counter < 10 || rate > 1 || total_cases<10000 do
     if run_button.enabled?
       sleep(sleep_time)
       run_button.click
