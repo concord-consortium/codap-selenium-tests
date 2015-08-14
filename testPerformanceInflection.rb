@@ -308,7 +308,8 @@ def run_performance_harness(test_name)
   set_delay.send_keys(delay)
   run_button = @wait.until{@browser.find_element(:name=>'run')}
 
-  while average_rate_change > 1 || average_duration_change > 500 || rate_counter < 10 || duration_counter < 10 || rate > 1 || total_cases<10000 do
+ # until (average_rate_change < 0.5 &&  rate_counter >= 10) || (average_duration_change <= 500 && duration_counter >= 10) || (rate < 1) || (total_cases>10000) do
+  until (rate < 1) || (total_cases>10000) do
     if run_button.enabled?
       sleep(sleep_time)
       run_button.click
@@ -389,16 +390,17 @@ run do
   test_data_interactive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   $test_one=false
 end
-
+=end
 
 run do
   test_data_interactive_g("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+  $test_one=false
 end
 
 run do
   test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
-=end
+
 run do
   test_data_interactive_gt("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
