@@ -195,7 +195,7 @@ def test_data_interactive_gt(url)
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
-  @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
+  @wait.until {@browser.find_element(:css=> '.dg-table-button')}.click
   run_performance_harness(test_name)
 end
 
@@ -220,7 +220,7 @@ def test_data_interactive_t(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
-  @wait.until {@browser.find_element(:css=> '.dg-tables-button')}.click
+  @wait.until {@browser.find_element(:css=> '.dg-table-button')}.click
   run_performance_harness(test_name)
 end
 
@@ -248,7 +248,7 @@ def run_performance_harness(test_name)
   average_duration = 0
   average_rate = 0
 
-  frame = @browser.find_element(:css=> "iframe")
+  frame = @browser.find_element(:xpath=> "//div/iframe")
 
   @browser.switch_to.frame(frame)
 
