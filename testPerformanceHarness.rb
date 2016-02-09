@@ -41,6 +41,9 @@ def parse_args
     opts.on('-b', '--browser [BROWSER]', "Default is Chrome") do |driver|
       opt[:browser] = driver
     end
+    opts.on('-m', '--platform [PLATFORM]', "Default is Mac") do |platform|
+      opt[:platform] = platform
+    end
     opts.on('-v', '--version [BUILDNO]', 'CODAP build number (build_0xxx). Default is latest') do |build|
       opt[:version] = build
     end
@@ -100,6 +103,9 @@ def setup
   if opt[:browser].nil?
     opt[:browser]="chrome"
   end
+  if opt[:platform].nil?
+    opt[:platform]="mac"
+  end
   if opt[:root].nil?
     opt[:root]="localhost:4020/dg"
   end
@@ -125,14 +131,33 @@ def setup
     opt[:write]=false
   end
 
-  if opt[:browser]=="chrome"
-    @browser = Selenium::WebDriver.for :chrome
-  elsif opt[:browser]=="firefox"
-    @browser = Selenium::WebDriver.for :firefox
-  elsif opt[:browser]=='safari'
-    @browser = Selenium::WebDriver.for :safari
-  elsif opt[:browser]=='ie'
-    @browser = Selenium::WebDriver.for :ie
+  if opt[:platform]=='mac'
+    if opt[:browser]=="chrome"
+      @browser = Selenium::WebDriver.for :chrome
+    elsif opt[:browser]=="firefox"
+      @browser = Selenium::WebDriver.for :firefox
+    elsif opt[:browser]=='safari'
+      @browser = Selenium::WebDriver.for :safari
+    end
+  end
+
+  if opt[:platform]=="win"
+    if opt[:browser]=="chrome"
+      @browser = Selenium::WebDriver.for(
+          :remote,
+          :url=> 'http://localhost:4444/wd/hub',
+          :desired_capabilities=> :chrome)
+    elsif opt[:browser]=="firefox"
+      @browser = Selenium::WebDriver.for(
+          :remote,
+          :url=> 'http://localhost:4444/wd/hub',
+          :desired_capabilities=> :firefox)
+    elsif opt[:browser]=='ie'
+      @browser = Selenium::WebDriver.for(
+               :remote,
+               :url=> 'http://localhost:4444/wd/hub',
+               :desired_capabilities=> :ie)
+    end
   end
 
   $ROOT_DIR = opt[:root]
@@ -177,7 +202,7 @@ def get_website(url)
   else
     puts "Got wrong page"
   end
-  get_buildno
+#  get_buildno
 end
 
 #Gets the build number from the DOM
@@ -194,8 +219,8 @@ def test_data_interactive_gt(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
-  @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   @wait.until {@browser.find_element(:css=> '.dg-table-button')}.click
+  @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   run_performance_harness(test_name)
 end
 
@@ -207,6 +232,7 @@ def test_data_interactive_g(url)
   if @browser.find_element(:css=>'.focus') #Dismisses the splashscreen if present
     @wait.until{@browser.find_element(:css=>'.focus')}.click
   end
+  sleep(3)
   @wait.until {@browser.find_element(:css=> '.dg-graph-button')}.click
   run_performance_harness(test_name)
   #find_component("Graph")
