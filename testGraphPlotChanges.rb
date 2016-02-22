@@ -8,6 +8,28 @@ def setupHelper(session_id)
   @logger = LogReporter.new(session_id)
 end
 
+def write_result_file(doc_name)
+  googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
+  localdrive_path="Documents/CODAP data/"
+  $dir_path = "Documents/CODAP data/"
+  $save_filename = "Plot_changes_logs"
+
+  log = @driver.manage.logs.get(:browser)
+  messages = ""
+  log.each {|item| messages += item.message + "\n"}
+
+  if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
+    File.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |log|
+      log<< messages unless messages == ""
+    end
+  else
+    File.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "a") do |log|
+      log << messages unless messages == ""
+    end
+  end
+
+end
+
 def setup(browser_name)
   caps = Selenium::WebDriver::Remote::Capabilities.new
   case (browser_name)
@@ -41,7 +63,7 @@ def teardown
   @driver.quit
 end
 
-MACBROWSERS = [:firefox, :chrome]
+MACBROWSERS = [:chrome]
 
 def run
   MACBROWSERS.each do |macbrowser|
@@ -54,21 +76,41 @@ end
 
 run do
   codap = CODAPObject.new(@driver)
-  open_doc = 'PH_35_Data.json'
+  open_doc = '3TableGroups.json'
   file = File.absolute_path(File.join(Dir.pwd, open_doc))
   puts "file is #{file}, open_doc is #{open_doc}"
   codap.open_local_doc(file)
   open_doc.slice! '.json'
-  puts "open_doc is #{open_doc}"
-  #sleep(5)
   codap.verify_doc(open_doc)
-  codap.click_table_button
+  #codap.click_table_button
   codap.click_graph_button
-  codap.drag_attribute('trial','x')
-  puts @driver.manage.logs.get(:browser)
-  codap.drag_attribute('randNum','y')
-  puts @driver.manage.logs.get(:browser)
-  codap.drag_attribute('choice','legend')
-  puts @driver.manage.logs.get(:browser)
+  codap.drag_attribute('ACAT1','x')
+  write_result_file(open_doc)
+  codap.drag_attribute('ACAT2','y')
+  write_result_file(open_doc)
+  codap.drag_attribute('ANUM1','x')
+  write_result_file(open_doc)
+  codap.drag_attribute('ANUM2','y')
+  write_result_file(open_doc)
+  codap.drag_attribute('BCAT1','x')
+  write_result_file(open_doc)
+  codap.drag_attribute('BNUM1','x')
+  write_result_file(open_doc)
+  codap.drag_attribute('CCAT1','x')
+  write_result_file(open_doc)
+  codap.drag_attribute('CNUM1','x')
+  write_result_file(open_doc)
+  codap.drag_attribute('BNUM1','y')
+  write_result_file(open_doc)
+  codap.drag_attribute('CCAT2','x')
+  write_result_file(open_doc)
+  codap.drag_attribute('BCAT1','y')
+  write_result_file(open_doc)
+  codap.drag_attribute('ACAT2','y')
+  write_result_file(open_doc)
+  codap.drag_attribute('BCAT1','legend')
+  write_result_file(open_doc)
+  codap.drag_attribute('CNUM1','legend')
+  write_result_file(open_doc)
   #puts @logger.latest
 end
