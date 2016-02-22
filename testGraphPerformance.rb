@@ -96,6 +96,9 @@ run do
     write_result_file(doc)
     codap.drag_attribute('avgRate','y')
     write_result_file(doc)
+#Need to close file and open next one
+    codap.open_file_menu
+    codap.select_file_menu_open_doc
 
   end
   #puts @logger.latest
