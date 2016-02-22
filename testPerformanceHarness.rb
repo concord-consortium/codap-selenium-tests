@@ -202,7 +202,7 @@ def get_website(url)
   else
     puts "Got wrong page"
   end
-#  get_buildno
+  get_buildno
 end
 
 #Gets the build number from the DOM
@@ -325,9 +325,9 @@ run do
   test_data_interactive("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
   $test_one=false
 end
-run do
-  test_data_interactive_g("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
-end
+ run do
+   test_data_interactive_g("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
+ end
 run do
   test_data_interactive_t("#{$build}?di=http://concord-consortium.github.io/codap-data-interactives/PerformanceHarness/PerformanceHarness.html")
 end
