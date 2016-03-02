@@ -38,7 +38,8 @@ def setup(browser_name, platform)
       :url=> 'http://localhost:4444/wd/hub',
       :desired_capabilities=> caps )
   setupHelper(@driver.session_id)
-  ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
+  #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
+  ENV['base_url'] = 'http://codap.concord.org/~jsandoe/build/static/dg/en/cert/index.html'
   puts "platform is #{@driver.capabilities.platform}, browser is #{@driver.capabilities.browser_name}"
 rescue Exception => e
   puts e.message
@@ -73,7 +74,7 @@ end
 run do
   codap = CODAPObject.new(@driver)
   codap.start_new_doc
-  codap.click_table_button
+  #codap.click_table_button #Table does not open when no cases
   codap.click_graph_button
   codap.click_map_button
   codap.click_slider_button
