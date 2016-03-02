@@ -44,6 +44,7 @@ class CODAPObject
   FILE_MENU_OPEN_DOC = {id: 'dg-fileMenutItem-open-doc'}
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert)]/div/div/div[contains(@label,"Close")]'}
+  GRAPH_CAMERA = {css: 'display-camera'}
 
 
   attr_reader :driver
@@ -213,9 +214,15 @@ class CODAPObject
     #scroll_right.click
   end
 
+  def click_graph_camera
+    wait_for {displayed?(GRAPH_CAMERA)}
+    driver.find_element(GRAPH_CAMERA).click
+
+  end
+
   private
   def verify_page
-    expect(driver.title).to eql('Untitled Document - CODAP')
+    expect(driver.title).to include('CODAP')
   end
 
 
