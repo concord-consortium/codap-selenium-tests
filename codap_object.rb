@@ -44,7 +44,12 @@ class CODAPObject
   FILE_MENU_OPEN_DOC = {id: 'dg-fileMenutItem-open-doc'}
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert)]/div/div/div[contains(@label,"Close")]'}
-  GRAPH_CAMERA = {css: 'display-camera'}
+  AXIS_MENU_REMOVE = {xpath: '//div[contains(@class, "sc-menu-item")]/a/span[contains(text(),"Remove")]'}
+  GRAPH_SCREENSHOT = {css: '.display-camera'}
+  #GRAPH_SCREENSHOT_FILENAME = {xpath: '//div[contains(@role,"dialog")]'}#/div[2]/div[2]/input[contains(@class, "field")]'}
+  GRAPH_SCREENSHOT_FILENAME = {css: '.dg-single-text-dialog-textfield'}
+  GRAPH_SCREENSHOT_CANCEL = {css: '.dg-single-text-dialog-cancel'}
+  GRAPH_SCREENSHOT_OK = {css: '.dg-single-text-dialog-ok'}
 
 
   attr_reader :driver
@@ -214,9 +219,36 @@ class CODAPObject
     #scroll_right.click
   end
 
-  def click_graph_camera
-    wait_for {displayed?(GRAPH_CAMERA)}
-    driver.find_element(GRAPH_CAMERA).click
+  def remove_graph_attribute(graph_target)
+    puts "In remove_graph_attribute"
+    case (graph_target)
+      when 'x'
+        target_loc = driver.find_element(GRAPH_H_AXIS)
+      when 'y'
+        target_loc = driver.find_element(GRAPH_V_AXIS)
+      when 'legend'
+        target_loc = driver.find_element(GRAPH_LEGEND)
+    end
+    target_loc.click
+    puts "Clicked #{target_loc}"
+    if (driver.find_element(AXIS_MENU_REMOVE))
+      driver.find_element(AXIS_MENU_REMOVE).click
+    else
+      puts "Can't find menu"
+    end
+
+  end
+
+  def take_screenshot(attribute,location)
+    driver.find_element(GRAPH_TILE).click
+    sleep(3)
+    driver.find_element(GRAPH_SCREENSHOT).click
+    screenshot_popup = wait_for{driver.find_element(GRAPH_SCREENSHOT_FILENAME)}
+    puts "Found screenshot_popup at #{screenshot_popup}"
+    driver.action.click(screenshot_popup).perform
+    screenshot_filename = "#{attribute}_on_#{location}"
+    driver.action.send_keys(screenshot_popup, screenshot_filename).perform
+    driver.find_element(GRAPH_SCREENSHOT_OK).click
 
   end
 
@@ -225,6 +257,10 @@ class CODAPObject
     expect(driver.title).to include('CODAP')
   end
 
+  def wait_for(seconds=25)
+    puts "Waiting"
+    Selenium::WebDriver::Wait.new(:timeout => seconds).until { yield }
+  end
 
   def verify_tile(button)
     case (button)
@@ -265,10 +301,7 @@ class CODAPObject
     driver.switch_to.alert(user_entry_dialog)
   end
 
-  def wait_for(seconds=25)
-    puts "Waiting"
-    Selenium::WebDriver::Wait.new(:timeout => seconds).until { yield }
-  end
+
 
   def select_menu_item(menu, menu_item)
     puts 'in select_menu_item'

@@ -30,32 +30,51 @@ def write_result_file(doc_name)
 
 end
 
-def setup(browser_name)
+def setup(browser_name, platform)
   caps = Selenium::WebDriver::Remote::Capabilities.new
-  case (browser_name)
-    when :firefox
-      caps[:browserName] = :firefox
-      caps[:logging_prefs] = {:browser => "ALL"}
-    when :chrome
-      caps[:browserName] = :chrome
-      caps[:logging_prefs] = {:browser => "ALL"}
-    when :safari
-      caps[:browserName] = :safari
-      caps[:logging_prefs] = {:browser => "ALL"}
+  case (platform)
+    when "mac"
+      caps[:platform]='OS X'
+      case (browser_name)
+        when :firefox
+          caps[:browserName] = :firefox
+          caps[:logging_prefs] = {:browser => "ALL"}
+        when :chrome
+          caps[:browserName] = :chrome
+          caps[:logging_prefs] = {:browser => "ALL"}
+        when :safari
+          caps[:browserName] = :safari
+          caps[:logging_prefs] = {:browser => "ALL"}
+      end
+    when "windows"
+      caps[:platform]='Windows'
+      case (browser_name)
+        when :firefox
+          caps[:browserName] = :firefox
+          caps[:logging_prefs] = {:browser => "ALL"}
+        when :chrome
+          caps[:browserName] = :chrome
+          caps[:logging_prefs] = {:browser => "ALL"}
+        when :ie
+          caps[:browserName] = 'internet explorer'
+          caps[:logging_prefs] = {:browser => "ALL"}
+      end
   end
   @driver = Selenium::WebDriver.for(
       :remote,
       :url=> 'http://localhost:4444/wd/hub',
       :desired_capabilities=> caps )
-  setupHelper(@driver.session_id)
-  ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
+  @driver = Selenium::WebDriver.for browser_name
+  #setupHelper(@driver.session_id)
+  #ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
   #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
-  #ENV['base_url'] = 'localhost:4020/dg'
+  ENV['base_url'] = 'localhost:4020/dg'
+  #ENV['base_url'] = 'http://codap.concord.org/~jsandoe/sc-1_11-upgrade/static/dg/en/cert/index.html'
   dnd_javascript = File.read(Dir.pwd + '/dnd.js')
-rescue Exception => e
-  puts e.message
-  puts "Could not start driver #{@browser_name}"
-  exit 1
+# rescue Exception => e
+#   puts e.message
+#   puts "Could not start driver #{@browser_name}"
+#   exit 1
 end
 
 def teardown
@@ -63,14 +82,21 @@ def teardown
   @driver.quit
 end
 
-MACBROWSERS = [:chrome]
+MACBROWSERS = [:chrome, :firefox]
+WINBROWSERS = [:ie, :chrome, :firefox]
 
 def run
-  MACBROWSERS.each do |macbrowser|
-    puts macbrowser
-    setup(macbrowser)
+  # MACBROWSERS.each do |macbrowser|
+  #   puts macbrowser
+  #   setup(macbrowser, 'mac')
+  #   yield
+  #   teardown
+  # end
+  WINBROWSERS.each do |winbrowser|
+    puts winbrowser
+    setup(winbrowser, 'windows')
     yield
-    #teardown
+    teardown
   end
 end
 
@@ -79,38 +105,64 @@ run do
   open_doc = '3TableGroups.json'
   file = File.absolute_path(File.join(Dir.pwd, open_doc))
   puts "file is #{file}, open_doc is #{open_doc}"
+  attributes = ['ACAT1','ACAT2','ANUM1','ANUM2','BCAT1','BNUM1','CCAT1','CNUM1','CCAT2','CNUM2']
+  drop_zone = ['x','y','legend']
+
   codap.open_local_doc(file)
   open_doc.slice! '.json'
   codap.verify_doc(open_doc)
-  #codap.click_table_button
   codap.click_graph_button
   codap.drag_attribute('ACAT1','x')
   write_result_file(open_doc)
+  codap.take_screenshot('ACAT1','x')
   codap.drag_attribute('ACAT2','y')
   write_result_file(open_doc)
+  codap.take_screenshot('ACAT2','y')
   codap.drag_attribute('ANUM1','x')
   write_result_file(open_doc)
+  codap.take_screenshot('ANUM1','x')
   codap.drag_attribute('ANUM2','y')
   write_result_file(open_doc)
+  codap.take_screenshot('ANUM2','y')
   codap.drag_attribute('BCAT1','x')
   write_result_file(open_doc)
+  codap.take_screenshot('BCAT1','x')
   codap.drag_attribute('BNUM1','x')
   write_result_file(open_doc)
+  codap.take_screenshot('BNUM1','x')
   codap.drag_attribute('CCAT1','x')
   write_result_file(open_doc)
+  codap.take_screenshot('CCAT1','x')
   codap.drag_attribute('CNUM1','x')
   write_result_file(open_doc)
+  codap.take_screenshot('CNUM1','x')
   codap.drag_attribute('BNUM1','y')
   write_result_file(open_doc)
+  codap.take_screenshot('BNUM1','y')
   codap.drag_attribute('CCAT2','x')
   write_result_file(open_doc)
+  codap.take_screenshot('CCAT2','x')
   codap.drag_attribute('BCAT1','y')
   write_result_file(open_doc)
+  codap.take_screenshot('BCAT1','y')
   codap.drag_attribute('ACAT2','y')
   write_result_file(open_doc)
+  codap.take_screenshot('ACAT2','y')
   codap.drag_attribute('BCAT1','legend')
   write_result_file(open_doc)
+  codap.take_screenshot('BCAT1','legend')
   codap.drag_attribute('CNUM1','legend')
   write_result_file(open_doc)
+  codap.take_screenshot('CNUM1','legend')
+  codap.drag_attribute('CNUM2','y')
+  write_result_file(open_doc)
+  codap.take_screenshot('CNUM2','y')
+  codap.remove_graph_attribute('legend')
+  write_result_file(open_doc)
+  codap.take_screenshot('none','legend')
+  codap.remove_graph_attribute('x')
+  write_result_file(open_doc)
+  codap.take_screenshot('none','x')
+
   #puts @logger.latest
 end
