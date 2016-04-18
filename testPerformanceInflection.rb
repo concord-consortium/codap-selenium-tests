@@ -44,6 +44,9 @@ def parse_args
     opts.on('-b', '--browser [BROWSER]', "Default is Chrome") do |driver|
       opt[:browser] = driver
     end
+    opts.on('-m', '--platform [PLATFORM]', "Default is Mac") do |platform|
+      opt[:platform] = platform
+    end
     opts.on('-v', '--version [BUILDNO]', 'CODAP build number (build_0xxx). Default is latest') do |build|
       opt[:version] = build
     end
@@ -120,6 +123,9 @@ def setup
   if opt[:browser].nil?
     opt[:browser]="chrome"
   end
+  if opt[:platform].nil?
+    opt[:platform]="mac"
+  end
   if opt[:root].nil?
     opt[:root]="codap.concord.org/releases/"
   end
@@ -145,14 +151,33 @@ def setup
     opt[:write]=false
   end
 
-  if opt[:browser]=="chrome"
-    @browser = Selenium::WebDriver.for :chrome
-  elsif opt[:browser]=="firefox"
-    @browser = Selenium::WebDriver.for :firefox
-  elsif opt[:browser]=='safari'
-    @browser = Selenium::WebDriver.for :safari
-  elsif opt[:browser]=='ie'
-    @browser = Selenium::WebDriver.for :ie
+  if opt[:platform]=='mac'
+    if opt[:browser]=="chrome"
+      @browser = Selenium::WebDriver.for :chrome
+    elsif opt[:browser]=="firefox"
+      @browser = Selenium::WebDriver.for :firefox
+    elsif opt[:browser]=='safari'
+      @browser = Selenium::WebDriver.for :safari
+    end
+  end
+
+  if opt[:platform]=="win"
+    if opt[:browser]=="chrome"
+      @browser = Selenium::WebDriver.for(
+          :remote,
+          :url=> 'http://localhost:4444/wd/hub',
+          :desired_capabilities=> :chrome)
+    elsif opt[:browser]=="firefox"
+      @browser = Selenium::WebDriver.for(
+          :remote,
+          :url=> 'http://localhost:4444/wd/hub',
+          :desired_capabilities=> :firefox)
+    elsif opt[:browser]=='ie'
+      @browser = Selenium::WebDriver.for(
+          :remote,
+          :url=> 'http://localhost:4444/wd/hub',
+          :desired_capabilities=> :ie)
+    end
   end
 
   $ROOT_DIR = opt[:root]
