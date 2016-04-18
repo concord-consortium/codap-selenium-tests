@@ -25,6 +25,7 @@ class CODAPObject
   GRAPH_TILE = {css: '.graph-view'}
   GRAPH_H_AXIS = {css: '.h-axis'}
   GRAPH_V_AXIS = {css: '.v-axis'}
+  GRAPH_V2_AXIS = {css: '.v2-axis'}
   GRAPH_PLOT_VIEW = {css: '.plot-view'}
   GRAPH_LEGEND = {css: '.legend-view'}
   MAP_TILE = {css: '.leaflet-container'}
@@ -46,7 +47,6 @@ class CODAPObject
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert)]/div/div/div[contains(@label,"Close")]'}
   AXIS_MENU_REMOVE = {xpath: '//div[contains(@class, "sc-menu-item")]/a/span[contains(text(),"Remove")]'}
   GRAPH_SCREENSHOT = {css: '.display-camera'}
-  #GRAPH_SCREENSHOT_FILENAME = {xpath: '//div[contains(@role,"dialog")]'}#/div[2]/div[2]/input[contains(@class, "field")]'}
   GRAPH_SCREENSHOT_FILENAME = {css: '.dg-single-text-dialog-textfield'}
   GRAPH_SCREENSHOT_CANCEL = {css: '.dg-single-text-dialog-cancel'}
   GRAPH_SCREENSHOT_OK = {css: '.dg-single-text-dialog-ok'}
