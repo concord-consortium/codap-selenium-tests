@@ -1,4 +1,6 @@
 #! /usr/bin/ruby
+#This test runs the Performance Harness data interactive to generate data to see How much data CODAP can handle .
+# The test will keep generating data until either the rate becomes less than 1 or there are more than 10,000 cases
 
 require 'rspec'
 require 'selenium-webdriver'
