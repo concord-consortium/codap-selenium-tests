@@ -1,4 +1,5 @@
 #! /usr/bin/ruby
+#testPerformanceHarness runs the CODAP data interactive Peformance Harness. This test can be used to generate a specified number of data and benchmark the data generation rate with only a the data interactive, with the data interactive and a table, with the data interactive and a graph, with the data interactive, table and graph.
 
 require 'rspec'
 require 'selenium-webdriver'
