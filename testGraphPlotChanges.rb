@@ -1,3 +1,5 @@
+#testGraphPlotChanges test graph plot transitions and take graph screenshots of each transition. The data file 3TableGroups.json need to be in the same directory as the test. Plot transitions screenshots are saved separately by plot transition name. The test will run on latest version of CODAP in Mac OS X Chrome, Firefox and Safari, and Windows 8.1 Chrome, Firefox and Internet Explorer 11.
+
 require 'selenium-webdriver'
 require 'rspec/expectations'
 require './codap_object'
@@ -56,7 +58,7 @@ def setup(browser_name, platform)
           caps[:browserName] = :chrome
           caps[:logging_prefs] = {:browser => "ALL"}
         when :ie
-          caps[:browserName] = 'internet explorer'
+          caps[:browserName] = :internet_explorer #'internet explorer'
           caps[:logging_prefs] = {:browser => "ALL"}
       end
   end
@@ -68,13 +70,12 @@ def setup(browser_name, platform)
   #setupHelper(@driver.session_id)
   #ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
   #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
-  ENV['base_url'] = 'localhost:4020/dg'
-  #ENV['base_url'] = 'http://codap.concord.org/~jsandoe/sc-1_11-upgrade/static/dg/en/cert/index.html'
-  dnd_javascript = File.read(Dir.pwd + '/dnd.js')
-# rescue Exception => e
-#   puts e.message
-#   puts "Could not start driver #{@browser_name}"
-#   exit 1
+  #ENV['base_url'] = 'localhost:4020/dg'
+  ENV['base_url'] = 'http://codap.concord.org/releases/latest/static/dg/en/cert/index.html'
+  rescue Exception => e
+    puts e.message
+    puts "Could not start driver #{@browser_name}"
+    exit 1
 end
 
 def teardown
@@ -82,16 +83,16 @@ def teardown
   @driver.quit
 end
 
-MACBROWSERS = [:chrome, :firefox]
+MACBROWSERS = [:chrome, :firefox, :safari]
 WINBROWSERS = [:ie, :chrome, :firefox]
 
 def run
-  # MACBROWSERS.each do |macbrowser|
-  #   puts macbrowser
-  #   setup(macbrowser, 'mac')
-  #   yield
-  #   teardown
-  # end
+  MACBROWSERS.each do |macbrowser|
+    puts macbrowser
+    setup(macbrowser, 'mac')
+    yield
+    teardown
+  end
   WINBROWSERS.each do |winbrowser|
     puts winbrowser
     setup(winbrowser, 'windows')
@@ -156,13 +157,13 @@ run do
   codap.take_screenshot('CNUM1','legend')
   codap.drag_attribute('CNUM2','y')
   write_result_file(open_doc)
-  codap.take_screenshot('CNUM2','y')
-  codap.remove_graph_attribute('legend')
-  write_result_file(open_doc)
-  codap.take_screenshot('none','legend')
-  codap.remove_graph_attribute('x')
-  write_result_file(open_doc)
-  codap.take_screenshot('none','x')
+  # codap.take_screenshot('CNUM2','y')
+  # codap.remove_graph_attribute('legend')
+  # write_result_file(open_doc)
+  # codap.take_screenshot('none','legend')
+  # codap.remove_graph_attribute('x')
+  # write_result_file(open_doc)
+  # codap.take_screenshot('none','x')
 
   #puts @logger.latest
 end
