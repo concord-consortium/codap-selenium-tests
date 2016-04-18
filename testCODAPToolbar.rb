@@ -1,3 +1,5 @@
+# This will click on all the buttons in the CODAP toolshelf except for the table and the guide. Tables do not open unless there is data. Guides do not open if there is no guide specified in configuration.
+
 require 'selenium-webdriver'
 require 'rspec/expectations'
 require './codap_object'
@@ -39,7 +41,7 @@ def setup(browser_name, platform)
       :desired_capabilities=> caps )
   setupHelper(@driver.session_id)
   #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
-  ENV['base_url'] = 'http://codap.concord.org/~jsandoe/build/static/dg/en/cert/index.html'
+  ENV['base_url'] = 'http://codap.concord.org/releases/latest/static/dg/en/cert/index.html'
   puts "platform is #{@driver.capabilities.platform}, browser is #{@driver.capabilities.browser_name}"
 rescue Exception => e
   puts e.message
@@ -53,7 +55,8 @@ def teardown
   @driver.quit
 end
 
-MACBROWSERS = [:firefox, :chrome]
+
+MACBROWSERS = [:chrome, :firefox, :safari]
 WINBROWSERS = [:firefox, :chrome, :ie]
 
 def run
