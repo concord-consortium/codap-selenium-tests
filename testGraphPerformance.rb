@@ -1,3 +1,4 @@
+# testGraphPerformance tests the performance of the graph with varying numbers of data. The following files need to be in the same directory as the test: PH_35_Data.json, PH_5K_Data.json, PH_10K_Data.json)
 require 'selenium-webdriver'
 require 'rspec/expectations'
 require './codap_object'
@@ -51,7 +52,6 @@ def setup(browser_name)
   ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
   #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
   #ENV['base_url'] = 'localhost:4020/dg'
-  dnd_javascript = File.read(Dir.pwd + '/dnd.js')
 rescue Exception => e
   puts e.message
   puts "Could not start driver #{@browser_name}"
@@ -63,7 +63,7 @@ def teardown
   @driver.quit
 end
 
-MACBROWSERS = [:chrome]
+MACBROWSERS = [:chrome, :firefox, :safari]
 
 def run
   MACBROWSERS.each do |macbrowser|
