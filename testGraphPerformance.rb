@@ -12,7 +12,7 @@ end
 def write_result_file(doc_name)
   googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
   localdrive_path="Documents/CODAP data/"
-  $dir_path = "Documents/CODAP data/"
+  $dir_path = "./"
   $save_filename = "Plot_changes_logs"
 
   log = @driver.manage.logs.get(:browser)
