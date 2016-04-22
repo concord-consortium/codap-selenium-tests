@@ -7,7 +7,7 @@ Selenium tests of CODAP.
 
 - testPerformanceInflection runs the CODAP data interactive Performance Harness to see how much data CODAP can handle. The test will keep generating data until either the rate becomes less than 1 or there are more than 10,000 cases. This test will generate data with only the data interactive, with the data interactive and a table, with the data interactive and a graph, with the data interactive, table and graph. Results are written into csv file.
 
-- testCODAPToolbar will click on all the buttons in the CODAP toolshelf except for the table and the guide. Tables do not open unless there is data. Guides do not open if there is no guide specified in configuration. The test will run on latest version of CODAP in Mac OS X Chrome, Firefox and Safari, and Windows 8.1 Chrome, Firefox and Internet Explorer 11. Results are written into a csv file.
+- testCODAPToolbar will click on all the buttons in the CODAP toolshelf except for the table and the guide. Tables do not open unless there is data. Guides do not open if there is no guide specified in configuration. The test will run on latest version of CODAP in Mac OS X Chrome, Firefox and Safari, and Windows 8.1 Chrome, Firefox and Internet Explorer 11. 
 
 - testGraphPerformance tests graph plot transition performance with varying numbers of data. The following files need to be in the same directory as the test:PH_35_Data.json, PH_5K_Data.json, and PH_10K_Data.json. The test will run om latest version of CODAP in Mac OS X Chrome, Firefox and Safari. Result of console log benchmarks are written into a text file.
 
@@ -173,7 +173,11 @@ Examples:
 Results are saved to testPerformanceInflectionResultDefault__version__.csv unless otherwise specified with -f option.
 
 ### testCODAPToolbar
+`ruby testCODAPToolbar.rb` runs the latest version of CODAP and clicks on all the toolshelf buttons except for the Table button and Guide button. The test runs on Mac Chrome, Firefox, and Safari, and Win 8.1 Chrome, Firefox, and IE11.
 
 ### testGraphPerformance
+`ruby testGraphPerformance.rb` runs the latest version of CODAP and tests graph plot transition performance with varying numbers of data. The following CODAP documents need to be in the same directory as the test:PH_35_Data.json, PH_5K_Data.json, and PH_10K_Data.json. The test will run om latest version of CODAP in Mac OS X Chrome, Firefox and Safari. Result of console log benchmarks are written into a text file.
+    The test opens one of the CODAP documents and drags attributes from the table to different graph positions (x axis, y-axis, and legend.) Benchmark console logs are saved to a text file called *Plot_changes_logs* in the test directory. Subsequent tests appends the console logs to this file.
 
 ### testGraphPlotChanges
+`ruby testGraphPlotChanges.rb` tests graph plot transitions and take graph screenshots of each transition. The data file 3TableGroups.json need to be in the same directory as the test. Plot transitions screenshots are saved separately by plot transition name (*attribute*_on_*location*.png). The test will run on latest version of CODAP in Mac OS X Chrome, Firefox and Safari, and Windows 8.1 Chrome, Firefox and Internet Explorer 11.
