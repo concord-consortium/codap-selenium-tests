@@ -15,6 +15,10 @@ Selenium tests of CODAP.
 
 Selenium Standalone Server needs to be installed on all platforms that the test will run on.
 
+Requirements
+============
+These tests assume that you have a Mac and a Windows machine to test on. Either platforms may be virtual machines as long as the Selenium Standalone Server is installed on them and the nodes may be registered to the hub.
+
 Installation
 ====
 
