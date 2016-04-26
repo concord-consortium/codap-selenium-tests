@@ -158,6 +158,12 @@ class CODAPObject
     verify_tile(TEXT_BUTTON)
   end
 
+  def click_help_button
+    wait_for {displayed? (HELP_BUTTON)}
+    driver.find_element(HELP_BUTTON).click
+    #verify_tile(HELP_BUTTON)
+  end
+
   def click_tilelist_button
     wait_for {displayed? (TILE_LIST_BUTTON)}
     driver.find_element(TILE_LIST_BUTTON).click
@@ -278,6 +284,10 @@ class CODAPObject
       when TEXT_BUTTON
         wait_for { displayed?(TEXT_TILE) }
         driver.find_element(TEXT_TILE).click
+      when HELP_BUTTON
+        help_page_title = driver.find_element(:id, "block-menu-menu-help-categories")
+        wait_for {displayed?(help_page_title)}
+        expect(help_page_title.text).to include "CODAP Help"
       when TILE_LIST_BUTTON
         puts "Tile list button clicked"
       #driver.find_element(:xpath=> '//span[contains(@class, "ellipsis") and text()="No Data"]').click
