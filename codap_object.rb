@@ -17,7 +17,7 @@ class CODAPObject
   TILE_LIST_BUTTON ={css: '.dg-tilelist-button' }
   OPTION_BUTTON = {css: '.dg-option-button' }
   GUIDE_BUTTON   = {css: '.dg-guide-button' }
-  HELP_BUTTON = {css: '.moonicon-icon-help'}
+  HELP_BUTTON = {css: '.navBar-help'}
   H_SCROLLER = {css: '.sc-horizontal, .sc-scroller-view'}
   SCROLL_H_RIGHT = {css: '.thumb'}
   CASE_TABLE_TILE = {css: '.dg-case-table'}
