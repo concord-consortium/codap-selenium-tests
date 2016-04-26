@@ -66,14 +66,12 @@ def run
     yield
     teardown
   end
-=begin
   WINBROWSERS.each do |winbrowser|
     puts winbrowser
     setup(winbrowser, "windows")
     yield
     teardown
   end
-=end
 end
 
 run do
@@ -85,7 +83,7 @@ run do
   codap.click_slider_button
   codap.click_calc_button
   codap.click_text_button
-  codap.click_help_button
+  #codap.click_help_button
   codap.click_option_button
   codap.click_tilelist_button
   #codap.click_guide_button
