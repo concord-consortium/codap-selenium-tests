@@ -56,7 +56,7 @@ def teardown
 end
 
 
-MACBROWSERS = [:chrome, :firefox, :safari]
+MACBROWSERS = [:chrome, :firefox]
 WINBROWSERS = [:firefox, :chrome, :ie]
 
 def run
@@ -75,18 +75,12 @@ def run
 end
 
 run do
-  codap = CODAPObject.new(@driver)
-  codap.start_new_doc
-  #codap.click_table_button #Table does not open when no cases
-  codap.click_graph_button
-  codap.click_map_button
-  codap.click_slider_button
-  codap.click_calc_button
-  codap.click_text_button
-  #codap.click_help_button
-  codap.click_option_button
-  codap.click_tilelist_button
-  #codap.click_guide_button
-  puts @logger.latest if @driver.capabilities.browser_name !='internet explorer'
+    components = ['graph','map','slider','calc','text','option','tile']
+    codap = CODAPObject.new(@driver)
+    codap.start_new_doc
+    components.each do |component|
+      codap.click_button(component)
+    end
+    puts @logger.latest if @driver.capabilities.browser_name !='internet explorer'
   #TODO Needs assertions for each button click
 end
