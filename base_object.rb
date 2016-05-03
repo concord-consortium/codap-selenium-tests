@@ -63,9 +63,9 @@ class BaseObject
 
   def select_menu_item(menu, menu_item)
     puts 'in select_menu_item'
-    driver.find_element(menu)
+    find(menu)
     wait_for {displayed? (menu_item)}
-    find(menu_item).click
+    click_on(menu_item)
   end
 
   def get_column_header(header_name)

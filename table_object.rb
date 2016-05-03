@@ -1,14 +1,13 @@
-class Table_Object
+class TableObject < BaseObject
 
   H_SCROLLER = {css: '.sc-horizontal, .sc-scroller-view'}
   SCROLL_H_RIGHT = {css: '.thumb'}
   CASE_TABLE_TILE = {css: '.dg-case-table'}
   TABLE_HEADER_NAME = {css: '.slick-column-name'}
 
-  attr_reader :driver
 
-  def initialize
-    @driver = driver
+  def initialize(driver)
+    super
   end
 
   def get_column_header(header_name)

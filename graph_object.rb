@@ -1,4 +1,4 @@
-class GraphObject
+class GraphObject < BaseObject
 
   GRAPH_TILE = {css: '.graph-view'}
   GRAPH_H_AXIS = {css: '.h-axis'}
@@ -11,8 +11,8 @@ class GraphObject
 
   attr_reader :driver
 
-  def initialize
-    @driver = driver
+  def initialize(driver)
+    super
   end
 
   def remove_graph_attribute(graph_target)

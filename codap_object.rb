@@ -1,4 +1,4 @@
-class CODAPObject
+class CODAPObject < BaseObject
 
   SPLASHSCREEN = {css: '.focus'}
   DATA_INTERACTIVE = { css: 'iframe'}
@@ -26,36 +26,29 @@ class CODAPObject
   SLIDER_TILE = {css: '.slider-thumb'}
   TEXT_TILE = {css: '.text-area'}
   CALC_TILE = {css: '.calculator'}
-  HELP_TILE = {css: }
+  #HELP_TILE = {css: }
   TILE_ICON_SLIDER = {css: '.tile-icon-slider'}
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert)]/div/div/div[contains(@label,"Close")]'}
-  SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
-  SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
-  SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
   VIEW_WEBPAGE_MENU_ITEM = { id: 'dg-optionMenuItem-view_webpage'}
 
-  attr_reader :driver
+  #attr_reader :driver
 
   def initialize(driver)
-    @driver = driver
+    super
     visit
     verify_page
     dismiss_splashscreen
   end
 
-  def visit
-    driver.get ENV['base_url']
-  end
-
   def open_file_menu
-    driver.find_element(FILE_MENU).click
+    click_on(FILE_MENU)
   end
 
   def not_saved_alert_close_button
     wait_for {displayed?(ALERT_DIALOG)}
     wait_for {displayed?(NOT_SAVED_CLOSE_BUTTON)}
-    driver.find_element(NOT_SAVED_CLOSE_BUTTON).click
+    click_on(NOT_SAVED_CLOSE_BUTTON)
   end
 
   def click_button(button)
@@ -92,46 +85,24 @@ class CODAPObject
   end
 
   def click_toolshelf
-    driver.find_element(TOOLSHELF_BACK).click
-  end
-
-  def drag_attribute(header_name, graph_target)
-    #drag_scroller
-    #drag_scroller_right
-    source_loc = get_column_header(header_name)
-    case (graph_target)
-      when 'x'
-        target_loc = driver.find_element(GRAPH_H_AXIS)
-      when 'y'
-        target_loc = driver.find_element(GRAPH_V_AXIS)
-      when 'legend'
-        target_loc = driver.find_element(GRAPH_PLOT_VIEW)
-        wait_for { displayed?(GRAPH_LEGEND)}
-    end
-    driver.action.drag_and_drop(source_loc, target_loc).perform
+    click_on(TOOLSHELF_BACK)
   end
 
   def drag_scroller
-    scroll = driver.find_element(H_SCROLLER)
+    scroll = find(H_SCROLLER)
     driver.action.drag_and_drop_by(scroll, 100, 0).perform
   end
 
   def drag_scroller_right
     puts "In drag_scroller_right"
-    scroll_right = driver.find_element(SCROLL_H_RIGHT)
+    scroll_right = find(SCROLL_H_RIGHT)
     puts "Found element #{scroll_right}"
     driver.action.drag_and_drop_by(scroll_right, 50, 0).perform
     #scroll_right.click
   end
 
-  private
   def verify_page
     expect(driver.title).to include('CODAP')
-  end
-
-  def wait_for(seconds=25)
-    puts "Waiting"
-    Selenium::WebDriver::Wait.new(:timeout => seconds).until { yield }
   end
 
   def verify_tile(button)
@@ -149,7 +120,7 @@ class CODAPObject
         wait_for { displayed?(CALC_TILE) }
       when TEXT_BUTTON
         wait_for { displayed?(TEXT_TILE) }
-        driver.find_element(TEXT_TILE).click
+        click_on(TEXT_TILE)
       when HELP_BUTTON
         # help_page_title = driver.find_element(:id, "block-menu-menu-help-categories")
         # wait_for {displayed?(help_page_title)}
@@ -160,10 +131,10 @@ class CODAPObject
       #driver.find_element(:xpath=> '//span[contains(@class, "ellipsis") and text()="No Data"]').click
       when OPTION_BUTTON
         wait_for {displayed? (VIEW_WEBPAGE_MENU_ITEM)}
-        driver.find_element(VIEW_WEBPAGE_MENU_ITEM).click
-        textfield = wait_for{driver.find_element(SINGLE_TEXT_DIALOG_TEXTFIELD)}
+        click_on(VIEW_WEBPAGE_MENU_ITEM)
+        textfield = wait_for{find(SINGLE_TEXT_DIALOG_TEXTFIELD)}
         driver.action.click(textfield).perform
-        driver.find_element(SINGLE_TEXT_DIALOG_CANCEL_BUTTON).click
+        find(SINGLE_TEXT_DIALOG_CANCEL_BUTTON).click
        # puts "Option button clicked"
       when GUIDE_BUTTON
         puts "Guide button clicked"
@@ -171,34 +142,11 @@ class CODAPObject
   end
 
   def dismiss_splashscreen
-    if !driver.find_element(SPLASHSCREEN) #Dismisses the splashscreen if present
+    if !find(SPLASHSCREEN) #Dismisses the splashscreen if present
       #sleep(5)
     else
-      driver.find_element(SPLASHSCREEN).click
+      find(SPLASHSCREEN).click
     end
-  end
-
-  def switch_to_dialog
-    user_entry_dialog = driver.find_element(USER_ENTRY_DIALOG)
-    driver.switch_to.alert(user_entry_dialog)
-  end
-
-
-
-  def select_menu_item(menu, menu_item)
-    puts 'in select_menu_item'
-    driver.find_element(menu)
-    wait_for {displayed? (menu_item)}
-    driver.find_element(menu_item).click
-  end
-
-  def displayed?(locator)
-    driver.find_element(locator).displayed?
-    puts "#{locator} found"
-    true
-  rescue Selenium::WebDriver::Error::NoSuchElementError
-    puts "#{locator} not found"
-    false
   end
 
 end
