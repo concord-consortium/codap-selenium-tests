@@ -1,3 +1,4 @@
+require './base_object'
 class CODAPObject < BaseObject
 
   SPLASHSCREEN = {css: '.focus'}
