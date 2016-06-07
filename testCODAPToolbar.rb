@@ -41,7 +41,9 @@ def setup(browser_name, platform)
       :desired_capabilities=> caps )
   #setupHelper(@driver.session_id)
   #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
-  ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
+  #ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
+  ENV['base_url'] = 'http://localhost:4020/dg'
+
   puts "platform is #{@driver.capabilities.platform}, browser is #{@driver.capabilities.browser_name}"
 rescue Exception => e
   puts e.message
@@ -60,22 +62,22 @@ MACBROWSERS = [:chrome, :firefox]
 WINBROWSERS = [:firefox, :chrome, :ie]
 
 def run
-  # MACBROWSERS.each do |macbrowser|
-  #   puts macbrowser
-  #   setup(macbrowser, "mac")
-  #   yield
-  #   teardown
-  # end
-  WINBROWSERS.each do |winbrowser|
-    puts winbrowser
-    setup(winbrowser, "windows")
+  MACBROWSERS.each do |macbrowser|
+    puts macbrowser
+    setup(macbrowser, "mac")
     yield
     teardown
   end
+  # WINBROWSERS.each do |winbrowser|
+  #   puts winbrowser
+  #   setup(winbrowser, "windows")
+  #   yield
+  #   teardown
+  # end
 end
 
 run do
-    components = ['graph','map','slider','calc','text','option','tile']
+    components = ['graph','map','slider','calc','text','option','separator','tilelist']
     codap = CODAPObject.new(@driver)
     codap.start_new_doc
     components.each do |component|

@@ -21,6 +21,10 @@ class BaseObject
     driver.get(ENV['base_url'] + url)
   end
 
+  def verify_page(title)
+    expect(@driver.title).to include(title)
+  end
+
   def find(locator)
     driver.find_element locator
   end
@@ -38,7 +42,7 @@ class BaseObject
   end
 
   def displayed?(locator)
-    driver.find_element(locator).displayed?
+    @driver.find_element(locator).displayed?
     true
   rescue Selenium::WebDriver::Error::NoSuchElementError
     false

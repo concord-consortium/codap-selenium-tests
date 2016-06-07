@@ -2,6 +2,7 @@ require './base_object'
 
 class CODAPObject
   SPLASHSCREEN = {css: '.focus'}
+  BACKGROUND = {css: '.doc-background'}
   DATA_INTERACTIVE = { css: 'iframe'}
   DOC_TITLE = {css: '.menu-bar-content-filename'}
   DOC_FILE_STATUS = {css: 'span.menu-bar-file-status-alert'}
@@ -36,14 +37,22 @@ class CODAPObject
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert)]/div/div/div[contains(@label,"Close")]'}
   VIEW_WEBPAGE_MENU_ITEM = { id: 'dg-optionMenuItem-view_webpage'}
+  OPTION_MENU_SEPARATOR ={css: '.menu-item.disabled'}
 
-  #attr_reader :driver
+  attr_reader :driver
 
   def initialize(driver)
-    super
-    visit
-    verify_page
+    @driver=driver
+    @codap_base = BaseObject.new(driver)
+    @codap_base.visit
+    @codap_base.verify_page('CODAP')
     dismiss_splashscreen
+  end
+
+  def start_new_doc
+    puts "In start_new_doc"
+    wait_for { displayed?(OPEN_NEW_BUTTON) }
+    @codap_base.click_on(OPEN_NEW_BUTTON)
   end
 
   def open_file_menu
@@ -57,6 +66,8 @@ class CODAPObject
   end
 
   def click_button(button)
+    verifiable = ['table','graph','map','slider','calc','text']
+
     case (button)
       when 'table'
         element = TABLE_BUTTON
@@ -70,27 +81,31 @@ class CODAPObject
         element = CALC_BUTTON
       when 'text'
         element = TEXT_BUTTON
-      when 'tile'
+      when 'tilelist'
         element = TILE_LIST_BUTTON
       when 'option'
         element = OPTION_BUTTON
       when 'guide'
         element = GUIDE_BUTTON
-      when 'tooslhelf'
+      when 'toolshelf'
         element = TOOLSHELF_BACK
-      when 'single_text_dialog_ok'
-        element = SINGLE_TEXT_DIALOG_OK_BUTTON
-      when 'single_text_dialog_cancel'
-        element = SINGLE_TEXT_DIALOG_CANCEL_BUTTON
+      when 'background'
+        element = BACKGROUND
+      when 'separator'
+        element = OPTION_MENU_SEPARATOR
     end
 
     puts "button is #{button}, element is #{element}"
-    wait_for {displayed?(element)}
-    driver.find_element(element).click
+    @codap_base.click_on(element)
+    if verifiable.include? button
+      puts "#{button} Button is in verifiable"
+      verify_tile(element)
+    end
   end
 
   def click_toolshelf
-    click_on(TOOLSHELF_BACK)
+    #@codap_base.click_on(TOOLSHELF_BACK)
+    driver.find_element(TOOLSHELF_BACK).click
   end
 
   def drag_scroller
@@ -125,7 +140,7 @@ class CODAPObject
         wait_for { displayed?(CALC_TILE) }
       when TEXT_BUTTON
         wait_for { displayed?(TEXT_TILE) }
-        click_on(TEXT_TILE)
+        @codap_base.click_on(TEXT_TILE)
       when HELP_BUTTON
         # help_page_title = driver.find_element(:id, "block-menu-menu-help-categories")
         # wait_for {displayed?(help_page_title)}
@@ -147,12 +162,31 @@ class CODAPObject
   end
 
   def dismiss_splashscreen
-    if !find(SPLASHSCREEN) #Dismisses the splashscreen if present
+    if !@codap_base.find(SPLASHSCREEN) #Dismisses the splashscreen if present
       #sleep(5)
     else
-      find(SPLASHSCREEN).click
+      @codap_base.click_on(SPLASHSCREEN)
     end
   end
+
+  private
+
+  def wait_for(seconds=25)
+    puts "Waiting"
+    Selenium::WebDriver::Wait.new(:timeout => seconds).until { yield }
+  end
+
+  def displayed?(locator)
+    @driver.find_element(locator).displayed?
+    puts "#{locator} found"
+    true
+  rescue Selenium::WebDriver::Error::NoSuchElementError
+    puts "#{locator} not found"
+    false
+  end
+
+
+
 
 end
 
