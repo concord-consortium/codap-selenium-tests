@@ -1,10 +1,11 @@
 require './base_object'
-class CODAPObject < BaseObject
 
+class CODAPObject
   SPLASHSCREEN = {css: '.focus'}
   DATA_INTERACTIVE = { css: 'iframe'}
-  DOC_TITLE = {css: '.doc-title'}
-  FILE_MENU = { css: '.nav-popup-button'}
+  DOC_TITLE = {css: '.menu-bar-content-filename'}
+  DOC_FILE_STATUS = {css: 'span.menu-bar-file-status-alert'}
+  FILE_MENU = { css: '.menu-anchor'}
   TOOLSHELF_BACK = { css: '.toolshelf-background'}
   TABLE_BUTTON = { css: '.dg-table-button' }
   GRAPH_BUTTON = { css: '.dg-graph-button'  }
@@ -18,6 +19,7 @@ class CODAPObject < BaseObject
   OPTION_BUTTON = {css: '.dg-option-button' }
   GUIDE_BUTTON   = {css: '.dg-guide-button' }
   HELP_BUTTON = {css: '.navBar-help'}
+  VERSION_INFO = {css: 'span.menu-bar-info'}
   LOGIN_USER = {css: '.navBar-status'}
   H_SCROLLER = {css: '.sc-horizontal, .sc-scroller-view'}
   SCROLL_H_RIGHT = {css: '.thumb'}
@@ -27,7 +29,9 @@ class CODAPObject < BaseObject
   SLIDER_TILE = {css: '.slider-thumb'}
   TEXT_TILE = {css: '.text-area'}
   CALC_TILE = {css: '.calculator'}
-  #HELP_TILE = {css: }
+  OPEN_NEW_BUTTON = {id: 'dg-user-entry-new-doc-button'}
+  OPEN_DOC_BUTTON = {id: 'dg-user-entry-open-doc-button'}
+  #HELP_TILE = {css: } Help is a webview in an iframe component has //*[div[contains(@class="titleview")and contains(text(), 'Help with CODAP')]
   TILE_ICON_SLIDER = {css: '.tile-icon-slider'}
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert)]/div/div/div[contains(@label,"Close")]'}
@@ -151,3 +155,4 @@ class CODAPObject < BaseObject
   end
 
 end
+
