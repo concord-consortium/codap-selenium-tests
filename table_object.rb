@@ -3,7 +3,14 @@ class TableObject < BaseObject
   H_SCROLLER = {css: '.sc-horizontal, .sc-scroller-view'}
   SCROLL_H_RIGHT = {css: '.thumb'}
   CASE_TABLE_TILE = {css: '.dg-case-table'}
-  TABLE_HEADER_NAME = {css: '.slick-column-name'}
+  ATTRIBUTE_NAME = {css: '.slick-header-column'}
+  TABLE_TRASH = {css:  '.table-trash'}
+  TABLE_DROP_TARGET = {css: '.dg-table-drop-target'}
+  TABLE_ATTRIBUTES = {css: '.table-attributes'} #Tool palette icon for creating new attributes and export cases
+  TABLE_ATTRIBUTES_MENU = {css:  '.attributes-popup'}
+
+  # Need to add menu items for trash and attributes menu
+
 
 
   def initialize(driver)

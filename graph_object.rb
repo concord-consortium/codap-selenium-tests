@@ -7,7 +7,30 @@ class GraphObject < BaseObject
   GRAPH_PLOT_VIEW = {css: '.plot-view'}
   GRAPH_LEGEND = {css: '.legend-view'}
   AXIS_MENU_REMOVE = {xpath: '//div[contains(@class, "sc-menu-item")]/a/span[contains(text(),"Remove")]'}
+  GRAPH_RESCALE = {css: '.display-rescale'}
+  GRAPH_HIDESHOW = {css: '.display-hideshow'}
+  GRAPH_TRASH = {css: '.display-trash'}
+  GRAPH_RULER = {css: '.display-values'}
+  GRAPH_STYLES = {css: '.display-styles'}
   GRAPH_SCREENSHOT = {css: '.display-camera'}
+  GRAPH_COUNT = {css: '.graph-count-check'}
+  GRAPH_CONNECTING_LINE = {css: '.graph-connectingLine-check'}
+  GRAPH_MOVABLE_VALUE = {css: '.graph-movableValue-check'}
+  GRAPH_MOVABLE_LINE = {css: '.graph-movableLine-check'}
+  GRAPH_INTERCEPT_LOCKED = {css: '.graph-interceptLocked-check'}
+  GRAPH_SQUARES = {css: '.graph-squares-check'}
+  GRAPH_MEAN = {css: '.graph-plottedMean-check'}
+  GRAPH_MEDIAN = {css: '.graph-plottedMedian-check'}
+  GRAPH_STD_DEV = {css: '.graph-plottedStdDev-check'}
+  GRAPH_INTERQUARTILE = {css: '.graph-plottedIQR-check'}
+  GRAPH_PLOTTED_VALUE = {css: '.graph-plottedValue-check'}
+  GRAPH_PLOTTED_FUNCTION = {css: '.graph-plottedFunction-check'}
+  GRAPH_POINT_SIZE_SLIDER = {css: '.graph-pointSize-slider'}
+  GRAPH_POINT_COLOR_PICKER = {css: '.graph-point-color'}
+  GRAPH_STROKE_COLOR_PICKER = {css: '.graph-stroke-color'}
+  GRAPH_TRANSPARENT = {css: '.graph-transparent-check'}
+
+  #menu items for trash and hide/show need to be added.
 
   attr_reader :driver
 
