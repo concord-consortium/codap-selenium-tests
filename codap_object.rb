@@ -44,6 +44,8 @@ class CODAPObject
   OPEN_CONCORD_CLOUD = {css: '.workspace-tabs >ul:nth-of-type(2) > li'}
   OPEN_GOOGLE_DRIVE = {css: '.workspace-tabs >ul:nth-of-type(3) > li'}
   OPEN_LOCAL_FILE = {css: '.workspace-tabs >ul:nth-of-type(4) > li'}
+  FILE_SELECTION_DROP_AREA = {css: '.dropArea>input'}
+
 
   attr_reader :driver
 
@@ -122,6 +124,15 @@ class CODAPObject
       puts "#{button} Button is in verifiable"
       verify_tile(element)
     end
+  end
+
+  def open_local_doc(doc_name)
+    puts "File name is: #{doc_name}"
+    wait_for {displayed? (OPEN_LOCAL_FILE)}
+    click_button('local')
+    wait_for {displayed? (FILE_SELECTION_DROP_AREA)}
+    @codap_base.find(FILE_SELECTION_DROP_AREA).send_keys doc_name
+
   end
 
   def click_toolshelf
