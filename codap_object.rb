@@ -39,6 +39,12 @@ class CODAPObject
   VIEW_WEBPAGE_MENU_ITEM = { id: 'dg-optionMenuItem-view_webpage'}
   OPTION_MENU_SEPARATOR ={css: '.menu-item.disabled'}
 
+  #Open Dialog box locators
+  OPEN_EXAMPLE_DOCS = {css: '.workspace-tabs >ul:nth-of-type(1)> li'}#.workspace-tabs>ul>li:contains("Example Documents")
+  OPEN_CONCORD_CLOUD = {css: '.workspace-tabs >ul:nth-of-type(2) > li'}
+  OPEN_GOOGLE_DRIVE = {css: '.workspace-tabs >ul:nth-of-type(3) > li'}
+  OPEN_LOCAL_FILE = {css: '.workspace-tabs >ul:nth-of-type(4) > li'}
+
   attr_reader :driver
 
   def initialize(driver)
@@ -49,10 +55,16 @@ class CODAPObject
     dismiss_splashscreen
   end
 
-  def start_new_doc
+  def user_entry_start_new_doc
     puts "In start_new_doc"
     wait_for { displayed?(OPEN_NEW_BUTTON) }
     @codap_base.click_on(OPEN_NEW_BUTTON)
+  end
+
+  def user_entry_open_doc
+    puts "In user_entry_open_doc"
+    @codap_base.wait_for{ displayed?(OPEN_DOC_BUTTON) }
+    @codap_base.click_on(OPEN_DOC_BUTTON)
   end
 
   def open_file_menu
@@ -93,6 +105,15 @@ class CODAPObject
         element = BACKGROUND
       when 'separator'
         element = OPTION_MENU_SEPARATOR
+      when 'examples'
+        element = OPEN_EXAMPLE_DOCS
+      when 'cloud'
+        element = OPEN_CONCORD_CLOUD
+      when 'google drive'
+        element = OPEN_GOOGLE_DRIVE
+      when 'local'
+        element = OPEN_LOCAL_FILE
+
     end
 
     puts "button is #{button}, element is #{element}"
