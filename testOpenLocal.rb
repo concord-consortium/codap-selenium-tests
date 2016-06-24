@@ -33,7 +33,7 @@ end
 def run
   setup
   yield
-  #teardown
+  teardown
 end
 
 run do
@@ -46,7 +46,7 @@ run do
   open_doc_title = open_doc.slice! '.json'
   puts "open_doc is #{open_doc} open_doc_title is #{open_doc_title}"
   sleep(5)
-  #codap.verify_doc(open_doc)
+  codap.verify_doc_title(open_doc)
   # Open table
   # Open Graph
 end

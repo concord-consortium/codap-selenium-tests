@@ -1,4 +1,5 @@
-require './base_object'
+require './codap_base_object'
+require './cfm_object'
 
 class CODAPObject
   SPLASHSCREEN = {css: '.focus'}
@@ -32,14 +33,15 @@ class CODAPObject
   CALC_TILE = {css: '.calculator'}
   OPEN_NEW_BUTTON = {id: 'dg-user-entry-new-doc-button'}
   OPEN_DOC_BUTTON = {id: 'dg-user-entry-open-doc-button'}
-  #HELP_TILE = {css: } Help is a webview in an iframe component has //*[div[contains(@class="titleview")and contains(text(), 'Help with CODAP')]
+  AUTHORIZE_STARTUP_BUTTON = {id: 'dg-user-entry-authorize-startup-button'}
+#HELP_TILE = {css: } Help is a webview in an iframe component has //*[div[contains(@class="titleview")and contains(text(), 'Help with CODAP')]
   TILE_ICON_SLIDER = {css: '.tile-icon-slider'}
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert)]/div/div/div[contains(@label,"Close")]'}
   VIEW_WEBPAGE_MENU_ITEM = { id: 'dg-optionMenuItem-view_webpage'}
   OPTION_MENU_SEPARATOR ={css: '.menu-item.disabled'}
 
-  #Open Dialog box locators
+#Open Dialog box locators
   OPEN_EXAMPLE_DOCS = {css: '.workspace-tabs >ul:nth-of-type(1)> li'}#.workspace-tabs>ul>li:contains("Example Documents")
   OPEN_CONCORD_CLOUD = {css: '.workspace-tabs >ul:nth-of-type(2) > li'}
   OPEN_GOOGLE_DRIVE = {css: '.workspace-tabs >ul:nth-of-type(3) > li'}
@@ -47,26 +49,29 @@ class CODAPObject
   FILE_SELECTION_DROP_AREA = {css: '.dropArea>input'}
 
 
+
   attr_reader :driver
 
   def initialize(driver)
+    puts "Initializing"
     @driver=driver
-    @codap_base = BaseObject.new(driver)
+    @codap_base = CodapBaseObject.new(driver)
+    @cfm = CFMObject.new(driver)
     @codap_base.visit
     @codap_base.verify_page('CODAP')
     dismiss_splashscreen
-  end
-
-  def user_entry_start_new_doc
-    puts "In start_new_doc"
-    wait_for { displayed?(OPEN_NEW_BUTTON) }
-    @codap_base.click_on(OPEN_NEW_BUTTON)
   end
 
   def user_entry_open_doc
     puts "In user_entry_open_doc"
     @codap_base.wait_for{ displayed?(OPEN_DOC_BUTTON) }
     @codap_base.click_on(OPEN_DOC_BUTTON)
+  end
+
+  def user_entry_start_new_doc
+    puts "In user_entry_start_new_doc"
+    @codap_base.wait_for { displayed?(OPEN_NEW_BUTTON) }
+    @codap_base.click_on(OPEN_NEW_BUTTON)
   end
 
   def open_file_menu
@@ -115,7 +120,6 @@ class CODAPObject
         element = OPEN_GOOGLE_DRIVE
       when 'local'
         element = OPEN_LOCAL_FILE
-
     end
 
     puts "button is #{button}, element is #{element}"
@@ -160,7 +164,6 @@ class CODAPObject
   def verify_tile(button)
     case (button)
       when TABLE_BUTTON
-        #puts "Table button clicked"
         wait_for { displayed?(CASE_TABLE_TILE) }
       when GRAPH_TILE
         wait_for { displayed?(GRAPH_TILE) }
@@ -187,15 +190,19 @@ class CODAPObject
         textfield = wait_for{find(SINGLE_TEXT_DIALOG_TEXTFIELD)}
         driver.action.click(textfield).perform
         find(SINGLE_TEXT_DIALOG_CANCEL_BUTTON).click
-       # puts "Option button clicked"
+      # puts "Option button clicked"
       when GUIDE_BUTTON
         puts "Guide button clicked"
     end
   end
 
+  def verify_doc_title(doc_name)
+    expect(driver.title).to include(doc_name)
+  end
+
   def dismiss_splashscreen
     if !@codap_base.find(SPLASHSCREEN) #Dismisses the splashscreen if present
-      #sleep(5)
+      sleep(5)
     else
       @codap_base.click_on(SPLASHSCREEN)
     end
@@ -216,9 +223,6 @@ class CODAPObject
     puts "#{locator} not found"
     false
   end
-
-
-
-
 end
+
 
