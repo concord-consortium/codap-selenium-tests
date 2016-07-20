@@ -1,4 +1,4 @@
-require './codap_base_object'
+require './base_object'
 require './cfm_object'
 
 class CODAPObject < CodapBaseObject
