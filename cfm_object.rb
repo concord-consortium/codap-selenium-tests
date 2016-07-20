@@ -1,7 +1,10 @@
-require './codap_base_object'
+module CFMObject
+  #User Entry Buttons Locators
+  USER_ENTRY_NEW_DOC_BUTTON = {xpath: '//button[contains(.,"Create New Document")]'}
+  USER_ENTRY_OPEN_DOC_BUTTON = {xpath: '//button[contains(.,"Open Document")]'}
+  USER_ENTRY_AUTHORIZE_DOC_BUTTON = {xpath: '//button[contains(.,"Authorize")]'}
 
-class CFMObject
-#Open Dialog box locators
+  #Open Dialog box locators
   OPEN_EXAMPLE_DOCS = {css: '.workspace-tabs >ul:nth-of-type(1)> li'}#.workspace-tabs>ul>li:contains("Example Documents")
   OPEN_CONCORD_CLOUD = {css: '.workspace-tabs >ul:nth-of-type(2) > li'}
   OPEN_GOOGLE_DRIVE = {css: '.workspace-tabs >ul:nth-of-type(3) > li'}
@@ -22,51 +25,7 @@ class CFMObject
   FILE_DOWNLOAD = {css: '.menu-showing> ul:nth-child(1)> li:nth-child(10)'}
   FILE_RENAME = {css: '.menu-showing> ul:nth-child(1)> li:nth-child(11)'}
 
-  attr_reader :driver
-
-  def initialize(driver)
-    puts "Initializing CFM Object"
-    @driver=driver
-    @codap_base = CodapBaseObject.new(driver)
-  end
-
-  def click_on(button)
-
-    case (button)
-      when 'examples'
-        element = OPEN_EXAMPLE_DOCS
-      when 'cloud'
-        element = OPEN_CONCORD_CLOUD
-      when 'google drive'
-        element = OPEN_GOOGLE_DRIVE
-      when 'local'
-        element = OPEN_LOCAL_FILE
-      when 'file_menu'
-        element = FILE_MENU
-      when 'new'
-        element = FILE_NEW
-      when 'open'
-        element = FILE_OPEN
-      when 'close'
-        element = FILE_CLOSE
-      when 'import'
-        element = FILE_IMPORT
-      when 'revert'
-        element = FILE_REVERT
-      when 'save'
-        element = FILE_SAVE
-      when 'copy'
-        element = FILE_COPY
-      when 'share'
-        element = FILE_SHARE
-      when 'download'
-        element = FILE_DOWNLOAD
-      when 'rename'
-        element = FILE_RENAME
-    end
-
-    puts "button is #{button}, element is #{element}"
-    @codap_base.click_on(element)
-
+  def in_cfm
+    puts "In CFMObject"
   end
 end
