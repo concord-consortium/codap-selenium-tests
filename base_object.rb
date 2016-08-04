@@ -39,6 +39,20 @@ class CodapBaseObject
     find(locator).click
   end
 
+  def move_to(locator)
+    @@driver.action.move_to(locator).perform
+  end
+
+  def pop_up_click(locator)
+    puts "In pop_up_click"
+    @@driver.action.click(locator).perform
+  end
+
+  def pop_up_type(locator, input)
+    @@driver.action.send_keys(locator, input).perform
+  end
+
+
   def displayed?(locator)
     @@driver.find_element(locator).displayed?
     true
@@ -70,14 +84,14 @@ class CodapBaseObject
     click_on(menu_item)
   end
 
-  def get_column_header(header_name)
-    header_name_path = '//span[contains(@class, "slick-column-name") and text()="'+header_name+'"]'
-    column_header_name = {xpath: header_name_path}
-    column_header_name_loc = find(column_header_name)
-    @@driver.action.move_to(column_header_name_loc).perform
-    puts "Column header name is #{column_header_name_loc.text}"
-    return column_header_name_loc
-  end
+  # def get_column_header(header_name)
+  #   header_name_path = '//span[contains(@class, "slick-column-name") and text()="'+header_name+'"]'
+  #   column_header_name = {xpath: header_name_path}
+  #   column_header_name_loc = find(column_header_name)
+  #   @@driver.action.move_to(column_header_name_loc).perform
+  #   puts "Column header name is #{column_header_name_loc.text}"
+  #   return column_header_name_loc
+  # end
 
   def drag_attribute(source_element, target_element)
     #drag_scroller

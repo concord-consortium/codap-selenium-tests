@@ -1,8 +1,13 @@
 require './base_object'
 require './cfm_object'
+require './table_object'
+require './graph_object'
+
 
 class CODAPObject < CodapBaseObject
   include CFMObject
+  include TableObject
+  include GraphObject
 
   SPLASHSCREEN = {css: '.focus'}
   BACKGROUND = {css: 'menu-bar'}
@@ -50,16 +55,10 @@ class CODAPObject < CodapBaseObject
     puts "Initializing"
   end
 
-  def user_entry_open_doc
-    puts "In user_entry_open_doc"
-    wait_for{ displayed?(OPEN_DOC_BUTTON) }
-    click_on(OPEN_DOC_BUTTON)
-  end
-
-  def user_entry_start_new_doc
-    puts "In user_entry_start_new_doc"
-    wait_for { displayed?(USER_ENTRY_NEW_DOC_BUTTON) }
-    click_on(USER_ENTRY_NEW_DOC_BUTTON)
+  def start_codap
+    visit
+    verify_page('CODAP')
+    dismiss_splashscreen
   end
 
   def open_file_menu
@@ -199,7 +198,7 @@ class CODAPObject < CodapBaseObject
   end
 
   def verify_doc_title(doc_name)
-    expect(driver.title).to include(doc_name)
+    expect(@@driver.title).to include(doc_name)
   end
 
   def dismiss_splashscreen

@@ -1,4 +1,4 @@
-class GraphObject < BaseObject
+module GraphObject
 
   GRAPH_TILE = {css: '.graph-view'}
   GRAPH_H_AXIS = {css: '.h-axis'}
@@ -30,28 +30,26 @@ class GraphObject < BaseObject
   GRAPH_STROKE_COLOR_PICKER = {css: '.graph-stroke-color'}
   GRAPH_TRANSPARENT = {css: '.graph-transparent-check'}
 
+  SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
+  SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
+  SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
+
   #menu items for trash and hide/show need to be added.
-
-  attr_reader :driver
-
-  def initialize(driver)
-    super
-  end
 
   def remove_graph_attribute(graph_target)
     puts "In remove_graph_attribute"
     case (graph_target)
       when 'x'
-        target_loc = driver.find_element(GRAPH_H_AXIS)
+        target_loc = find(GRAPH_H_AXIS)
       when 'y'
-        target_loc = driver.find_element(GRAPH_V_AXIS)
+        target_loc = find(GRAPH_V_AXIS)
       when 'legend'
-        target_loc = driver.find_element(GRAPH_LEGEND)
+        target_loc = find(GRAPH_LEGEND)
     end
     target_loc.click
     puts "Clicked #{target_loc}"
-    if (driver.find_element(AXIS_MENU_REMOVE))
-      driver.find_element(AXIS_MENU_REMOVE).click
+    if (find(AXIS_MENU_REMOVE))
+      click_on(AXIS_MENU_REMOVE)
     else
       puts "Can't find menu"
     end
@@ -59,17 +57,15 @@ class GraphObject < BaseObject
   end
 
   def take_screenshot(attribute,location)
-    driver.find_element(GRAPH_TILE).click
-    sleep(3)
-    driver.find_element(GRAPH_SCREENSHOT).click
-    screenshot_popup = wait_for{driver.find_element(SINGLE_TEXT_DIALOG_TEXTFIELD)}
+    click_on(GRAPH_TILE)
+    click_on(GRAPH_SCREENSHOT)
+    wait_for{ displayed?(SINGLE_TEXT_DIALOG_TEXTFIELD) }
+    screenshot_popup = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
     puts "Found screenshot_popup at #{screenshot_popup}"
-    driver.action.click(screenshot_popup).perform
+    pop_up_click(screenshot_popup)
     screenshot_filename = "#{attribute}_on_#{location}"
-    driver.action.send_keys(screenshot_popup, screenshot_filename).perform
-    driver.find_element(SINGLE_TEXT_DIALOG_OK_BUTTON).click
-
+    pop_up_type(screenshot_popup, screenshot_filename)
+    click_on(SINGLE_TEXT_DIALOG_OK_BUTTON)
   end
-
 
 end
