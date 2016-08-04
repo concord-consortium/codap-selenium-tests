@@ -4,33 +4,29 @@ require 'selenium-webdriver'
 require 'rspec/expectations'
 require './codap_object'
 include RSpec::Matchers
-# require './LogReporter'
-#
-# def setupHelper(session_id)
-#   @logger = LogReporter.new(session_id)
-# end
 
-# def write_result_file(doc_name)
-#   googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
-#   localdrive_path="Documents/CODAP data/"
-#   $dir_path = "Documents/CODAP data/"
-#   $save_filename = "Plot_changes_logs"
-#
-#   log = @driver.manage.logs.get(:browser)
-#   messages = ""
-#   log.each {|item| messages += item.message + "\n"}
-#
-#   if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
-#     File.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |log|
-#       log<< messages unless messages == ""
-#     end
-#   else
-#     File.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "a") do |log|
-#       log << messages unless messages == ""
-#     end
-#   end
-#
-# end
+
+def write_result_file(doc_name)
+  googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
+  localdrive_path="Documents/CODAP data/"
+  $dir_path = "Documents/CODAP data/"
+  $save_filename = "Plot_changes_logs"
+
+  log = @@driver.manage.logs.get(:browser)
+  messages = ""
+  log.each {|item| messages += item.message + "\n"}
+
+  if !File.exist?("#{Dir.home}/#{$dir_path}/#{$save_filename}") || $new_file
+    File.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "wb") do |log|
+      log<< messages unless messages == ""
+    end
+  else
+    File.open("#{Dir.home}/#{$dir_path}/#{$save_filename}", "a") do |log|
+      log << messages unless messages == ""
+    end
+  end
+
+end
 
 def setup(browser_name, platform)
   caps = Selenium::WebDriver::Remote::Capabilities.new
@@ -67,7 +63,7 @@ def setup(browser_name, platform)
       :url=> 'http://localhost:4444/wd/hub',
       :desired_capabilities=> caps )
   @@driver = Selenium::WebDriver.for browser_name
-  #setupHelper(@driver.session_id)
+  @logger = setupHelper(@@driver.session_id)
   #ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
   #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
   #ENV['base_url'] = 'localhost:4020/dg'
@@ -84,7 +80,7 @@ end
 
 def teardown
   puts "in teardown"
-  @driver.quit
+  @@driver.quit
 end
 
 MACBROWSERS = [:chrome, :firefox, :safari]
@@ -105,6 +101,12 @@ def run
   end
 end
 
+# def run
+#   setup
+#   yield
+#   teardown
+# end
+
 run do
   codap = CODAPObject.new()
   open_doc = '3TableGroups.json'
@@ -124,8 +126,8 @@ run do
                     {:attribute=>'CCAT2', :axis=>'x'},
                     {:attribute=>'BCAT1', :axis=>'y'},
                     {:attribute=>'ACAT2', :axis=>'y'},
-                    {:attribute=>'BCAT1', :axis=>'legend'},
-                    {:attribute=>'CNUM1', :axis=>'legend'},
+                    {:attribute=>'BCAT1', :axis=>'graph_legend'},
+                    {:attribute=>'CNUM1', :axis=>'graph_legend'},
                     {:attribute=>'CNUM2', :axis=>'y'},]
 
   codap.start_codap
@@ -143,7 +145,7 @@ run do
   array_of_plots.each do |hash|
     codap.drag_attribute(hash[:attribute], hash[:axis])
     sleep(2)
-    # write_result_file(open_doc)
+    write_result_file(open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis])
   end
 end

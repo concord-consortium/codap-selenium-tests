@@ -43,8 +43,8 @@ module GraphObject
         target_loc = find(GRAPH_H_AXIS)
       when 'y'
         target_loc = find(GRAPH_V_AXIS)
-      when 'legend'
-        target_loc = find(GRAPH_LEGEND)
+      when 'graph_legend'
+        target_loc = find(GRAPH_PLOT_VIEW)
     end
     target_loc.click
     puts "Clicked #{target_loc}"
