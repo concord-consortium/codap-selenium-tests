@@ -7,6 +7,7 @@ require 'optparse'
 require 'date'
 require 'csv'
 
+SPLASHSCREEN = {css: '.focus'}
 $test_one=true
 $keep_opt={}
 def which_test
@@ -156,7 +157,7 @@ def setup
     elsif opt[:browser]=='ie'
       @browser = Selenium::WebDriver.for(
                :remote,
-               :url=> 'http://localhost:4444/wd/hub',
+               :url=> 'http://192.168.1.7:4444/wd/hub',
                :desired_capabilities=> :ie)
     end
   end
@@ -203,6 +204,7 @@ def get_website(url)
   else
     puts "Got wrong page"
   end
+  dismiss_splashscreen
   get_buildno
 end
 
@@ -210,6 +212,18 @@ end
 def get_buildno
   $buildno= @browser.execute_script("return window.DG.BUILD_NUM")
   puts "CODAP build_num is #{$buildno}."
+end
+
+def dismiss_splashscreen
+  if !@browser.find_element(SPLASHSCREEN) #Dismisses the splashscreen if present
+    sleep(5)
+  else
+    puts 'before splashscreen click'
+    sleep(10)
+    # @browser.find_element(SPLASHSCREEN).click
+    puts 'dismiss splashscreen'
+  end
+
 end
 
 #Opens CODAP with specified data interactive in url with graph and table

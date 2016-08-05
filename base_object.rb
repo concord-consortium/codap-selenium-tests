@@ -1,5 +1,6 @@
 require 'rspec/expectations'
 include RSpec::Matchers
+require './LogReporter'
 
 class CodapBaseObject
   SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
@@ -14,6 +15,10 @@ class CodapBaseObject
   MAP_VIEW = {css: '.leaflet-map-pane'}
   MAP_lEGEND = {css: '.legend-view'}
 
+  def setupHelper(session_id)
+    return LogReporter.new(session_id)
+  end
+
   def visit(url='/')
     @@driver.get(ENV['base_url'] + url)
   end
@@ -25,6 +30,10 @@ class CodapBaseObject
 
   def find(locator)
     @@driver.find_element locator
+  end
+
+  def find_all(locator)
+    @@driver.find_elements locator
   end
 
   def clear(locator)

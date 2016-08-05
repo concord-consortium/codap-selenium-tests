@@ -149,6 +149,10 @@ class CODAPObject < CodapBaseObject
     @@driver.find_element(TOOLSHELF_BACK).click
   end
 
+  def goto_table
+    click_on(CASE_TABLE)
+  end
+
   def drag_scroller
     scroll = find(H_SCROLLER)
     driver.action.drag_and_drop_by(scroll, 100, 0).perform

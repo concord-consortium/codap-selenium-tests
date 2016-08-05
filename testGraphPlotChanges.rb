@@ -28,84 +28,84 @@ def write_result_file(doc_name)
 
 end
 
-def setup(browser_name, platform)
-  caps = Selenium::WebDriver::Remote::Capabilities.new
-  case (platform)
-    when "mac"
-      caps[:platform]='OS X'
-      case (browser_name)
-        when :firefox
-          caps[:browserName] = :firefox
-          caps[:logging_prefs] = {:browser => "ALL"}
-        when :chrome
-          caps[:browserName] = :chrome
-          caps[:logging_prefs] = {:browser => "ALL"}
-        when :safari
-          caps[:browserName] = :safari
-          caps[:logging_prefs] = {:browser => "ALL"}
-      end
-    when "windows"
-      caps[:platform]='Windows'
-      case (browser_name)
-        when :firefox
-          caps[:browserName] = :firefox
-          caps[:logging_prefs] = {:browser => "ALL"}
-        when :chrome
-          caps[:browserName] = :chrome
-          caps[:logging_prefs] = {:browser => "ALL"}
-        when :ie
-          caps[:browserName] = :internet_explorer #'internet explorer'
-          caps[:logging_prefs] = {:browser => "ALL"}
-      end
-  end
-  @@driver = Selenium::WebDriver.for(
-      :remote,
-      :url=> 'http://localhost:4444/wd/hub',
-      :desired_capabilities=> caps )
-  @@driver = Selenium::WebDriver.for browser_name
-  @logger = setupHelper(@@driver.session_id)
-  #ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
-  #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
-  #ENV['base_url'] = 'localhost:4020/dg'
-  ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
-  rescue Exception => e
-    puts e.message
-    puts "Could not start driver #{@@driver}"
-    exit 1
-end
-# def setup
-#   @@driver = Selenium::WebDriver.for :chrome
+# def setup(browser_name, platform)
+#   caps = Selenium::WebDriver::Remote::Capabilities.new
+#   case (platform)
+#     when "mac"
+#       caps[:platform]='OS X'
+#       case (browser_name)
+#         when :firefox
+#           caps[:browserName] = :firefox
+#           caps[:logging_prefs] = {:browser => "ALL"}
+#         when :chrome
+#           caps[:browserName] = :chrome
+#           caps[:logging_prefs] = {:browser => "ALL"}
+#         when :safari
+#           caps[:browserName] = :safari
+#           caps[:logging_prefs] = {:browser => "ALL"}
+#       end
+#     when "windows"
+#       caps[:platform]='Windows'
+#       case (browser_name)
+#         when :firefox
+#           caps[:browserName] = :firefox
+#           caps[:logging_prefs] = {:browser => "ALL"}
+#         when :chrome
+#           caps[:browserName] = :chrome
+#           caps[:logging_prefs] = {:browser => "ALL"}
+#         when :ie
+#           caps[:browserName] = :internet_explorer #'internet explorer'
+#           caps[:logging_prefs] = {:browser => "ALL"}
+#       end
+#   end
+#   @@driver = Selenium::WebDriver.for(
+#       :remote,
+#       :url=> 'http://localhost:4444/wd/hub',
+#       :desired_capabilities=> caps )
+#   @@driver = Selenium::WebDriver.for browser_name
+#   @logger = setupHelper(@@driver.session_id)
+#   #ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
+#   #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
+#   #ENV['base_url'] = 'localhost:4020/dg'
 #   ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
+#   rescue Exception => e
+#     puts e.message
+#     puts "Could not start driver #{@@driver}"
+#     exit 1
 # end
-
-def teardown
-  puts "in teardown"
-  @@driver.quit
+def setup
+  @@driver = Selenium::WebDriver.for :chrome
+  ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
 end
-
-MACBROWSERS = [:chrome, :firefox, :safari]
-WINBROWSERS = [:ie, :chrome, :firefox]
+#
+# def teardown
+#   puts "in teardown"
+#   @@driver.quit
+# end
+#
+# MACBROWSERS = [:chrome, :firefox, :safari]
+# WINBROWSERS = [:ie, :chrome, :firefox]
+#
+# def run
+#   MACBROWSERS.each do |macbrowser|
+#     puts macbrowser
+#     setup(macbrowser, 'mac')
+#     yield
+#     teardown
+#   end
+#   WINBROWSERS.each do |winbrowser|
+#     puts winbrowser
+#     setup(winbrowser, 'windows')
+#     yield
+#     teardown
+#   end
+# end
 
 def run
-  MACBROWSERS.each do |macbrowser|
-    puts macbrowser
-    setup(macbrowser, 'mac')
-    yield
-    teardown
-  end
-  WINBROWSERS.each do |winbrowser|
-    puts winbrowser
-    setup(winbrowser, 'windows')
-    yield
-    teardown
-  end
+  setup
+  yield
+  teardown
 end
-
-# def run
-#   setup
-#   yield
-#   teardown
-# end
 
 run do
   codap = CODAPObject.new()
@@ -148,4 +148,6 @@ run do
     write_result_file(open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis])
   end
+
+  # codap.remove_graph_attribute('graph_legend')
 end
