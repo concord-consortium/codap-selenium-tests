@@ -132,8 +132,7 @@ end
                     {:attribute=>'CNUM1', :axis=>'graph_legend'},
                     {:attribute=>'CNUM2', :axis=>'y'},]
 
-  codap.visit(url)
-  sleep(10)
+  codap.start_codap(url)
   # Open CODAP document
   codap.user_entry_open_doc
   codap.open_local_doc(file)
