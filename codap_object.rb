@@ -55,8 +55,8 @@ class CODAPObject < CodapBaseObject
     puts "Initializing"
   end
 
-  def start_codap
-    visit
+  def start_codap(url)
+    visit(url)
     verify_page('CODAP')
     dismiss_splashscreen
   end
