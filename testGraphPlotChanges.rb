@@ -152,3 +152,6 @@ end
 
   # codap.remove_graph_attribute('graph_legend')
   codap.teardown
+
+`mkdir -p ~/Sites/plot_transition_results`
+`mv ~/Downloads/graph_*.png ~/Sites/plot_transition_results/`
