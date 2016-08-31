@@ -73,10 +73,10 @@ end
 #     puts "Could not start driver #{@@driver}"
 #     exit 1
 # end
-def setup
-  @@driver = Selenium::WebDriver.for :chrome
-  ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
-end
+# def setup
+#   @@driver = Selenium::WebDriver.for :chrome
+#   ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
+# end
 #
 # def teardown
 #   puts "in teardown"
@@ -100,15 +100,17 @@ end
 #     teardown
 #   end
 # end
+#
+# def run
+#   setup
+#   yield
+#   teardown
+# end
 
-def run
-  setup
-  yield
-  teardown
-end
 
-run do
   codap = CODAPObject.new()
+  codap.setup_one(:chrome)
+  url = "https://codap.concord.org/releases/latest/"
   open_doc = '3TableGroups.json'
   file = File.absolute_path(File.join(Dir.pwd, open_doc))
   puts "file is #{file}, open_doc is #{open_doc}"
@@ -130,8 +132,8 @@ run do
                     {:attribute=>'CNUM1', :axis=>'graph_legend'},
                     {:attribute=>'CNUM2', :axis=>'y'},]
 
-  codap.start_codap
-
+  codap.visit(url)
+  sleep(10)
   # Open CODAP document
   codap.user_entry_open_doc
   codap.open_local_doc(file)
@@ -145,9 +147,9 @@ run do
   array_of_plots.each do |hash|
     codap.drag_attribute(hash[:attribute], hash[:axis])
     sleep(2)
-    write_result_file(open_doc)
+    codap.write_log_file('./', open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis])
   end
 
   # codap.remove_graph_attribute('graph_legend')
-end
+  codap.teardown
