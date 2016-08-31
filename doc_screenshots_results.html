@@ -4,14 +4,29 @@
     <meta charset="UTF-8">
     <title>Doc Screenshot Results</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <style>
+        img {
+            border-style: solid;
+            border-width: 1px;
+            border-color: darkblue;
+            height: 360px;
+            width: 360px;
+        }
+        .result {
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
 <h2>Doc Screenshots</h2>
-<div id = "container"></div>
+<div class = "container">
+
+</div>
 <script>
     $(function () {
-        var $container = $('#container');
-        var $screenshot_image;
+        var $container = $('.container');
+        var $result;
+        var $container_result;
         var screenshot_dir = 'http://localhost/~evangelineireland/doc_screenshots/'
         var file_extension = '.png';
         var i;
@@ -22,7 +37,9 @@
                 //list all .png files in the page
                 $(data).find("a").attr("href", function (i, val) {
                     if (val.match(/\.(jpe?g|png|gif)$/)) {
-                        $("#container").append("<img src='" + screenshot_dir + val + "'>");
+                        $result = $('<div class="result">').appendTo($container)
+                        $container_result = $result.append("<img src='" + screenshot_dir + val + "'></div>");
+                        $(".container").append($container_result)
                     }
                 });
             }
