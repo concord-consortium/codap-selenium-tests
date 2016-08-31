@@ -15,12 +15,16 @@ class CodapBaseObject
   MAP_VIEW = {css: '.leaflet-map-pane'}
   MAP_lEGEND = {css: '.legend-view'}
 
-  def setupHelper(session_id)
-    return LogReporter.new(session_id)
+  def setup_one(browser)
+    @@driver = Selenium::WebDriver.for browser
   end
 
-  def visit(url='/')
-    @@driver.get(ENV['base_url'] + url)
+  def teardown
+    @@driver.quit
+  end
+
+  def visit(url)
+    @@driver.get(url)
   end
 
   def verify_page(title)
@@ -48,20 +52,6 @@ class CodapBaseObject
     find(locator).click
   end
 
-  def move_to(locator)
-    @@driver.action.move_to(locator).perform
-  end
-
-  def pop_up_click(locator)
-    puts "In pop_up_click"
-    @@driver.action.click(locator).perform
-  end
-
-  def pop_up_type(locator, input)
-    @@driver.action.send_keys(locator, input).perform
-  end
-
-
   def displayed?(locator)
     @@driver.find_element(locator).displayed?
     true
@@ -77,13 +67,48 @@ class CodapBaseObject
     @@driver.title
   end
 
+  def save_screenshot(dir,page_title)
+    puts "in get_screenshot"
+    @@driver.save_screenshot "#{dir}/#{page_title}#{Time.now.strftime("__%d_%m_%Y__%H_%M_%S")}.png"
+  end
+
+  def write_log_file(dir_path, filename)
+    log = @@driver.manage.logs.get(:browser)
+    messages = ""
+    log.each {|item| messages += item.message + "\n"}
+
+    if !File.exist?("#{dir_path}/#{filename}")
+      File.open("#{dir_path}/#{filename}", "wb") do |log|
+        log<< messages unless messages == ""
+      end
+    else
+      File.open("#{dir_path}/#{filename}", "a") do |log|
+        log << messages unless messages == ""
+      end
+    end
+  end
+
   def wait_for(seconds=25)
     Selenium::WebDriver::Wait.new(:timeout => seconds).until { yield }
   end
 
-  def switch_to_dialog
-    user_entry_dialog = find(USER_ENTRY_DIALOG)
-    @@driver.switch_to.alert(user_entry_dialog)
+  def pop_up_click(locator)
+    puts "In pop_up_click"
+    @@driver.action.click(locator).perform
+  end
+
+  def pop_up_type(locator, input)
+    puts "In pop_up_type"
+    @@driver.action.send_keys(locator, input).perform
+  end
+
+
+  def move_to(locator)
+    @@driver.action.move_to(locator).perform
+  end
+
+  def switch_to_dialog(dialog)
+    @@driver.switch_to.alert()
   end
 
   def select_menu_item(menu, menu_item)
@@ -93,14 +118,14 @@ class CodapBaseObject
     click_on(menu_item)
   end
 
-  # def get_column_header(header_name)
-  #   header_name_path = '//span[contains(@class, "slick-column-name") and text()="'+header_name+'"]'
-  #   column_header_name = {xpath: header_name_path}
-  #   column_header_name_loc = find(column_header_name)
-  #   @@driver.action.move_to(column_header_name_loc).perform
-  #   puts "Column header name is #{column_header_name_loc.text}"
-  #   return column_header_name_loc
-  # end
+  def get_column_header(header_name)
+    header_name_path = '//span[contains(@class, "slick-column-name") and text()="'+header_name+'"]'
+    column_header_name = {xpath: header_name_path}
+    column_header_name_loc = find(column_header_name)
+    @@driver.action.move_to(column_header_name_loc).perform
+    puts "Column header name is #{column_header_name_loc.text}"
+    return column_header_name_loc
+  end
 
   def drag_attribute(source_element, target_element)
     #drag_scroller
