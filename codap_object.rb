@@ -2,12 +2,13 @@ require './base_object'
 require './cfm_object'
 require './table_object'
 require './graph_object'
-
+require './map_object'
 
 class CODAPObject < CodapBaseObject
   include CFMObject
   include TableObject
   include GraphObject
+  include MapObject
 
   SPLASHSCREEN = {css: '.focus'}
   BACKGROUND = {css: 'menu-bar'}
@@ -32,9 +33,6 @@ class CODAPObject < CodapBaseObject
   LOGIN_USER = {css: '.navBar-status'}
   H_SCROLLER = {css: '.sc-horizontal, .sc-scroller-view'}
   SCROLL_H_RIGHT = {css: '.thumb'}
-  CASE_TABLE_TILE = {css: '.dg-case-table'}
-  GRAPH_TILE = {css: '.graph-view'}
-  MAP_TILE = {css: '.leaflet-container'}
   SLIDER_TILE = {css: '.slider-label'}
   TEXT_TILE = {css: '.text-area'}
   CALC_TILE = {css: '.calculator'}
@@ -58,7 +56,7 @@ class CODAPObject < CodapBaseObject
   def start_codap(url)
     visit(url)
     verify_page('CODAP')
-    dismiss_splashscreen
+    # dismiss_splashscreen #Splashscreen was repurposed to be the wait cursor for loading document and can no longer be dismissed.
   end
 
   def open_file_menu
@@ -135,15 +133,6 @@ class CODAPObject < CodapBaseObject
     click_on(REDO_BUTTON)
   end
 
-  def open_local_doc(doc_name)
-    puts "File name is: #{doc_name}"
-    wait_for {displayed? (OPEN_LOCAL_FILE)}
-    click_button('local')
-    wait_for {displayed? (FILE_SELECTION_DROP_AREA)}
-    find(FILE_SELECTION_DROP_AREA).send_keys doc_name
-
-  end
-
   def click_toolshelf
     #@codap_base.click_on(TOOLSHELF_BACK)
     @@driver.find_element(TOOLSHELF_BACK).click
@@ -180,7 +169,7 @@ class CODAPObject < CodapBaseObject
         wait_for { displayed?(CALC_TILE) }
       when TEXT_BUTTON
         wait_for { displayed?(TEXT_TILE) }
-        click_on(TEXT_TILE)
+        # click_on(TEXT_TILE)
       when HELP_BUTTON
         # help_page_title = driver.find_element(:id, "block-menu-menu-help-categories")
         # wait_for {displayed?(help_page_title)}
@@ -202,12 +191,13 @@ class CODAPObject < CodapBaseObject
   end
 
   def verify_doc_title(doc_name)
+    sleep(3)
     expect(@@driver.title).to include(doc_name)
   end
 
   def dismiss_splashscreen
     if !find(SPLASHSCREEN) #Dismisses the splashscreen if present
-      sleep(5)
+      sleep(1)
     else
       click_on(SPLASHSCREEN)
     end
