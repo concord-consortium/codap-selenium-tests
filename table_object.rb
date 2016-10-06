@@ -1,11 +1,14 @@
 module TableObject
 
   CASE_TABLE = {css: '.dg-case-table'}
-  CASE_TABLE_TILE = {css: '.dg-case-table-title'}
+  CASE_TABLE_TITLE = {css: '.dg-case-table-title'}
   ATTRIBUTE_NAME = {css: '.slick-header-column'}
   TABLE_TRASH = {css:  '.table-trash'}
   TABLE_DROP_TARGET = {css: '.dg-table-drop-target'}
   TABLE_ATTRIBUTES = {css: '.inspector-palette> .table-attributes'} #Tool palette icon for creating new attributes and export cases
+
+  # Need to add menu items for trash and attributes menu
+
   TABLE_ATTRIBUTES_MENU = {css:  '.attributes-popup'}
   TABLE_SELECT_ALL = {css: '.sc-menu-item > a:nth-child(1) > span:nth-child(1)'}
   # TABLE__DELETE_SELECTED
@@ -25,7 +28,7 @@ module TableObject
 
 
   def get_column_header(header_name)
-    header_name_path = '//span[contains(@class, "slick-column-name") and text()="'+header_name+'"]'
+    header_name_path = '//div[contains(@class,"slick-header-column")]/span/span[contains(@class, "two-line-header-line-1") and text()="'+header_name+'"]'
     column_header_name = {xpath: header_name_path}
     column_header_name_loc = find(column_header_name)
     move_to(column_header_name_loc)
