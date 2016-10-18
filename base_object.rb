@@ -1,3 +1,4 @@
+require 'selenium-webdriver'
 require 'rspec/expectations'
 include RSpec::Matchers
 require './LogReporter'
@@ -17,13 +18,39 @@ class CodapBaseObject
 
   def setup_one(browser)
     @@driver = Selenium::WebDriver.for browser
+    rescue Exception => e
+      puts e.message
+      puts "Could not start driver #{@@driver}"
+      exit
   end
+
+  def setup_caps(platform, browser)
+    puts "In setup_caps #{platform}, #{browser}"
+    caps = Selenium::WebDriver::Remote::Capabilities.new
+    caps[:platform] = platform
+    caps[:browserName] = browser
+    caps[:logging_prefs] = {:browser => "ALL"}
+    return caps
+  end
+
+  # def setup_remote(caps)
+  #   puts "in setup_remote #{caps}"
+  #   @@driver = Selenium::WebDriver.for (
+  #     :remote,
+  #     :url=> 'http://localhost:4444/wd/hub',
+  #     :desired_capabilities=> caps )
+  #   rescue Exception => e
+  #     puts e.message
+  #     puts "Could not start driver #{@@driver}"
+  #     exit
+  # end
 
   def teardown
     @@driver.quit
   end
 
   def visit(url)
+    puts "IN VISIT"
     @@driver.get(url)
   end
 
@@ -69,7 +96,7 @@ class CodapBaseObject
 
   def save_screenshot(dir,page_title)
     puts "in get_screenshot"
-    @@driver.save_screenshot "#{dir}/#{page_title}#{Time.now.strftime("__%d_%m_%Y__%H_%M_%S")}.png"
+    @@driver.save_screenshot "#{dir}/#{page_title}#{Time.now.strftime("_%d_%m_%Y__%H_%M_%S")}.png"
   end
 
   def write_log_file(dir_path, filename)
@@ -77,12 +104,12 @@ class CodapBaseObject
     messages = ""
     log.each {|item| messages += item.message + "\n"}
 
-    if !File.exist?("#{dir_path}/#{filename}")
-      File.open("#{dir_path}/#{filename}", "wb") do |log|
+    if !File.exist?("#{dir_path}/#{filename}.txt")
+      File.open("#{dir_path}/#{filename}.txt", "wb") do |log|
         log<< messages unless messages == ""
       end
     else
-      File.open("#{dir_path}/#{filename}", "a") do |log|
+      File.open("#{dir_path}/#{filename}.txt", "a") do |log|
         log << messages unless messages == ""
       end
     end
@@ -118,14 +145,17 @@ class CodapBaseObject
     click_on(menu_item)
   end
 
-  def get_column_header(header_name)
-    header_name_path = '//span[contains(@class, "slick-column-name") and text()="'+header_name+'"]'
-    column_header_name = {xpath: header_name_path}
-    column_header_name_loc = find(column_header_name)
-    @@driver.action.move_to(column_header_name_loc).perform
-    puts "Column header name is #{column_header_name_loc.text}"
-    return column_header_name_loc
-  end
+  # def get_column_header(header_name)
+  #   # header_name_path = '//span/span[contains(@class, "two-line-header-line-1") and text()="'+header_name+'"]'#slickgrid_3330094 > span > span.two-line-header-line-1
+  #   #header_name_path={css: '.two-line-header-line-1'}
+  #   header_names = {css:'.slick-header-column'}
+  #   column_header_name = {xpath: header_name_path}
+  #   # column_header_name_loc = find(column_header_names)
+  #   column_header_name_loc = find(header_names)
+  #   @@driver.action.move_to(column_header_name_loc).perform
+  #   puts "Column header name is #{column_header_name_loc.text}"
+  #   return column_header_name_loc
+  # end
 
   def drag_attribute(source_element, target_element)
     #drag_scroller
