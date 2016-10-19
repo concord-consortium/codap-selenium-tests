@@ -8,7 +8,7 @@ File.open('CODAPDocLinks.txt').each do |url|
   codap.visit(url)
   # TODO if url fails to load, try again max 5 times.
   puts "URL is #{url}"
-  sleep(8)
+  sleep(30)
   if url.include? "#"
     page_source = url.split('#').last
   else

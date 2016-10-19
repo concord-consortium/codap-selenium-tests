@@ -63,7 +63,7 @@ module GraphObject
     screenshot_popup = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
     puts "Found screenshot_popup at #{screenshot_popup}"
     pop_up_click(screenshot_popup)
-    screenshot_filename = "#{attribute}_on_#{location}" #add a specific folder to save snapshots to
+    screenshot_filename = "graph_#{attribute}_on_#{location}" #add a specific folder to save snapshots to
     pop_up_type(screenshot_popup, screenshot_filename)
     click_on(SINGLE_TEXT_DIALOG_OK_BUTTON)
   end
