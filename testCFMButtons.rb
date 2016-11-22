@@ -1,40 +1,52 @@
 require 'selenium-webdriver'
 require 'rspec/expectations'
 require './codap_object'
-require './base_object'
+
 
 include RSpec::Matchers
 
-def setup
-=begin
-  @driver = Selenium::WebDriver.for(
-      :remote,
-      :url=> 'http://localhost:4444/wd/hub',
-      :desired_capabilities=> :safari )
-=end
-  @driver = Selenium::WebDriver.for :chrome
-  ENV['base_url'] = 'http://localhost:4020/dg'
-  #ENV['base_url'] = 'http://localhost:4020/dg?di=http://localhost:4020/codap-data-interactives/PerformanceHarness/PerformanceHarness.html'
-  #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
-  #ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
+# def setup
+# =begin
+#   @driver = Selenium::WebDriver.for(
+#       :remote,
+#       :url=> 'http://localhost:4444/wd/hub',
+#       :desired_capabilities=> :safari )
+# =end
+#   @driver = Selenium::WebDriver.for :chrome
+#   ENV['base_url'] = 'http://localhost:4020/dg'
+#   #ENV['base_url'] = 'http://localhost:4020/dg?di=http://localhost:4020/codap-data-interactives/PerformanceHarness/PerformanceHarness.html'
+#   #ENV['base_url'] = 'http://codap.concord.org/~eireland/CodapClasses'
+#   #ENV['base_url'] = 'http://codap.concord.org/releases/latest/'
+#
+# end
+#
+# def teardown
+#   @driver.quit
+# end
+#
+# def run
+#   setup
+#   yield
+#   teardown
+# end
+#
+# run do
+#   codap = CODAPObject.new(@driver)
+#   buttons = ['examples','cloud','google drive','local']
+#   codap.user_entry_open_doc
+#   buttons.each do |button|
+#     codap.click_button(button)
+#   end
+# end
 
-end
 
-def teardown
-  @driver.quit
-end
-
-def run
-  setup
-  yield
-  teardown
-end
-
-run do
-  codap = CODAPObject.new(@driver)
+codap = CODAPObject.new()
+codap.setup_one(:chrome)
+url = "https://codap.concord.org/releases/staging/"
+codap.start_codap(url)
+# Click on CFM buttons
   buttons = ['examples','cloud','google drive','local']
   codap.user_entry_open_doc
   buttons.each do |button|
     codap.click_button(button)
   end
-end

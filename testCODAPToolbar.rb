@@ -3,7 +3,7 @@
 require './codap_object.rb'
 
 url = 'https://codap.concord.org/releases/staging/'
-components = ['graph','map','slider','calc','text','option','separator','tilelist']
+components = ['graph','map','slider','calc','text','option','tilelist', 'help']
 
 codap = CODAPObject.new()
 codap.setup_one(:chrome)

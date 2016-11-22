@@ -14,6 +14,7 @@ module GraphObject
   GRAPH_STYLES = {css: '.display-styles'}
   GRAPH_SCREENSHOT = {css: '.display-camera'}
   GRAPH_COUNT = {css: '.graph-count-check'}
+  GRAPH_PERCENT = {css: '.graph-percent-check'}
   GRAPH_CONNECTING_LINE = {css: '.graph-connectingLine-check'}
   GRAPH_MOVABLE_VALUE = {css: '.graph-movableValue-check'}
   GRAPH_MOVABLE_LINE = {css: '.graph-movableLine-check'}
@@ -29,13 +30,17 @@ module GraphObject
   GRAPH_POINT_COLOR_PICKER = {css: '.graph-point-color'}
   GRAPH_STROKE_COLOR_PICKER = {css: '.graph-stroke-color'}
   GRAPH_TRANSPARENT = {css: '.graph-transparent-check'}
+  GRAPH_SCREENSHOT_DOWNLOAD = {css: '.buttons>a'}
+  GRPAH_SCREENSHOT_INPUT_FILENAME = {css: '.localFileSave>input'}
+  GRAPH_SCREENSHOT_DIALOG_TITLE = {css: '.modal-dialog-title'}
 
   SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
   SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
   SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
 
   #menu items for trash and hide/show need to be added.
-
+  #sc1761 > div > div:nth-child(2) > div > div.modal-content > div > div > div.modal-dialog-workspace > div > div.workspace-tab-component > div:nth-child(2) > div > input[type="text"]
+  # //*[@id="sc1761"]/div/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div[2]/div/input
   def remove_graph_attribute(graph_target)
     puts "In remove_graph_attribute"
     case (graph_target)
@@ -59,13 +64,19 @@ module GraphObject
   def take_screenshot(attribute,location)
     click_on(GRAPH_TILE)
     click_on(GRAPH_SCREENSHOT)
-    wait_for{ displayed?(SINGLE_TEXT_DIALOG_TEXTFIELD) }
-    screenshot_popup = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
-    puts "Found screenshot_popup at #{screenshot_popup}"
-    pop_up_click(screenshot_popup)
-    screenshot_filename = "graph_#{attribute}_on_#{location}" #add a specific folder to save snapshots to
-    pop_up_type(screenshot_popup, screenshot_filename)
-    click_on(SINGLE_TEXT_DIALOG_OK_BUTTON)
+    wait_for{ displayed?(GRAPH_SCREENSHOT_DIALOG_TITLE) }
+     screenshot_popup = find(GRPAH_SCREENSHOT_INPUT_FILENAME)
+     puts "Found screenshot_popup at #{screenshot_popup}"
+     screenshot_filename = "graph_#{attribute}_on_#{location}" #add a specific folder to save snapshots to
+     screenshot_popup.clear
+     screenshot_popup.send_keys(screenshot_filename)
+    click_on(GRAPH_SCREENSHOT_DOWNLOAD)
+  end
+
+  def turn_on_count()
+      click_on(GRAPH_TILE)
+      click_on(GRAPH_RULER)
+      click_on(GRAPH_COUNT)
   end
 
 end

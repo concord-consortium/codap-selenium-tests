@@ -125,7 +125,7 @@ class CodapBaseObject
   end
 
   def pop_up_type(locator, input)
-    puts "In pop_up_type"
+    puts "In pop_up_type. Input is: #{input}"
     @@driver.action.send_keys(locator, input).perform
   end
 
@@ -144,18 +144,6 @@ class CodapBaseObject
     wait_for {displayed? (menu_item)}
     click_on(menu_item)
   end
-
-  # def get_column_header(header_name)
-  #   # header_name_path = '//span/span[contains(@class, "two-line-header-line-1") and text()="'+header_name+'"]'#slickgrid_3330094 > span > span.two-line-header-line-1
-  #   #header_name_path={css: '.two-line-header-line-1'}
-  #   header_names = {css:'.slick-header-column'}
-  #   column_header_name = {xpath: header_name_path}
-  #   # column_header_name_loc = find(column_header_names)
-  #   column_header_name_loc = find(header_names)
-  #   @@driver.action.move_to(column_header_name_loc).perform
-  #   puts "Column header name is #{column_header_name_loc.text}"
-  #   return column_header_name_loc
-  # end
 
   def drag_attribute(source_element, target_element)
     #drag_scroller
