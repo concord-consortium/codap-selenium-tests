@@ -28,7 +28,7 @@ class CODAPObject < CodapBaseObject
   TILE_LIST_BUTTON ={css: '.dg-tilelist-button' }
   OPTION_BUTTON = {css: '.dg-option-button' }
   GUIDE_BUTTON   = {css: '.dg-guide-button' }
-  HELP_BUTTON = {css: '.navBar-help'}
+  HELP_BUTTON = {css: '.dg-help-button'}
   VERSION_INFO = {css: 'span.menu-bar-info'}
   LOGIN_USER = {css: '.navBar-status'}
   H_SCROLLER = {css: '.sc-horizontal, .sc-scroller-view'}
@@ -39,7 +39,6 @@ class CODAPObject < CodapBaseObject
 #  OPEN_NEW_BUTTON = {id: 'dg-user-entry-new-doc-button'}
   OPEN_DOC_BUTTON = {id: 'dg-user-entry-open-doc-button'}
   AUTHORIZE_STARTUP_BUTTON = {id: 'dg-user-entry-authorize-startup-button'}
-#HELP_TILE = {css: } Help is a webview in an iframe component has //*[div[contains(@class="titleview")and contains(text(), 'Help with CODAP')]
   TILE_ICON_SLIDER = {css: '.tile-icon-slider'}
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert")]/div/div/div[contains(@label,"Close")]'}
@@ -48,6 +47,8 @@ class CODAPObject < CodapBaseObject
   OPEN_CODAP_WEBSITE = {id: 'dg-optionMenuItem-codap-website'}
   WEBVIEW_FRAME = {css: '.dg-web-view-frame'}
   TILE_MENU_ITEM = {css: 'a.menu-item'}
+  HELP_MENU_ITEM = {css: '#dg-optionMenuItem-help-website > a > span[contains(text()="Help"'}
+  HELP_PAGE_TITLE = {id: 'page-title'}
 
   def initialize()
     puts "Initializing"
@@ -70,7 +71,7 @@ class CODAPObject < CodapBaseObject
   end
 
   def click_button(button)
-    verifiable = ['table','graph','map','slider','calc','text']
+    verifiable = ['table','graph','map','slider','calc','text','codap_site']
 
     case (button)
       when 'table'
@@ -91,6 +92,8 @@ class CODAPObject < CodapBaseObject
         element = OPTION_BUTTON
       when 'guide'
         element = GUIDE_BUTTON
+      when 'help'
+        element = HELP_MENU_ITEM
       when 'toolshelf'
         element = TOOLSHELF_BACK
       when 'background'
@@ -105,6 +108,8 @@ class CODAPObject < CodapBaseObject
         element = OPEN_GOOGLE_DRIVE
       when 'local'
         element = OPEN_LOCAL_FILE
+      when 'codap_site'
+        element = OPEN_CODAP_WEBSITE
     end
 
     puts "button is #{button}, element is #{element}"
@@ -122,6 +127,10 @@ class CODAPObject < CodapBaseObject
     if button == "tilelist"
       puts "In tilelist if #{TILE_MENU_ITEM}"
       click_on(TILE_MENU_ITEM)
+    end
+    if button == 'help'
+      puts "In help if #{HELP_MENU_ITEM}"
+      click_on(HELP_MENU_ITEM)
     end
   end
 
@@ -151,7 +160,7 @@ class CODAPObject < CodapBaseObject
     puts "In drag_scroller_right"
     scroll_right = find(SCROLL_H_RIGHT)
     puts "Found element #{scroll_right}"
-    driver.action.drag_and_drop_by(scroll_right, 50, 0).perform
+    @@driver.action.drag_and_drop_by(scroll_right, 50, 0).perform
     #scroll_right.click
   end
 
@@ -179,14 +188,14 @@ class CODAPObject < CodapBaseObject
         puts "Tile list button clicked"
       #driver.find_element(:xpath=> '//span[contains(@class, "ellipsis") and text()="No Data"]').click
       when OPTION_BUTTON
-        wait_for {displayed? (VIEW_WEBPAGE_MENU_ITEM)}
-        click_on(VIEW_WEBPAGE_MENU_ITEM)
-        textfield = wait_for{find(SINGLE_TEXT_DIALOG_TEXTFIELD)}
-        driver.action.click(textfield).perform
-        find(SINGLE_TEXT_DIALOG_CANCEL_BUTTON).click
+        wait_for {displayed? (OPEN_CODAP_WEBSITE)}
+        click_on(OPEN_CODAP_WEBSITE)
+        wait_for { displayed? WEBVIEW_FRAME}
       # puts "Option button clicked"
       when GUIDE_BUTTON
         puts "Guide button clicked"
+      when OPEN_CODAP_WEBSITE
+        wait_for { displayed? WEBVIEW_FRAME}
     end
   end
 
