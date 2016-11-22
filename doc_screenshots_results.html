@@ -37,8 +37,8 @@
                 //list all .png files in the page
                 $(data).find("a").attr("href", function (i, val) {
                     if (val.match(/\.(jpe?g|png|gif)$/)) {
-                        $result = $('<div class="result">').appendTo($container)
-                        $container_result = $result.append("<img src='" + screenshot_dir + val + "'></div>");
+                        $result = $('<div class="result">').appendTo($container);
+                        $container_result = $result.append("<p>"+val+"</p><img src='" + screenshot_dir + val + "'></div>");
                         $(".container").append($container_result)
                     }
                 });
