@@ -62,7 +62,7 @@ end
   #Change axes by attribute, axis
   array_of_plots.each do |hash|
     codap.drag_attribute(hash[:attribute], hash[:axis])
-    sleep(2)
+    sleep(5)
     codap.write_log_file('./', open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis])
   end
