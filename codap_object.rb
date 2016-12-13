@@ -42,13 +42,13 @@ class CODAPObject < CodapBaseObject
   TILE_ICON_SLIDER = {css: '.tile-icon-slider'}
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert")]/div/div/div[contains(@label,"Close")]'}
-  VIEW_WEBPAGE_MENU_ITEM = { id: 'dg-optionMenuItem-view_webpage'}
   OPTION_MENU_SEPARATOR ={css: '.menu-item.disabled'}
   OPEN_CODAP_WEBSITE = {id: 'dg-optionMenuItem-codap-website'}
   WEBVIEW_FRAME = {css: '.dg-web-view-frame'}
   TILE_MENU_ITEM = {css: 'a.menu-item'}
   HELP_MENU_ITEM = {css: '#dg-optionMenuItem-help-website > a > span[contains(text()="Help"'}
   HELP_PAGE_TITLE = {id: 'page-title'}
+  DISPLAY_WEBSITE = {id: 'dg-optionMenuItem-view_webpage'}
 
   def initialize()
     puts "Initializing"
@@ -71,7 +71,7 @@ class CODAPObject < CodapBaseObject
   end
 
   def click_button(button)
-    verifiable = ['table','graph','map','slider','calc','text','codap_site']
+    verifiable = ['table','graph','map','slider','calc','text','option']
 
     case (button)
       when 'table'
@@ -108,6 +108,8 @@ class CODAPObject < CodapBaseObject
         element = OPEN_GOOGLE_DRIVE
       when 'local'
         element = OPEN_LOCAL_FILE
+      when 'display_website'
+        element = DISPLAY_WEBSITE
       when 'codap_site'
         element = OPEN_CODAP_WEBSITE
     end
@@ -117,12 +119,6 @@ class CODAPObject < CodapBaseObject
     if verifiable.include? button
       puts "#{button} Button is in verifiable"
       verify_tile(element)
-    end
-    if button == 'option'
-      puts "In option if. #{OPEN_CODAP_WEBSITE}"
-      click_on(OPEN_CODAP_WEBSITE)
-      verify_tile(WEBVIEW_FRAME)
-      sleep(5)
     end
     if button == "tilelist"
       puts "In tilelist if #{TILE_MENU_ITEM}"
@@ -188,14 +184,18 @@ class CODAPObject < CodapBaseObject
         puts "Tile list button clicked"
       #driver.find_element(:xpath=> '//span[contains(@class, "ellipsis") and text()="No Data"]').click
       when OPTION_BUTTON
-        wait_for {displayed? (OPEN_CODAP_WEBSITE)}
-        click_on(OPEN_CODAP_WEBSITE)
-        wait_for { displayed? WEBVIEW_FRAME}
+        wait_for {displayed? (DISPLAY_WEBSITE)}
+        click_on(DISPLAY_WEBSITE)
+        wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
+        input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
+        input_field.send_keys('https://concord.org')
+        click_on(SINGLE_TEXT_DIALOG_TEXTFIELD)
+
       # puts "Option button clicked"
       when GUIDE_BUTTON
         puts "Guide button clicked"
       when OPEN_CODAP_WEBSITE
-        wait_for { displayed? WEBVIEW_FRAME}
+        puts "CODAP website clicked"
     end
   end
 
