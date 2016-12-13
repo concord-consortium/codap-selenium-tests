@@ -1,18 +1,19 @@
 module GraphObject
 
   GRAPH_TILE = {css: '.graph-view'}
-  GRAPH_H_AXIS = {css: '.h-axis'}
-  GRAPH_V_AXIS = {css: '.v-axis'}
+  GRAPH_H_AXIS = {css: '.h-axis>svg>text.axis-label'}
+  GRAPH_V_AXIS = {css: '.v-axis>svg>text.axis-label'}
   GRAPH_V2_AXIS = {css: '.v2-axis'}
   GRAPH_PLOT_VIEW = {css: '.plot-view'}
-  GRAPH_LEGEND = {css: '.legend-view'}
-  AXIS_MENU_REMOVE = {xpath: '//div[contains(@class, "sc-menu-item")]/a/span[contains(text(),"Remove")]'}
+  GRAPH_LEGEND = {css: '.legend-view>svg>text.axis-label'}
+  AXIS_MENU_REMOVE = {xpath: '//div/a/span[contains(text(),"Remove")]'}
   GRAPH_RESCALE = {css: '.display-rescale'}
   GRAPH_HIDESHOW = {css: '.display-hideshow'}
   GRAPH_TRASH = {css: '.display-trash'}
   GRAPH_RULER = {css: '.display-values'}
   GRAPH_STYLES = {css: '.display-styles'}
   GRAPH_SCREENSHOT = {css: '.display-camera'}
+  GRAPH_INSPECTOR_PICKER_PANEL = {css: '.inspector-picker'}
   GRAPH_COUNT = {css: '.graph-count-check'}
   GRAPH_PERCENT = {css: '.graph-percent-check'}
   GRAPH_PERCENT_ROW = {css: '.radio-0'}
@@ -43,9 +44,6 @@ module GraphObject
   SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
   SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
 
-  #menu items for trash and hide/show need to be added.
-  #sc1761 > div > div:nth-child(2) > div > div.modal-content > div > div > div.modal-dialog-workspace > div > div.workspace-tab-component > div:nth-child(2) > div > input[type="text"]
-  # //*[@id="sc1761"]/div/div[2]/div/div[2]/div/div/div[2]/div/div[2]/div[2]/div/input
   def remove_graph_attribute(graph_target)
     puts "In remove_graph_attribute"
     case (graph_target)
@@ -54,16 +52,14 @@ module GraphObject
       when 'y'
         target_loc = find(GRAPH_V_AXIS)
       when 'graph_legend'
-        target_loc = find(GRAPH_PLOT_VIEW)
+        target_loc = find(GRAPH_LEGEND)
     end
+    target_loc_text = target_loc.text
+    puts "target text is #{target_loc_text}"
     target_loc.click
     puts "Clicked #{target_loc}"
-    if (find(AXIS_MENU_REMOVE))
-      click_on(AXIS_MENU_REMOVE)
-    else
-      puts "Can't find menu"
-    end
-
+    sleep(5)
+    click_on(AXIS_MENU_REMOVE)
   end
 
   def take_screenshot(attribute,location)
@@ -85,6 +81,12 @@ module GraphObject
     click_on(GRAPH_SCREENSHOT_DOWNLOAD)
     puts "clicked on download button"
     sleep(3)
+  end
+
+  def open_ruler_tool
+    wait_for{ displayed?(GRAPH_RULER)}
+    sleep(1)
+    click_on(GRAPH_RULER)
   end
 
   def turn_on_count()
