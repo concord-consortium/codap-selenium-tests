@@ -40,10 +40,6 @@ module GraphObject
   GRAPH_SCREENSHOT_INPUT_FILENAME = {css: '.localFileSave>input'}
   GRAPH_SCREENSHOT_DIALOG_TITLE = {css: '.modal-dialog-title'}
 
-  SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
-  SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
-  SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
-
   def remove_graph_attribute(graph_target)
     puts "In remove_graph_attribute"
     case (graph_target)
@@ -59,7 +55,8 @@ module GraphObject
     target_loc.click
     puts "Clicked #{target_loc}"
     sleep(5)
-    click_on(AXIS_MENU_REMOVE)
+    select_menu_item("Remove")
+    # click_on(AXIS_MENU_REMOVE)
   end
 
   def take_screenshot(attribute,location)

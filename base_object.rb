@@ -15,6 +15,7 @@ class CodapBaseObject
   GRAPH_LEGEND = {css: '.legend-view'}
   MAP_VIEW = {css: '.leaflet-map-pane'}
   MAP_lEGEND = {css: '.legend-view'}
+  IFRAME = {tag_name: 'iframe'}
 
   def setup_one(browser)
     @@driver = Selenium::WebDriver.for browser
@@ -138,9 +139,24 @@ class CodapBaseObject
     @@driver.switch_to.alert()
   end
 
-  def select_menu_item(menu, menu_item)
+  def switch_to_iframe(locator)
+    @@driver.switch_to.frame(locator)
+  end
+
+  def switch_to_main()
+    @@driver.switch_to.default_content
+  end
+
+  # def select_menu_item(menu, menu_item)
+  #   puts 'in select_menu_item'
+  #   find(menu)
+  #   wait_for {displayed? (menu_item)}
+  #   click_on(menu_item)
+  # end
+
+  def select_menu_item(menu_item_text)
     puts 'in select_menu_item'
-    find(menu)
+    menu_item = {xpath: "//div/a/span[contains(text(),'#{menu_item_text}')]"}
     wait_for {displayed? (menu_item)}
     click_on(menu_item)
   end
