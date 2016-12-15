@@ -44,11 +44,12 @@ class CODAPObject < CodapBaseObject
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert")]/div/div/div[contains(@label,"Close")]'}
   OPTION_MENU_SEPARATOR ={css: '.menu-item.disabled'}
   OPEN_CODAP_WEBSITE = {id: 'dg-optionMenuItem-codap-website'}
-  WEBVIEW_FRAME = {css: '.dg-web-view-frame'}
+  WEBVIEW_FRAME = {css: '.dg-web-view'}
   TILE_MENU_ITEM = {css: 'a.menu-item'}
-  HELP_MENU_ITEM = {css: '#dg-optionMenuItem-help-website > a > span[contains(text()="Help"'}
-  HELP_PAGE_TITLE = {id: 'page-title'}
+  HELP_PAGE_TITLE = {id: '#page-title'}
   DISPLAY_WEBSITE = {id: 'dg-optionMenuItem-view_webpage'}
+
+  CONCORD_LOGO = {id: 'brand'}
 
   def initialize()
     puts "Initializing"
@@ -71,7 +72,7 @@ class CODAPObject < CodapBaseObject
   end
 
   def click_button(button)
-    verifiable = ['table','graph','map','slider','calc','text','option']
+    verifiable = ['table','graph','map','slider','calc','text','option', 'tilelist', 'help']
 
     case (button)
       when 'table'
@@ -93,7 +94,7 @@ class CODAPObject < CodapBaseObject
       when 'guide'
         element = GUIDE_BUTTON
       when 'help'
-        element = HELP_MENU_ITEM
+        element = HELP_BUTTON
       when 'toolshelf'
         element = TOOLSHELF_BACK
       when 'background'
@@ -120,14 +121,14 @@ class CODAPObject < CodapBaseObject
       puts "#{button} Button is in verifiable"
       verify_tile(element)
     end
-    if button == "tilelist"
-      puts "In tilelist if #{TILE_MENU_ITEM}"
-      click_on(TILE_MENU_ITEM)
-    end
-    if button == 'help'
-      puts "In help if #{HELP_MENU_ITEM}"
-      click_on(HELP_MENU_ITEM)
-    end
+    # if button == "tilelist"
+    #   puts "#{button} "
+    #   select_menu_item("Web Page")
+    # end
+    # if button == 'help'
+    #   puts "In help if #{HELP_MENU_ITEM}"
+    #   click_on(HELP_MENU_ITEM)
+    # end
   end
 
   def undo
@@ -161,6 +162,7 @@ class CODAPObject < CodapBaseObject
   end
 
   def verify_tile(button)
+    # noinspection RubyInterpreter
     case (button)
       when TABLE_BUTTON
         wait_for { displayed?(CASE_TABLE_TILE) }
@@ -176,21 +178,42 @@ class CODAPObject < CodapBaseObject
         wait_for { displayed?(TEXT_TILE) }
         # click_on(TEXT_TILE)
       when HELP_BUTTON
-        # help_page_title = driver.find_element(:id, "block-menu-menu-help-categories")
-        # wait_for {displayed?(help_page_title)}
-        # expect(help_page_title.text).to include "CODAP Help"
         puts "Help button clicked."
+        select_menu_item("Help")
+        sleep(3)
+        switch_to_last_tab
+        locator = {tag_name: 'h1'}
+        page_elements = find_all(locator)
+        page_elements.each do |element|
+          text = element.text
+          puts "Page elements are #{text}"
+        end
+        # wait_for { displayed?(HELP_PAGE_TITLE) }
+        # page_title = find(HELP_PAGE_TITLE)
+        # if (page_title.text == "CODAP Help")
+        #   puts "found Help page"
+        # end
+        switch_to_main
       when TILE_LIST_BUTTON
-        puts "Tile list button clicked"
-      #driver.find_element(:xpath=> '//span[contains(@class, "ellipsis") and text()="No Data"]').click
+        select_menu_item("Calculator")
+        wait_for {displayed? (CALC_TILE)}
+        sleep(3)
       when OPTION_BUTTON
         wait_for {displayed? (DISPLAY_WEBSITE)}
         click_on(DISPLAY_WEBSITE)
         wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
         input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
-        input_field.send_keys('https://concord.org')
-        click_on(SINGLE_TEXT_DIALOG_TEXTFIELD)
-
+        pop_up_type(input_field,"https://concord.org")
+        wait_for {displayed? (SINGLE_TEXT_DIALOG_OK_BUTTON)}
+        pop_up_click(find(SINGLE_TEXT_DIALOG_OK_BUTTON))
+        webview = find(IFRAME)
+        sleep(5)
+        switch_to_iframe(webview)
+        wait_for {displayed? (CONCORD_LOGO)}
+        if displayed? (CONCORD_LOGO)
+          puts "Found Concord Logo"
+        end
+        switch_to_main
       # puts "Option button clicked"
       when GUIDE_BUTTON
         puts "Guide button clicked"

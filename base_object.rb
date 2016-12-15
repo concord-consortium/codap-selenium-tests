@@ -136,15 +136,24 @@ class CodapBaseObject
   end
 
   def switch_to_dialog(dialog)
+    puts "In switch to dialog"
     @@driver.switch_to.alert()
   end
 
   def switch_to_iframe(locator)
+    puts "In switch to iframe"
     @@driver.switch_to.frame(locator)
   end
 
   def switch_to_main()
+    puts "in switch to main"
     @@driver.switch_to.default_content
+  end
+
+  def switch_to_last_tab()
+    puts "in switch to tab"
+    # @@driver.action.send_keys(:control + :tab).perform
+    @@driver.switch_to.window(@@driver.window_handles.last)
   end
 
   # def select_menu_item(menu, menu_item)

@@ -58,24 +58,3 @@ sleep(10)
 
 
 
-# codap.drag_attribute('ANUM1','x')
-# sleep(2)
-# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-# codap.take_screenshot('ANUM1x', checkbox_texts)
-# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-#
-# codap.drag_attribute('ANUM2','y')
-# sleep(2)
-# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-# codap.take_screenshot('ANUM2y', checkbox_texts)
-# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-# codap.take_screenshot('ANum2y_checkboxoff',checkbox_texts)
-#
-# codap.remove_graph_attribute('y')
-# sleep(2)
-# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-# codap.take_screenshot('ANUM1x', checkbox_texts)
-# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-# codap.take_screenshot('ANum1x_checkboxoff',checkbox_texts)
-
-
