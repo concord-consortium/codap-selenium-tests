@@ -6,9 +6,8 @@ module CFMObject
 
   #Open Dialog box locators
   OPEN_EXAMPLE_DOCS = {css: '.workspace-tabs >ul:nth-of-type(1)> li'}#.workspace-tabs>ul>li:contains("Example Documents")
-  OPEN_CONCORD_CLOUD = {css: '.workspace-tabs >ul:nth-of-type(2) > li'}
-  OPEN_GOOGLE_DRIVE = {css: '.workspace-tabs >ul:nth-of-type(3) > li'}
-  OPEN_LOCAL_FILE = {css: '.workspace-tabs >ul:nth-of-type(4) > li'}
+  OPEN_GOOGLE_DRIVE = {css: '.workspace-tabs >ul:nth-of-type(2) > li'}
+  OPEN_LOCAL_FILE = {css: '.workspace-tabs >ul:nth-of-type(3) > li'}
   FILE_SELECTION_DROP_AREA = {css: '.dropArea>input'}
   DOC_STORE_LOGIN = {css: '.document-store-footer'}
   SAVE_CONCORD_CLOUD = {css: '.workspace-tabs > ul:nth-child(1) > li'}
