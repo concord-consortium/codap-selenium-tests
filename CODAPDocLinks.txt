@@ -66,7 +66,7 @@ https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?#file=ex
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?#file=examples:Markov%20Game
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?#file=examples:Parachute%20Model
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?app=is#shared=15094
-https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?url=https://concord-consortium.github.io/codap-data/FathomDocs/Sports/Bicycling/Bicycling.json
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?url=https://concord-consortium.github.io/codap-data/SampleDocs/Sports/Bicycling/Bicycling.json
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?documentServer=https://document-store.herokuapp.com/&di=https://concord-consortium.github.io/codap-data-interactives/TerraPopInteractive/TPI.html&recordid=8166
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?documentServer=https://Fdocument-store.herokuapp.com/&di=https://concord-consortium.github.io/codap-data-interactives/TerraPopInteractive/TPI.html&recordid=8213
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?documentServer=https://Fdocument-store.concord.org/&di=https://concord-consortium.github.io/codap-data-interactives/TerraPopInteractive/TPI.html
