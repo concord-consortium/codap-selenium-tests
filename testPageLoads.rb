@@ -47,7 +47,9 @@ def openPluginLinks(screenshot_dir)
     sleep(15)
     codap.save_screenshot(screenshot_dir, plugin.text) # Take screenshot
     codap.write_log_file(screenshot_dir, plugin.text) # Write log file
-    codap.switch_to_main()
+    tab_handle = codap.switch_to_last_tab()
+    codap.close_tab(tab_handle)
+    codap.switch_to_first_tab()
     end
   else
     puts "No plugins in the list"
@@ -57,5 +59,32 @@ def openPluginLinks(screenshot_dir)
 
 end
 
-# openMiscLinks(screenshot_dir)
+def openSampleDocLinks(screenshot_dir)
+  pluginURL = "https://concord-consortium.github.io/codap-data/"
+
+  codap = CODAPObject.new()
+  codap.setup_one(:chrome)
+  codap.visit(pluginURL)
+  sample_docs = codap.find_all(LISTING)
+  if sample_docs.length>0
+    sample_docs.each do |doc|
+      puts "Doc test is #{doc.text}"
+      doc.click
+      sleep(15)
+      codap.save_screenshot(screenshot_dir, doc.text) # Take screenshot
+      codap.write_log_file(screenshot_dir, doc.text) # Write log file
+      tab_handle = codap.switch_to_last_tab()
+      codap.close_tab(tab_handle)
+      codap.switch_to_first_tab()
+    end
+  else
+    puts "No docs in the list"
+  end
+
+  codap.teardown
+
+end
+
+openMiscLinks(screenshot_dir)
 openPluginLinks(screenshot_dir)
+openSampleDocLinks(screenshot_dir)
