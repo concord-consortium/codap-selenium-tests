@@ -50,10 +50,15 @@ class CodapBaseObject
     @@driver.quit
   end
 
+  def manage_window_size
+    target_size = Selenium::WebDriver::Dimension.new(1280,850)
+    @@driver.manage.window.size = target_size
+  end
+
   def visit(url)
     puts "IN VISIT"
     @@driver.get(url)
-    @@driver.manage.window.maximize
+    manage_window_size
   end
 
   def verify_page(title)

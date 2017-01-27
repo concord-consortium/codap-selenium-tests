@@ -39,6 +39,7 @@ module GraphObject
   GRAPH_SCREENSHOT_DOWNLOAD = {css: '.buttons>a'}
   GRAPH_SCREENSHOT_INPUT_FILENAME = {css: '.localFileSave>input'}
   GRAPH_SCREENSHOT_DIALOG_TITLE = {css: '.modal-dialog-title'}
+  GRAPH_COUNT_PERCENTAGE = {xpath: '//div[contains(@class,"plot-view")]/svg/text[3]/tspan'}
 
   def remove_graph_attribute(graph_target)
     puts "In remove_graph_attribute"
@@ -61,8 +62,10 @@ module GraphObject
 
   def take_screenshot(attribute,location)
     puts "in graph screenshot"
-    click_on(GRAPH_TILE)
-    puts "clicked on graph tile"
+    if (!displayed?(GRAPH_SCREENSHOT))
+      click_on(GRAPH_TILE)
+      puts "clicked on graph tile"
+    end
     click_on(GRAPH_SCREENSHOT)
     puts "clicked on graph_screenshot"
     wait_for{ displayed?(GRAPH_SCREENSHOT_DIALOG_TITLE) }

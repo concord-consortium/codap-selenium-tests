@@ -79,7 +79,7 @@ end
 codap = CODAPObject.new()
 codap.setup_one(:chrome)
 url = "https://codap.concord.org/releases/staging/"
-open_doc = '3TableGroups.codap'
+open_doc = '3TableGroups.json'
 file = File.absolute_path(File.join(Dir.pwd, open_doc))
 puts "file is #{file}, open_doc is #{open_doc}"
 attributes = ['ACAT1','ACAT2','ANUM1','ANUM2','BCAT1','BNUM1','CCAT1','CNUM1','CCAT2','CNUM2']
@@ -105,7 +105,7 @@ codap.start_codap(url)
 codap.user_entry_open_doc
 codap.open_local_doc(file)
 sleep(5)
-open_doc.slice! '.codap'
+open_doc.slice! '.json'
 codap.verify_doc_title(open_doc)
 
 #Open a graph
@@ -115,12 +115,14 @@ sleep(2)
 codap.drag_attribute('ACAT2', 'y') # Univariate categorical axis
 sleep(2)
 checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
+sleep(2)
 codap.take_screenshot('ACAT2y', checkbox_texts)
 checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
 
 codap.drag_attribute('ACAT1','x')
 sleep(2)
 checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
+sleep(2)
 codap.take_screenshot('ACAT1x', checkbox_texts)
 checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
 

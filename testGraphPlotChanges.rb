@@ -60,7 +60,8 @@ end
   codap.click_button('graph')
 
   #Change axes by attribute, axis
-  array_of_plots.each do |hash|
+  # noinspection RubyInterpreterInspection
+array_of_plots.each do |hash|
     codap.drag_attribute(hash[:attribute], hash[:axis])
     sleep(5)
     codap.write_log_file('./', open_doc)
