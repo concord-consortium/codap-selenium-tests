@@ -42,14 +42,16 @@ def openPluginLinks(screenshot_dir)
   plugins = codap.find_all(LISTING)
   if plugins.length>0
     plugins.each do |plugin|
-      puts "Plugin test is #{plugin.text}"
+      plugin_title = plugin.text
+      puts "Plugin text is #{plugin.text}"
     plugin.click
     sleep(15)
-    codap.save_screenshot(screenshot_dir, plugin.text) # Take screenshot
-    codap.write_log_file(screenshot_dir, plugin.text) # Write log file
-    tab_handle = codap.switch_to_last_tab()
-    codap.close_tab(tab_handle)
-    codap.switch_to_first_tab()
+    tab_handles=codap.get_tab_handles
+    codap.switch_to_tab(tab_handles[1])
+    codap.save_screenshot(screenshot_dir, plugin_title) # Take screenshot
+    codap.write_log_file(screenshot_dir, plugin_title) # Write log file
+    codap.close_tab(tab_handles[1])
+    codap.switch_to_tab(tab_handles[0])
     end
   else
     puts "No plugins in the list"
@@ -68,14 +70,17 @@ def openSampleDocLinks(screenshot_dir)
   sample_docs = codap.find_all(LISTING)
   if sample_docs.length>0
     sample_docs.each do |doc|
-      puts "Doc test is #{doc.text}"
+      doc_title = doc.text
+      puts "Doc text is #{doc_title}"
       doc.click
       sleep(15)
-      codap.save_screenshot(screenshot_dir, doc.text) # Take screenshot
-      codap.write_log_file(screenshot_dir, doc.text) # Write log file
+      tab_handles=codap.get_tab_handles
+      codap.switch_to_tab(tab_handles[1])
+      codap.save_screenshot(screenshot_dir, doc_title) # Take screenshot
+      codap.write_log_file(screenshot_dir, doc_title) # Write log file
       tab_handle = codap.switch_to_last_tab()
-      codap.close_tab(tab_handle)
-      codap.switch_to_first_tab()
+      codap.close_tab(tab_handles[1])
+      codap.switch_to_tab(tab_handles[0])
     end
   else
     puts "No docs in the list"
