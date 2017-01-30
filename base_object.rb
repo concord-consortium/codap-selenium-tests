@@ -1,7 +1,7 @@
 require 'selenium-webdriver'
 require 'rspec/expectations'
 include RSpec::Matchers
-require './LogReporter'
+require '~/development/codap-selenium-tests/LogReporter'
 
 class CodapBaseObject
   SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
