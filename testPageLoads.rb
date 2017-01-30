@@ -78,7 +78,6 @@ def openSampleDocLinks(screenshot_dir)
       codap.switch_to_tab(tab_handles[1])
       codap.save_screenshot(screenshot_dir, doc_title) # Take screenshot
       codap.write_log_file(screenshot_dir, doc_title) # Write log file
-      tab_handle = codap.switch_to_last_tab()
       codap.close_tab(tab_handles[1])
       codap.switch_to_tab(tab_handles[0])
     end
