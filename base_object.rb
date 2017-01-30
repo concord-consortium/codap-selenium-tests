@@ -151,6 +151,15 @@ class CodapBaseObject
     @@driver.switch_to.frame(locator)
   end
 
+  def get_tab_handles
+    return @@driver.window_handles
+  end
+
+  def switch_to_tab(handle)
+    puts "in switch to tab"
+    @@driver.switch_to.window(handle)
+  end
+
   def switch_to_main()
     puts "in switch to main"
     @@driver.switch_to.default_content
@@ -160,6 +169,7 @@ class CodapBaseObject
     puts "in switch to first tab"
     @@driver.switch_to.window(@@driver.window_handles.first)
     window_handle = @@driver.window_handles.first
+    return window_handle
   end
 
   def switch_to_last_tab()
