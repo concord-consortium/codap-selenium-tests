@@ -1,6 +1,6 @@
 require '~/development/codap-selenium-tests/base_object.rb'
 
-class PluginAPIObject < BaseObject
+class PluginAPIObject< CodapBaseObject
   RESOURCE_ITEMS = {css: '.di-resources-type-list>.di-item'}
   ACTION_ITEMS = {css: '.di-action-list>.di-item'}
   MESSAGE_AREA = {css: '.di-message-area'}
@@ -31,6 +31,7 @@ class PluginAPIObject < BaseObject
       end
     end
 
+    clear(MESSAGE_AREA)
     type(MESSAGE_AREA,message)
 
     click_on(SEND_BUTTON)
