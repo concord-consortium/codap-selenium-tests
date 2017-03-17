@@ -15,13 +15,25 @@
 
 
 <body>
-<h2>Doc Screenshots</h2>
+<h2>Graph Plot Changes Screenshots</h2>
 <div class = "container">
-    <div class = "container_result"></div>
+    <div class = "image_name"></div>
+    <div class = "reference_container">
+        <div class = "reference_image"></div>
+    </div>
+    <div class = "result_container">
+        <div class = "result_image"></div>
+    </div>
+    <div class = 'console_log'></div>
 </div>
 <script>
     $(function () {
+        var $container = $('.container');
+        var $result;
+        var $container_result;
         var screenshot_dir = 'http://localhost/~evangelineireland/plot_transition_results/'
+        var file_extension = '.png';
+        var i;
 
         $.ajax({
             url: screenshot_dir,
@@ -29,7 +41,9 @@
                 //list all .png files in the page
                 $(data).find("a").attr("href", function (i, val) {
                     if (val.match(/\.(jpe?g|png|gif)$/)) {
-                        $(".container_result").append("<img src='" + screenshot_dir + val + "'>");
+                        $result = $('<div class="result">').appendTo($container);
+                        $container_result = $result.append("<p>"+val+"</p><img src='" + screenshot_dir + val + "'></div>");
+                        $(".container").append($container_result)
                     }
                 });
             }
