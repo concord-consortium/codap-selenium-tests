@@ -28,9 +28,28 @@ class CodapBaseObject
   def setup_caps(platform, browser)
     puts "In setup_caps #{platform}, #{browser}"
     caps = Selenium::WebDriver::Remote::Capabilities.new
-    caps[:platform] = platform
-    caps[:browserName] = browser
-    caps[:logging_prefs] = {:browser => "ALL"}
+    if browser == "iPad"
+      caps['appiumVersion'] = '1.6.3'
+      caps['deviceName'] = 'iPad Simulator'
+      caps['platformName'] = 'iOS'
+      caps['platformVersion'] = '9.3'
+      caps['deviceOrientation'] = 'landscape'
+      caps['browserName'] = 'Safari'
+      caps['rotatable'] = true
+    elsif browser == "Android" #Need an Android Emulator that runs Chrome instead of generic Browser
+      caps['appiumVersion'] = '1.6.3'
+      caps['platformName'] = 'Android'
+      caps['platformVersion'] = '6.0'
+      caps['browserName'] ='Chrome'
+      caps['deviceName'] = 'Android Emulator'
+      caps['deviceOrientation'] = 'landscape'
+      caps['nativeWebScreenshot'] = true
+      caps['rotatable'] = true
+    else
+      caps['platform'] = platform
+      caps['browserName'] = browser
+      caps['logging_prefs'] = {:browser => "ALL"}
+    end
     return caps
   end
 
@@ -38,12 +57,24 @@ class CodapBaseObject
   #   puts "in setup_remote #{caps}"
   #   @@driver = Selenium::WebDriver.for (
   #     :remote,
-  #     :url=> 'http://localhost:4444/wd/hub',
+  #     :url=> 'http://eireland:b64ffb1e-a71d-40db-a73c-67a8b43620b6@ondemand.saucelabs.com:80/wd/hub',
   #     :desired_capabilities=> caps )
   #   rescue Exception => e
   #     puts e.message
   #     puts "Could not start driver #{@@driver}"
   #     exit
+  # end
+  #
+  # def setup_grid(caps)
+  #   puts "in setup_remote #{caps}"
+  #   @@driver = Selenium::WebDriver.for (
+  #       :remote,
+  #       :url=> 'http://localhost:4444/wd/hub',
+  #       :desired_capabilities=> caps )
+  # rescue Exception => e
+  #   puts e.message
+  #   puts "Could not start driver #{@@driver}"
+  #   exit
   # end
 
   def teardown
@@ -51,7 +82,7 @@ class CodapBaseObject
   end
 
   def manage_window_size
-    target_size = Selenium::WebDriver::Dimension.new(1280,850)
+    target_size = Selenium::WebDriver::Dimension.new(1680,1050)
     @@driver.manage.window.size = target_size
   end
 
@@ -118,6 +149,18 @@ class CodapBaseObject
     else
       File.open("#{dir_path}/#{filename}.txt", "a") do |log|
         log << messages unless messages == ""
+      end
+    end
+  end
+
+  def write_to_file(dir_path, filename, message)
+    if !File.exist?("#{dir_path}/#{filename}.txt")
+      File.open("#{dir_path}/#{filename}.txt", "wb") do |responses|
+        responses<< message unless message == ""
+      end
+    else
+      File.open("#{dir_path}/#{filename}.txt", "a") do |responses|
+        responses << message unless message == ""
       end
     end
   end
@@ -217,5 +260,14 @@ class CodapBaseObject
     end
     @@driver.action.drag_and_drop(source_loc, target_loc).perform
   end
+
+  def compare_images(path_a, path_b)
+    return 100 if !File.exist?(path_a) || !File.exist?(path_b)
+    a = Magick::Image.read(path_a).first
+    b = Magick::Image.read(path_b).first
+    a.resize!(b.columns, b.rows) if a.columns != b.columns || a.rows != b.rows
+    a.compare_channel(b, Magick::RootMeanSquaredErrorMetric)[1] * 100
+  end
+
 
 end

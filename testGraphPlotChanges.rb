@@ -2,6 +2,10 @@
 
 require './codap_object'
 
+GRAPH_TILE = {css: '.graph-view'}
+expected_screenshots_dir = '~/Sites/plot_transition_results/expected_screentshots/'
+staging_screenshots_dir = '~/Sites/plot_transition_results/test_screentshots/'
+
 
 def write_result_file(doc_name)
   googledrive_path="Google Drive/CODAP @ Concord/Software Development/QA"
@@ -24,6 +28,10 @@ def write_result_file(doc_name)
   end
 
 end
+
+begin
+  attempt = 0
+  max_attempts = 25
 
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
@@ -58,10 +66,11 @@ end
 
   #Open a graph
   codap.click_button('graph')
+  codap.wait_for{codap.displayed? (GRAPH_TILE) }
 
   #Change axes by attribute, axis
   # noinspection RubyInterpreterInspection
-array_of_plots.each do |hash|
+  array_of_plots.each do |hash|
     codap.drag_attribute(hash[:attribute], hash[:axis])
     sleep(5)
     codap.write_log_file('./', open_doc)
@@ -71,5 +80,19 @@ array_of_plots.each do |hash|
   # codap.remove_graph_attribute('graph_legend')
   codap.teardown
 
-`mkdir -p ~/Sites/plot_transition_results`
-`mv ~/Downloads/graph_*.png ~/Sites/plot_transition_results/`
+rescue => e
+  puts '::ERROR::'
+  puts e
+  attempt +=1
+  if attempt< max_attempts
+    puts "RETRYING (#{attempt})..."
+    retry
+  end
+end
+
+`mkdir -p ~/Sites/plot_transition_results/test_screentshots`
+`mv ~/Downloads/graph_*.png ~/Sites/plot_transition_results/test_screentshots/`
+
+#count num of screenshots
+#for each test screenshot, compare test screenshot to expected screenshot
+#
