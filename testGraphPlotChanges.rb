@@ -90,6 +90,7 @@ rescue => e
   end
 end
 
+`rm -rf ~/Sites/plot_transition_results/test_screentshots`
 `mkdir -p ~/Sites/plot_transition_results/test_screentshots`
 `mv ~/Downloads/graph_*.png ~/Sites/plot_transition_results/test_screentshots/`
 

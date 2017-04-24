@@ -3,7 +3,7 @@ require './codap_object.rb'
 LISTING = {css: ".listing-title"}
 
 screenshot_dir = "#{Dir.home}/Sites/doc_screenchot_results/test_screenshots/"
-`rm #{screenshot_dir}`
+`rm -rf #{screenshot_dir}`
 `mkdir -p #{screenshot_dir}`
 
 def openMiscLinks(screenshot_dir)
