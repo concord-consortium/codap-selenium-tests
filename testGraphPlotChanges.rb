@@ -69,15 +69,12 @@ begin
   codap.wait_for{codap.displayed? (GRAPH_TILE) }
 
   #Change axes by attribute, axis
-  # noinspection RubyInterpreterInspection
   array_of_plots.each do |hash|
     codap.drag_attribute(hash[:attribute], hash[:axis])
     sleep(5)
     codap.write_log_file('./', open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis])
   end
-
-  # codap.remove_graph_attribute('graph_legend')
   codap.teardown
 
 rescue => e
@@ -90,10 +87,7 @@ rescue => e
   end
 end
 
-`rm -rf ~/Sites/plot_transition_results/test_screentshots`
-`mkdir -p ~/Sites/plot_transition_results/test_screentshots`
-`mv ~/Downloads/graph_*.png ~/Sites/plot_transition_results/test_screentshots/`
+`rm -rf ~/Sites/plot_transition_results/test_screenshots`
+`mkdir -p ~/Sites/plot_transition_results/test_screenshots`
+`mv ~/Downloads/graph_*.png ~/Sites/plot_transition_results/test_screenshots/`
 
-#count num of screenshots
-#for each test screenshot, compare test screenshot to expected screenshot
-#
