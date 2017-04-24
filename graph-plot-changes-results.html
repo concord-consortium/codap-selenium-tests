@@ -4,11 +4,41 @@
     <meta charset="UTF-8">
     <title>Graph Plot Changes Results</title>
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/2.1.0/jquery.min.js"></script>
+    <script src="http://huddle.github.io/Resemble.js/resemble.js" charset="utf-8"></script>
     <style>
         img {
+            padding-left: 50px;
+            display: inline-block;
+            vertical-alignment: middle;
+        }
+
+        .test_screenshot {
+            width: 50%;
+            float: left;
+        }
+
+        .expected_screenshot {
+            width: 50%;
+            float: right;
+        }
+
+        .title {
+            text-align: center;
+            margin: 5px 0 5px 0;
+            /*padding: 10px;*/
+        }
+
+        .result_container {
             border-style: solid;
             border-width: 1px;
             border-color: darkblue;
+            background-color: orange;
+            /*margin: 2px;*/
+        }
+
+        .screenshots {
+            padding: 10px;
+            height: 300px;
         }
     </style>
 </head>
@@ -17,23 +47,18 @@
 <body>
 <h2>Graph Plot Changes Screenshots</h2>
 <div class = "container">
-    <div class = "image_name"></div>
-    <div class = "reference_container">
-        <div class = "reference_image"></div>
-    </div>
-    <div class = "result_container">
-        <div class = "result_image"></div>
-    </div>
-    <div class = 'console_log'></div>
 </div>
 <script>
     $(function () {
         var $container = $('.container');
-        var $result;
+        var $result, $resultInner;
         var $container_result;
-        var screenshot_dir = 'http://localhost/~evangelineireland/plot_transition_results/'
+        var $screenshots;
+        var screenshot_dir = './test_screentshots/';
+        var expected_screenshot_dir = './expected_screenshots/';
         var file_extension = '.png';
         var i;
+        var resembleControl;
 
         $.ajax({
             url: screenshot_dir,
@@ -41,9 +66,10 @@
                 //list all .png files in the page
                 $(data).find("a").attr("href", function (i, val) {
                     if (val.match(/\.(jpe?g|png|gif)$/)) {
-                        $result = $('<div class="result">').appendTo($container);
-                        $container_result = $result.append("<p>"+val+"</p><img src='" + screenshot_dir + val + "'></div>");
-                        $(".container").append($container_result)
+                        $result = $('<div class="result_container">').appendTo($container);
+                        $result.append("<div class='title'>"+val+"</div>");
+                        resembleControl = resemble(expected_screenshot_dir +val).compareTo(screenshot_dir + val).onComplete(function(data){});
+                        $screenshots = $result.append("<div class = 'screenshots'><div class='test_screenshot'><img src='" + screenshot_dir + val + "'></div><div class='expected_screenshot'><img src='"+expected_screenshot_dir +val+"'</div></div>");
                     }
                 });
             }
