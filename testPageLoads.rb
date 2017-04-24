@@ -2,7 +2,7 @@ require './codap_object.rb'
 
 LISTING = {css: ".listing-title"}
 
-screenshot_dir = "#{Dir.home}/Sites/doc_screenchot_results/test_screenshots/"
+screenshot_dir = "#{Dir.home}/Sites/doc_screenshot_results/test_screenshots/"
 `rm -rf #{screenshot_dir}`
 `mkdir -p #{screenshot_dir}`
 
