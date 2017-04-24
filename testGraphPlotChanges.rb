@@ -53,8 +53,8 @@ begin
                     {:attribute=>'CCAT2', :axis=>'x'},
                     {:attribute=>'BCAT1', :axis=>'y'},
                     {:attribute=>'ACAT2', :axis=>'y'},
-                    {:attribute=>'BCAT1', :axis=>'graph_legend'},
-                    {:attribute=>'CNUM1', :axis=>'graph_legend'},
+                    {:attribute=>'ACAT1', :axis=>'graph_legend'},
+                    {:attribute=>'ANUM1', :axis=>'graph_legend'},
                     {:attribute=>'CNUM2', :axis=>'y'},]
 
   codap.start_codap(url)
