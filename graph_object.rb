@@ -71,7 +71,7 @@ module GraphObject
     wait_for{ displayed?(GRAPH_SCREENSHOT_DIALOG_TITLE) }
      screenshot_popup = find(GRAPH_SCREENSHOT_INPUT_FILENAME)
      puts "Found screenshot_popup at #{screenshot_popup}"
-     screenshot_filename = "graph_#{attribute}_on_#{location}" #add a specific folder to save snapshots to
+     screenshot_filename = "graph_#{attribute}_on_#{location}_#{Time.now.strftime("_%d_%m_%Y__%H_%M_%S")}" #add a specific folder to save snapshots to
      screenshot_popup.clear
      screenshot_popup.send_keys(screenshot_filename)
     sleep(3)
