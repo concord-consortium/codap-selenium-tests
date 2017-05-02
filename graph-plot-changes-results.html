@@ -39,6 +39,12 @@
             padding: 10px;
             height: 300px;
         }
+
+        .no-img > p {
+            color: #fff;
+            vertical-align: middle;
+            font-size: 60px;
+        }
     </style>
 </head>
 
@@ -50,14 +56,12 @@
 <script>
     $(function () {
         var $container = $('.container');
-        var $result, $resultInner;
-        var $container_result;
-        var $screenshots;
+        var $result = $('<div class="result_container">').appendTo($container);
+        var $screenshots
         var screenshot_dir = './test_screenshots/';
         var expected_screenshot_dir = './expected_screenshots/';
         var file_extension = '.png';
-        var i;
-        var resembleControl;
+        var screenshot_name;
 
         $.ajax({
             url: screenshot_dir,
@@ -65,10 +69,11 @@
                 //list all .png files in the page
                 $(data).find("a").attr("href", function (i, val) {
                     if (val.match(/\.(jpe?g|png|gif)$/)) {
-                        $result = $('<div class="result_container">').appendTo($container);
+                        screenshot_name = val.split("__")[0];
+
                         $result.append("<div class='title'>"+val+"</div>");
-                        resembleControl = resemble(expected_screenshot_dir +val).compareTo(screenshot_dir + val).onComplete(function(data){});
-                        $screenshots = $result.append("<div class = 'screenshots'><div class='test_screenshot'><img src='" + screenshot_dir + val + "'></div><div class='expected_screenshot'><img src='"+expected_screenshot_dir +val+"'</div></div>");
+                        $screenshots = $result.append("<div class = 'screenshots'><div class='test_screenshot'><img src='" + screenshot_dir + val + "'></div><div class='expected_screenshot'><img src='"+expected_screenshot_dir +val+"'></div></div>");
+
                     }
                 });
             }
