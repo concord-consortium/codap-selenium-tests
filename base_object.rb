@@ -117,6 +117,10 @@ class CodapBaseObject
     find(locator).click
   end
 
+  def hover(locator)
+    @@driver.action.move_to(locator).perform
+  end
+
   def displayed?(locator)
     @@driver.find_element(locator).displayed?
     true

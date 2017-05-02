@@ -26,13 +26,20 @@ def write_result_file(doc_name)
 end
 
 CHECKBOX_LOCATOR = {css: '.checkbox'}
-PLOTTED_INPUT_FIELD = {css: 'input.field'}
-PLOTTED_FUNCTION_FIELD = {css: "input.field"}
+INPUT_FIELD_LOCATOR = {css: "input.field"}
+LABEL_LOCATOR = {xpath: '//input[contains(@class,"field")]/ancestor::div/div[contains(@class, "sc-label-view")]'}
+# GRAPH_TITLE_BAR = {xpath: '//div[contains(@class,"graph-view")]/ancestor::dg/div[contains(@class,"titlebar")]'}
+GRAPH_CLOSE = {css: ".dg-close-view"}
+GRAPH_TITLE_BAR = {css: '.titlebar-selected'}
+GRAPH_TILE = {css: '.graph-view'}
+
 
 def click_on_checkboxes(kcodap, state)
 #Turn on checkboxes
   plotted_value = false
   plotted_function = false
+  input = ["x*x/10", "75"]
+  input_field_list=[]
 
   kcodap.open_ruler_tool
   checkbox_list = kcodap.find_all(CHECKBOX_LOCATOR) #get list of checkboxes
@@ -42,7 +49,7 @@ def click_on_checkboxes(kcodap, state)
   puts "num of checkboxes is: #{num_of_checkboxes}"
   sleep(3)
   checkbox_list.each do |checkbox|
-    puts checkbox.text
+    # puts checkbox.text
     if checkbox.text == 'Plotted Value'
       plotted_value = true
     end
@@ -58,19 +65,34 @@ def click_on_checkboxes(kcodap, state)
     # end
   end
   if state == 'on'
-    if plotted_value == true
-      input_value_field = kcodap.find(PLOTTED_INPUT_FIELD)
-      # vaxis_text = vaxis.text
-      input_value_field.send_keys("75")
-      sleep(2)
-    end
-    if plotted_function ==true
-      input_function_field = kcodap.find(PLOTTED_FUNCTION_FIELD)
-      if (input_function_field.text=='')
-        input_function_field.send_keys('x*x/10')
-        sleep(2)
+    index=0
+    input_field_list = kcodap.find_all(INPUT_FIELD_LOCATOR)
+    if input_field_list.length>0
+      puts "input field list length is #{input_field_list.length}. input field list is #{input_field_list}"
+      input_field_list.each do |input_field|
+        # label_loc = {xpath: '/ancestor::div/div[contains(@class, "sc-label-view")]'}
+        label = kcodap.find(LABEL_LOCATOR)
+        puts "label is #{label.text}"
+        # input_field.send_keys(input[index])
+        index +=1
       end
     end
+    # if plotted_value == true
+    #   puts "plotted value is on"
+    #   input_value_field = kcodap.find(PLOTTED_INPUT_FIELD)
+    #   puts "input_value_field is #{input_value_field}"
+    #   sleep(3)
+    #   kcodap.click_on(PLOTTED_INPUT_FIELD)
+    #   input_value_field.send_keys("75")
+    #   sleep(2)
+    # end
+    # if plotted_function ==true
+    #   input_function_field = kcodap.find(PLOTTED_FUNCTION_FIELD)
+    #   if (input_function_field.text=='')
+    #     input_function_field.send_keys('x*x/10')
+    #     sleep(2)
+    #   end
+    # end
   end
   return checkbox_texts
 end
@@ -104,49 +126,60 @@ codap.start_codap(url)
 # Open CODAP document
 codap.user_entry_open_doc
 codap.open_local_doc(file)
-sleep(5)
+sleep(2)
 open_doc.slice! '.json'
 codap.verify_doc_title(open_doc)
 
 #Open a graph
 codap.click_button('graph')
 sleep(2)
+codap.click_on(GRAPH_TILE)
 
-codap.drag_attribute('ACAT2', 'y') # Univariate categorical axis
-sleep(2)
-checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-sleep(2)
-codap.take_screenshot('ACAT2y', checkbox_texts)
-checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
+# codap.drag_attribute('ACAT2', 'x') # Univariate categorical axis
+# sleep(2)
+# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
+# sleep(2)
+# codap.take_screenshot('ACAT2x', checkbox_texts)
+# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
+#
+# codap.drag_attribute('ACAT1','y')
+# sleep(2)
+# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
+# sleep(2)
+# codap.take_screenshot('ACAT1y', checkbox_texts)
+# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
 
-codap.drag_attribute('ACAT1','x')
-sleep(2)
-checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-sleep(2)
-codap.take_screenshot('ACAT1x', checkbox_texts)
-checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
+# codap.drag_attribute('ANUM1','x')
+# sleep(2)
+# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
+# codap.take_screenshot('ANUM1x', checkbox_texts)
+# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
+#
+# codap.drag_attribute('ANUM2','y')
+# sleep(2)
+# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
+# codap.take_screenshot('ANUM2y', checkbox_texts)
+# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
+# codap.take_screenshot('ANum2y_checkboxoff',checkbox_texts)
+title_bar = codap.find(GRAPH_TITLE_BAR)
+codap.close_component(title_bar)
 
+codap.click_button('graph')
+sleep(2)
 codap.drag_attribute('ANUM1','x')
 sleep(2)
 checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
 codap.take_screenshot('ANUM1x', checkbox_texts)
 checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
 
-codap.drag_attribute('ANUM2','y')
+codap.remove_graph_attribute('x')
 sleep(2)
 checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-codap.take_screenshot('ANUM2y', checkbox_texts)
+codap.take_screenshot('ANUM1y', checkbox_texts)
 checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-codap.take_screenshot('ANum2y_checkboxoff',checkbox_texts)
+codap.take_screenshot('ANum1y_checkboxoff',checkbox_texts)
 
-codap.remove_graph_attribute('y')
-sleep(2)
-checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-codap.take_screenshot('ANUM1x', checkbox_texts)
-checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-codap.take_screenshot('ANum1x_checkboxoff',checkbox_texts)
-
-sleep(10)
+sleep(5)
 
 #Turn off checkboxes
 
