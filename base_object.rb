@@ -238,7 +238,7 @@ class CodapBaseObject
 
   def select_menu_item(menu_item_text)
     puts 'in select_menu_item'
-    menu_item = {xpath: "//div/a/span[contains(text(),'#{menu_item_text}')]"}
+    menu_item = {xpath: "//div/a[contains(@class,'menu-item')]/span[contains(text(),'#{menu_item_text}')]"}
     wait_for {displayed? (menu_item)}
     click_on(menu_item)
   end
@@ -269,5 +269,36 @@ class CodapBaseObject
     a.compare_channel(b, Magick::RootMeanSquaredErrorMetric)[1] * 100
   end
 
+
+  def compare_file_sizes(dir_a, dir_b)
+    file_mismatch = []
+    dir_a_files = Dir.entries(dir_a)
+    dir_b_files = Dir.entries(dir_b)
+    num_files_a = dir_a_files.length
+    num_files_b = dir_b_files.length
+
+    puts "test_images_files are #{dir_a_files}. num_files is #{num_files_a}"
+    puts "expected_images_files are #{dir_b_files}. num_files is #{num_files_b}"
+
+    while dir_a_files.length > 0
+      file = dir_a_files[0]
+      puts "File is #{file}. File size test is #{File.size("#{dir_a}/#{file}")}"
+      puts "Expected file is #{dir_b}/#{file}. File size expected is #{File.size("#{dir_b}/#{file}")}"
+
+      if File.size("#{dir_a}/#{file}") != File.size("#{dir_b}/#{file}")
+        if file!= '.'
+          file_mismatch.push(file)
+        end
+      end
+      dir_a_files.shift
+      puts ("After shift dir_a_files is #{dir_a_files}")
+    end
+
+    if file_mismatch.length == 0
+      return "ALL FILES MATCH"
+    else
+      return "These files do not match #{file_mismatch}"
+    end
+  end
 
 end

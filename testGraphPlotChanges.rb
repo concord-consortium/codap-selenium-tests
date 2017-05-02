@@ -3,8 +3,10 @@
 require './codap_object'
 
 GRAPH_TILE = {css: '.graph-view'}
-expected_screenshots_dir = '~/Sites/plot_transition_results/expected_screentshots/'
-staging_screenshots_dir = '~/Sites/plot_transition_results/test_screentshots/'
+expected_screenshots_dir = '../../Sites/plot_transition_results/expected_screenshots/'
+staging_screenshots_dir = '../../Sites/plot_transition_results/test_screenshots/'
+prev_attr = ""
+prev_axis = ""
 
 
 def write_result_file(doc_name)
@@ -54,8 +56,11 @@ begin
                     {:attribute=>'BCAT1', :axis=>'y'},
                     {:attribute=>'ACAT2', :axis=>'y'},
                     {:attribute=>'ACAT1', :axis=>'graph_legend'},
+                    {:attribute=>'CNUM1', :axis=>'y'},
+                    {:attribute=>'BNUM1', :axis=>'x'},
                     {:attribute=>'ANUM1', :axis=>'graph_legend'},
-                    {:attribute=>'CNUM2', :axis=>'y'},]
+                    {:attribute=>'BCAT1', :axis=>'x'},
+                    {:attribute=>'CCAT2', :axis=>'y'},]
 
   codap.start_codap(url)
   # Open CODAP document
@@ -71,9 +76,11 @@ begin
   #Change axes by attribute, axis
   array_of_plots.each do |hash|
     codap.drag_attribute(hash[:attribute], hash[:axis])
-    sleep(5)
+    sleep(3)
     codap.write_log_file('./', open_doc)
-    codap.take_screenshot(hash[:attribute],hash[:axis])
+    codap.take_screenshot(hash[:attribute],hash[:axis], prev_attr, prev_axis)
+    prev_attr = hash[:attribute]
+    prev_axis = hash[:axis]
   end
   codap.teardown
 
@@ -91,3 +98,5 @@ end
 `mkdir -p ~/Sites/plot_transition_results/test_screenshots`
 `mv ~/Downloads/graph_*.png ~/Sites/plot_transition_results/test_screenshots/`
 
+size_compare_result = codap.compare_file_sizes(staging_screenshots_dir, expected_screenshots_dir)
+puts ("#{size_compare_result}")
