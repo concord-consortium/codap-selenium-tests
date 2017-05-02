@@ -3,8 +3,9 @@
 require './codap_object'
 
 GRAPH_TILE = {css: '.graph-view'}
-expected_screenshots_dir = '../../Sites/plot_transition_results/expected_screenshots/'
-staging_screenshots_dir = '../../Sites/plot_transition_results/test_screenshots/'
+"#{Dir.home}/Sites/doc_screenshot_results/test_screenshots/"
+expected_screenshots_dir = "#{Dir.home}/Sites/plot_transition_results/expected_screenshots/"
+staging_screenshots_dir = "#{Dir.home}/Sites/plot_transition_results/test_screenshots/"
 prev_attr = ""
 prev_axis = ""
 
@@ -75,8 +76,9 @@ begin
 
   #Change axes by attribute, axis
   array_of_plots.each do |hash|
+    sleep(2)
     codap.drag_attribute(hash[:attribute], hash[:axis])
-    sleep(3)
+    sleep(2)
     codap.write_log_file('./', open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis], prev_attr, prev_axis)
     prev_attr = hash[:attribute]
