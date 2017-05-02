@@ -8,7 +8,7 @@ test_screenshot_dir = "#{Dir.home}/Sites/doc_screenshot_results/test_screenshots
 
 def openMiscLinks(screenshot_dir)
   attempt=0
-  max_attempts = 25
+  max_attempts = 5
 
   begin
     urls = File.readlines('CODAPDocLinks.txt')
@@ -19,7 +19,7 @@ def openMiscLinks(screenshot_dir)
       codap = CODAPObject.new()
       codap.setup_one(:chrome)
       codap.visit(url)
-      # TODO if url fails to load, try again max 5 times.
+
       puts "URL is #{url}"
       sleep(30)
       if url.include? "#"
@@ -27,7 +27,7 @@ def openMiscLinks(screenshot_dir)
       else
         page_source = url.split('?').last
       end
-      page_source = page_source.gsub(/[.:=%\/]/, "_").chop
+      page_source = page_source.gsub(/['.:=%\/]/, "_").chop
       puts "Page_source is #{page_source}"
       # Prepare screenshots dir
       codap.save_screenshot(screenshot_dir, page_source)
@@ -61,7 +61,7 @@ def openPluginLinks(screenshot_dir)
     else
       while plugins.length>0
         plugin = plugins[0]
-        plugin_title = plugin.text
+        plugin_title = plugin.text.gsub(/['.:=%\/]/, "_")
         puts "Plugin text is #{plugin.text}"
         plugin.click
         sleep(15)
@@ -101,7 +101,7 @@ def openSampleDocLinks(screenshot_dir)
   else
     while sample_docs.length > 0
         doc=sample_docs[0]
-        doc_title = doc.text
+        doc_title = doc.text.gsub(/['.:=%\/]/, "_")
         puts "Doc text is #{doc_title}"
         doc.click
         sleep(15)
@@ -130,6 +130,6 @@ end
 openPluginLinks(test_screenshot_dir)
 # openSampleDocLinks(test_screenshot_dir)
 
-test_helper = CODAPObject.new()
-compare_size_result = test_helper.compare_file_sizes(test_screenshot_dir,expected_screenshot_dir)
-puts "#{compare_size_result}"
+# test_helper = CODAPObject.new()
+# compare_size_result = test_helper.compare_file_sizes(test_screenshot_dir,expected_screenshot_dir)
+# puts "#{compare_size_result}"
