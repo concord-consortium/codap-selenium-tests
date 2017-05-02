@@ -6,7 +6,7 @@ module GraphObject
   GRAPH_V2_AXIS = {css: '.v2-axis'}
   GRAPH_PLOT_VIEW = {css: '.plot-view'}
   GRAPH_LEGEND = {css: '.legend-view>svg>text.axis-label'}
-  AXIS_MENU_REMOVE = {xpath: '//div/a/span[contains(text(),"Remove")]'}
+  AXIS_MENU_REMOVE = {xpath: '//div/a[contains(@class,"menu-item")]/span[contains(text(),"Remove")]'}
   GRAPH_RESCALE = {css: '.display-rescale'}
   GRAPH_HIDESHOW = {css: '.display-hideshow'}
   GRAPH_TRASH = {css: '.display-trash'}
@@ -52,7 +52,7 @@ module GraphObject
         target_loc = find(GRAPH_LEGEND)
     end
     target_loc_text = target_loc.text
-    puts "target text is #{target_loc_text}"
+    puts "target text is #{target_loc_text}, target_loc is #{target_loc}"
     target_loc.click
     puts "Clicked #{target_loc}"
     sleep(5)
@@ -60,7 +60,7 @@ module GraphObject
     # click_on(AXIS_MENU_REMOVE)
   end
 
-  def take_screenshot(attribute,location)
+  def take_screenshot(attribute,location,other_attr="", other_axis="")
     puts "in graph screenshot"
     if (!displayed?(GRAPH_SCREENSHOT))
       click_on(GRAPH_TILE)
@@ -71,7 +71,7 @@ module GraphObject
     wait_for{ displayed?(GRAPH_SCREENSHOT_DIALOG_TITLE) }
      screenshot_popup = find(GRAPH_SCREENSHOT_INPUT_FILENAME)
      puts "Found screenshot_popup at #{screenshot_popup}"
-     screenshot_filename = "graph_#{attribute}_on_#{location}}" #add a specific folder to save snapshots to
+     screenshot_filename = "graph_#{attribute}_on_#{location}_#{other_attr}_on_#{other_axis}" #add a specific folder to save snapshots to
      screenshot_popup.clear
      screenshot_popup.send_keys(screenshot_filename)
     sleep(3)
