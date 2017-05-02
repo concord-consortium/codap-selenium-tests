@@ -1,10 +1,10 @@
 require './codap_object.rb'
 
 LISTING = {css: ".listing-title"}
-
-screenshot_dir = "#{Dir.home}/Sites/doc_screenshot_results/test_screenshots/"
-`rm -rf #{screenshot_dir}`
-`mkdir -p #{screenshot_dir}`
+expected_screenshot_dir = "#{Dir.home}/Sites/doc_screenshot_results/expected_screenshots/"
+test_screenshot_dir = "#{Dir.home}/Sites/doc_screenshot_results/test_screenshots/"
+`rm -rf #{test_screenshot_dir}`
+`mkdir -p #{test_screenshot_dir}`
 
 def openMiscLinks(screenshot_dir)
   attempt=0
@@ -126,6 +126,10 @@ def openSampleDocLinks(screenshot_dir)
   codap.teardown
 end
 
-openMiscLinks(screenshot_dir)
-# openPluginLinks(screenshot_dir)
-# openSampleDocLinks(screenshot_dir)
+# openMiscLinks(test_screenshot_dir)
+openPluginLinks(test_screenshot_dir)
+# openSampleDocLinks(test_screenshot_dir)
+
+test_helper = CODAPObject.new()
+compare_size_result = test_helper.compare_file_sizes(test_screenshot_dir,expected_screenshot_dir)
+puts "#{compare_size_result}"
