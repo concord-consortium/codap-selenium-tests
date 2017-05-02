@@ -134,7 +134,7 @@ class CodapBaseObject
 
   def save_screenshot(dir,page_title)
     puts "in get_screenshot"
-    @@driver.save_screenshot "#{dir}/#{page_title}#{Time.now.strftime("_%d_%m_%Y__%H_%M_%S")}.png"
+    @@driver.save_screenshot "#{dir}/#{page_title}.png"
   end
 
   def write_log_file(dir_path, filename)
