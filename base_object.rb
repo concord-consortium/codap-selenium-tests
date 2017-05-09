@@ -50,20 +50,21 @@ class CodapBaseObject
       caps['browserName'] = browser
       caps['logging_prefs'] = {:browser => "ALL"}
     end
+    puts "Caps are #{caps}"
     return caps
   end
 
-  # def setup_remote(caps)
-  #   puts "in setup_remote #{caps}"
-  #   @@driver = Selenium::WebDriver.for (
-  #     :remote,
-  #     :url=> 'http://eireland:b64ffb1e-a71d-40db-a73c-67a8b43620b6@ondemand.saucelabs.com:80/wd/hub',
-  #     :desired_capabilities=> caps )
-  #   rescue Exception => e
-  #     puts e.message
-  #     puts "Could not start driver #{@@driver}"
-  #     exit
-  # end
+  #does not work for tests that need to open a CODAP file
+  def setup_remote(caps)
+    puts "in setup_remote #{caps}"
+    @@driver = Selenium::WebDriver.for(:remote,
+                                       :url => "http://eireland:b64ffb1e-a71d-40db-a73c-67a8b43620b6@ondemand.saucelabs.com:80/wd/hub",
+                                       :desired_capabilities => caps)
+    rescue Exception => e
+      puts e.message
+      puts "Could not start driver #{@@driver}"
+      exit
+  end
   #
   # def setup_grid(caps)
   #   puts "in setup_remote #{caps}"
