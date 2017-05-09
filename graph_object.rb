@@ -20,7 +20,7 @@ module GraphObject
   GRAPH_PERCENT_COLUMN = {css: '.radio-1'}
   GRAPH_PERCENT_CELL = {css: '.radio-2'}
   GRAPH_CONNECTING_LINE = {css: '.graph-connectingLine-check'}
-  GRAPH_MOVABLE_VALUE = {css: '.graph-movableValue-check'}
+  GRAPH_MOVABLE_VALUE = {css: '.dg-movable-value-button'}
   GRAPH_MOVABLE_LINE = {css: '.graph-movableLine-check'}
   GRAPH_LSR_LINE = {css: '.graph-lsrl-check'}
   GRAPH_INTERCEPT_LOCKED = {css: '.graph-interceptLocked-check'}
@@ -89,44 +89,45 @@ module GraphObject
     click_on(GRAPH_RULER)
   end
 
-  def turn_on_count()
-    puts 'in turn_on_count'
+  def change_checkbox_state(checkbox, state)
+    puts 'in change checkbox state'
       click_on(GRAPH_TILE)
       click_on(GRAPH_RULER)
-    wait_for{ displayed?(GRAPH_COUNT)}
-    sleep(1)
-    click_on(GRAPH_COUNT)
-    puts "clicked on graph count #{GRAPH_COUNT}"
-  end
+      case (checkbox)
+        when "count"
+          element = GRAPH_COUNT
+        when "percent"
+          element = GRAPH_PERCENT
+        when "mean"
+          element = GRAPH_MEAN
+        when "median"
+          element = GRAPH_MEDIAN
+        when "sd"
+          element = GRAPH_STD_DEV
+        when "boxplot"
+          element = GRAPH_BOX_PLOT
+        when "plotted_value"
+          element = GRAPH_PLOTTED_VALUE
+        when "plotted_function"
+          element = GRAPH_PLOTTED_FUNCTION
+        when "connecting_lines"
+          element = GRAPH_CONNECTING_LINE
+        when "movable_line"
+          element = GRAPH_MOVABLE_LINE
+        when "lsrl"
+          element = GRAPH_LSR_LINE
+        when "intercept_lock"
+          element = GRAPH_INTERCEPT_LOCKED
+        when "squares"
+          element = GRAPH_SQUARES
+      end
 
-  def turn_off_count()
-    puts 'in turn_on_count'
-    click_on(GRAPH_TILE)
-    click_on(GRAPH_RULER)
-    wait_for{ displayed?(GRAPH_COUNT)}
+    wait_for{ displayed?(element)}
     sleep(1)
-    click_on(GRAPH_COUNT)
-    puts "clicked on graph count #{GRAPH_COUNT}"
-  end
-
-  def turn_on_percent()
-    puts 'in turn_on_percent'
-    click_on(GRAPH_TILE)
-    click_on(GRAPH_RULER)
-    wait_for{ displayed?(GRAPH_PERCENT)}
-    sleep(1)
-    click_on(GRAPH_PERCENT)
-    puts "clicked on graph percent #{GRAPH_PERCENT}"
-  end
-
-  def turn_off_percent()
-    puts 'in turn_on_percent'
-    click_on(GRAPH_TILE)
-    click_on(GRAPH_RULER)
-    wait_for{ displayed?(GRAPH_PERCENT)}
-    sleep(1)
-    click_on(GRAPH_PERCENT)
-    puts "clicked on graph percent #{GRAPH_PERCENT}"
+    click_on(element)
+    # verify state
+    el = find(element)
+    puts "#{element} state is #{el.selected?.inspect}"
   end
 
   def show_percent_column()
