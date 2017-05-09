@@ -163,47 +163,5 @@ end
 `mkdir -p ~/Sites/plot_ruler_results/test_screenshots`
 `mv ~/Downloads/graph_*.png ~/Sites/plot_ruler_results/test_screenshots/`
 
-# size_compare_result = codap.compare_file_sizes(staging_screenshots_dir, expected_screenshots_dir)
-# puts ("#{size_compare_result}")
 
-# codap.drag_attribute('ACAT2', 'x') # Univariate categorical axis
-# sleep(2)
-# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-# sleep(2)
-# codap.take_screenshot('ACAT2x', checkbox_texts)
-# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-#
-# codap.drag_attribute('BCAT1','y') #cat v cat
-# sleep(2)
-# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-# sleep(2)
-# codap.take_screenshot('BCAT1y', checkbox_texts)
-# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-#
-# codap.drag_attribute('ANUM1','x') #num v cat
-# sleep(2)
-# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-# codap.take_screenshot('ANUM1x', checkbox_texts)
-# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-#
-# codap.drag_attribute('ANUM2','y') #num v num
-# sleep(2)
-# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-# codap.take_screenshot('ANUM2y', checkbox_texts)
-# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-# codap.take_screenshot('ANum2y_checkboxoff',checkbox_texts)
-#
-# #Close graph to be able to just have one text field for plot value formula
-# title_bar = codap.find(GRAPH_TITLE_BAR)
-# codap.close_component(title_bar)
-#
-# codap.click_button('graph')
-# sleep(2)
-# codap.drag_attribute('ANUM1','x') #Univariate numerical axis
-# sleep(2)
-# checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
-# codap.take_screenshot('ANUM1x', checkbox_texts)
-# checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
-#
-# sleep(5)
 
