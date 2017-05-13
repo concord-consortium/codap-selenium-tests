@@ -12,7 +12,6 @@ def openMiscLinks(screenshot_dir)
 
   begin
     urls = File.readlines('CODAPDocLinks.txt')
-    puts urls
     while urls.length>0
       url = urls[0]
       # File.open('CODAPDocLinks.txt').each do |url|
@@ -126,10 +125,10 @@ def openSampleDocLinks(screenshot_dir)
   codap.teardown
 end
 
-# openMiscLinks(test_screenshot_dir)
+openMiscLinks(test_screenshot_dir)
 openPluginLinks(test_screenshot_dir)
-# openSampleDocLinks(test_screenshot_dir)
+openSampleDocLinks(test_screenshot_dir)
 
-# test_helper = CODAPObject.new()
-# compare_size_result = test_helper.compare_file_sizes(test_screenshot_dir,expected_screenshot_dir)
-# puts "#{compare_size_result}"
+test_helper = CODAPObject.new()
+compare_size_result = test_helper.compare_file_sizes(test_screenshot_dir,expected_screenshot_dir)
+puts "#{compare_size_result}"
