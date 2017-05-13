@@ -277,13 +277,10 @@ class CodapBaseObject
     num_files_a = dir_a_files.length
     num_files_b = dir_b_files.length
 
-    puts "test_images_files are #{dir_a_files}. num_files is #{num_files_a}"
-    puts "expected_images_files are #{dir_b_files}. num_files is #{num_files_b}"
-
     while dir_a_files.length > 0
       file = dir_a_files[0]
-      puts "File is #{file}. File size test is #{File.size("#{dir_a}/#{file}")}"
-      puts "Expected file is #{dir_b}/#{file}. File size expected is #{File.size("#{dir_b}/#{file}")}"
+      # puts "File is #{file}. File size test is #{File.size("#{dir_a}/#{file}")}"
+      # puts "Expected file is #{dir_b}/#{file}. File size expected is #{File.size("#{dir_b}/#{file}")}"
 
       if File.size("#{dir_a}/#{file}") != File.size("#{dir_b}/#{file}")
         if file!= '.'
