@@ -235,6 +235,11 @@ class CODAPObject < CodapBaseObject
     end
   end
 
+  def close_component(locator)
+    puts "In close_component"
+    @@driver.action.move_to(locator).move_by(137,0).click.perform
+  end
+
 end
 
 

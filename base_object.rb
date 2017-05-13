@@ -117,6 +117,10 @@ class CodapBaseObject
     find(locator).click
   end
 
+  def hover(locator)
+    @@driver.action.move_to(locator).perform
+  end
+
   def displayed?(locator)
     @@driver.find_element(locator).displayed?
     true
@@ -272,6 +276,7 @@ class CodapBaseObject
 
   def compare_file_sizes(dir_a, dir_b)
     file_mismatch = []
+    missing_expected_files = []
     dir_a_files = Dir.entries(dir_a)
     dir_b_files = Dir.entries(dir_b)
     num_files_a = dir_a_files.length
@@ -281,20 +286,23 @@ class CodapBaseObject
       file = dir_a_files[0]
       # puts "File is #{file}. File size test is #{File.size("#{dir_a}/#{file}")}"
       # puts "Expected file is #{dir_b}/#{file}. File size expected is #{File.size("#{dir_b}/#{file}")}"
-
+    if File.exists?("#{dir_b}/#{file}")
       if File.size("#{dir_a}/#{file}") != File.size("#{dir_b}/#{file}")
         if file!= '.'
           file_mismatch.push(file)
         end
       end
+    else
+      missing_expected_files.push(file)
+    end
       dir_a_files.shift
       puts ("After shift dir_a_files is #{dir_a_files}")
     end
 
-    if file_mismatch.length == 0
+    if file_mismatch.length == 0 && missing_expected_files.length == 0
       return "ALL FILES MATCH"
     else
-      return "These files do not match #{file_mismatch}"
+      return "These files do not match #{file_mismatch}. These expected files are missing #{missing_expected_files}"
     end
   end
 

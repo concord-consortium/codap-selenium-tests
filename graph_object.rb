@@ -60,7 +60,7 @@ module GraphObject
     # click_on(AXIS_MENU_REMOVE)
   end
 
-  def take_screenshot(attribute,location,other_attr="", other_axis="")
+  def take_screenshot(attribute,location,other_attr="", other_axis="", checkboxes=[])
     puts "in graph screenshot"
     if (!displayed?(GRAPH_SCREENSHOT))
       click_on(GRAPH_TILE)
@@ -71,7 +71,7 @@ module GraphObject
     wait_for{ displayed?(GRAPH_SCREENSHOT_DIALOG_TITLE) }
      screenshot_popup = find(GRAPH_SCREENSHOT_INPUT_FILENAME)
      puts "Found screenshot_popup at #{screenshot_popup}"
-     screenshot_filename = "graph_#{attribute}_on_#{location}_#{other_attr}_on_#{other_axis}" #add a specific folder to save snapshots to
+     screenshot_filename = "graph_#{attribute}_on_#{location}_#{other_attr}_on_#{other_axis}_with_#{checkboxes}" #add a specific folder to save snapshots to
      screenshot_popup.clear
      screenshot_popup.send_keys(screenshot_filename)
     sleep(3)
