@@ -7,14 +7,14 @@ class CodapBaseObject
   SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
   SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
   SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
-  GRAPH_TILE = {css: '.graph-view'}
-  GRAPH_H_AXIS = {css: '.h-axis'}
-  GRAPH_V_AXIS = {css: '.v-axis'}
-  GRAPH_V2_AXIS = {css: '.v2-axis'}
-  GRAPH_PLOT_VIEW = {css: '.plot-view'}
-  GRAPH_LEGEND = {css: '.legend-view'}
+  GRAPH_TILE = {css: '.dg-graph-view'}
+  GRAPH_H_AXIS = {css: '.dg-h-axis'}
+  GRAPH_V_AXIS = {css: '.dg-v-axis'}
+  GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
+  GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
+  GRAPH_LEGEND = {css: '.dg-legend-view'}
   MAP_VIEW = {css: '.leaflet-map-pane'}
-  MAP_lEGEND = {css: '.legend-view'}
+  MAP_lEGEND = {css: '.dg-legend-view'}
   IFRAME = {tag_name: 'iframe'}
 
   def setup_one(browser)
