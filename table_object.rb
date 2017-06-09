@@ -3,13 +3,13 @@ module TableObject
   CASE_TABLE = {css: '.dg-case-table'}
   CASE_TABLE_TITLE = {css: '.dg-case-table-title'}
   ATTRIBUTE_NAME = {css: '.slick-header-column'}
-  TABLE_TRASH = {css:  '.table-trash'}
+  TABLE_TRASH = {css:  '.dg-table-trash'}
   TABLE_DROP_TARGET = {css: '.dg-table-drop-target'}
-  TABLE_ATTRIBUTES = {css: '.inspector-palette> .table-attributes'} #Tool palette icon for creating new attributes and export cases
+  TABLE_ATTRIBUTES = {css: '.dg-inspector-palette> .dg-table-attributes'} #Tool palette icon for creating new attributes and export cases
 
   # Need to add menu items for trash and attributes menu
 
-  TABLE_ATTRIBUTES_MENU = {css:  '.attributes-popup'}
+  TABLE_ATTRIBUTES_MENU = {css:  '.dg-attributes-popup'}
   TABLE_SELECT_ALL = {css: '.sc-menu-item > a:nth-child(1) > span:nth-child(1)'}
   # TABLE__DELETE_SELECTED
   # TABLE_DELETE_UNSELECTED
