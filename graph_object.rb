@@ -1,8 +1,8 @@
 module GraphObject
 
   GRAPH_TILE = {css: '.dg-graph-view'}
-  GRAPH_H_AXIS = {css: '.dg-h-axis>svg>text.dg-axis-label'}
-  GRAPH_V_AXIS = {css: '.dg-v-axis>svg>text.dg-axis-label'}
+  GRAPH_H_AXIS = {css: '.dg-axis-view.h-axis'}
+  GRAPH_V_AXIS = {css: '.dg-axis-view.v-axis'}
   GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
   GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
   GRAPH_LEGEND = {css: '.dg-legend-view>svg>text.dg-axis-label'}
@@ -12,7 +12,7 @@ module GraphObject
   GRAPH_TRASH = {css: '.dg-display-trash'}
   GRAPH_RULER = {css: '.dg-display-values'}
   GRAPH_STYLES = {css: '.dg-display-styles'}
-  GRAPH_SCREENSHOT = {css: '.dg-display-camera'}
+  GRAPH_SCREENSHOT = {css: '.display-camera'}
   GRAPH_INSPECTOR_PICKER_PANEL = {css: '.dg-inspector-picker'}
   GRAPH_COUNT = {css: '.dg-graph-count-check'}
   GRAPH_PERCENT = {css: '.dg-graph-percent-check'}
