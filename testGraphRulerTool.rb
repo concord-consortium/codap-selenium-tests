@@ -35,8 +35,8 @@ CHECKBOX_LOCATOR = {css: '.checkbox'}
 INPUT_FIELD_LOCATOR = {css: "input.field"}
 LABEL_LOCATOR = {xpath: '//input[contains(@class,"field")]/ancestor::div/div[contains(@class, "sc-label-view")]'}
 GRAPH_CLOSE = {css: ".dg-close-view"}
-GRAPH_TITLE_BAR = {css: '.titlebar-selected'}
-GRAPH_TILE = {css: '.graph-view'}
+GRAPH_TITLE_BAR = {css: '.dg-titlebar-selected'}
+GRAPH_TILE = {css: '.dg-graph-view'}
 
 
 def click_on_checkboxes(kcodap, state)

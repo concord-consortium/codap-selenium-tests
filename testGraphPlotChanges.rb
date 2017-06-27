@@ -2,7 +2,7 @@
 
 require './codap_object'
 
-GRAPH_TILE = {css: '.graph-view'}
+GRAPH_TILE = {css: '.dg-graph-view'}
 "#{Dir.home}/Sites/doc_screenshot_results/test_screenshots/"
 expected_screenshots_dir = "#{Dir.home}/Sites/plot_transition_results/expected_screenshots/"
 staging_screenshots_dir = "#{Dir.home}/Sites/plot_transition_results/test_screenshots/"
