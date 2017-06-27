@@ -7,11 +7,11 @@ module GraphObject
   GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
   GRAPH_LEGEND = {css: '.dg-legend-view>svg>text.dg-axis-label'}
   AXIS_MENU_REMOVE = {xpath: '//div/a[contains(@class,"menu-item")]/span[contains(text(),"Remove")]'}
-  GRAPH_RESCALE = {css: '.dg-display-rescale'}
-  GRAPH_HIDESHOW = {css: '.dg-display-hideshow'}
-  GRAPH_TRASH = {css: '.dg-display-trash'}
-  GRAPH_RULER = {css: '.dg-display-values'}
-  GRAPH_STYLES = {css: '.dg-display-styles'}
+  GRAPH_RESCALE = {css: '.display-rescale'}
+  GRAPH_HIDESHOW = {css: '.display-hideshow'}
+  GRAPH_TRASH = {css: '.display-trash'}
+  GRAPH_RULER = {css: '.display-values'}
+  GRAPH_STYLES = {css: '.display-styles'}
   GRAPH_SCREENSHOT = {css: '.display-camera'}
   GRAPH_INSPECTOR_PICKER_PANEL = {css: '.dg-inspector-picker'}
   GRAPH_COUNT = {css: '.dg-graph-count-check'}
