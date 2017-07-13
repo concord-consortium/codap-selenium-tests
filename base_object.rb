@@ -8,8 +8,8 @@ class CodapBaseObject
   SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
   SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
   GRAPH_TILE = {css: '.dg-graph-view'}
-  GRAPH_H_AXIS = {css: '.dg-axis-view.h-axis'}
-  GRAPH_V_AXIS = {css: '.dg-axis-view.v-axis'}
+  GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
+  GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
   GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
   GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
   GRAPH_LEGEND = {css: '.dg-legend-view'}
