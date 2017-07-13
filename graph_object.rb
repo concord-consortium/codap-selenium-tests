@@ -1,18 +1,18 @@
 module GraphObject
 
   GRAPH_TILE = {css: '.dg-graph-view'}
-  GRAPH_H_AXIS = {css: '.dg-axis-view.h-axis'}
-  GRAPH_V_AXIS = {css: '.dg-axis-view.v-axis'}
+  GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
+  GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
   GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
   GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
   GRAPH_LEGEND = {css: '.dg-legend-view>svg>text.dg-axis-label'}
   AXIS_MENU_REMOVE = {xpath: '//div/a[contains(@class,"menu-item")]/span[contains(text(),"Remove")]'}
-  GRAPH_RESCALE = {css: '.display-rescale'}
-  GRAPH_HIDESHOW = {css: '.display-hideshow'}
-  GRAPH_TRASH = {css: '.display-trash'}
-  GRAPH_RULER = {css: '.display-values'}
-  GRAPH_STYLES = {css: '.display-styles'}
-  GRAPH_SCREENSHOT = {css: '.display-camera'}
+  GRAPH_RESCALE = {css: '.dg-display-rescale'}
+  GRAPH_HIDESHOW = {css: '.dg-display-hideshow'}
+  GRAPH_TRASH = {css: '.dg-display-trash'}
+  GRAPH_RULER = {css: '.dg-display-values'}
+  GRAPH_STYLES = {css: '.dg-display-styles'}
+  GRAPH_SCREENSHOT = {css: '.dg-display-camera'}
   GRAPH_INSPECTOR_PICKER_PANEL = {css: '.dg-inspector-picker'}
   GRAPH_COUNT = {css: '.dg-graph-count-check'}
   GRAPH_PERCENT = {css: '.dg-graph-percent-check'}
