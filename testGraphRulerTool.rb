@@ -91,6 +91,9 @@ def click_on_checkboxes(kcodap, state)
 end
 
 begin
+  attempt = 0
+  max_attempts = 25
+  
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
   url = "https://codap.concord.org/releases/staging/"
