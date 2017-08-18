@@ -98,8 +98,8 @@ begin
 
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
-  # url = "https://codap.concord.org/releases/staging/"
-  url = "localhost:4020/dg"
+   url = "https://codap.concord.org/releases/staging/"
+ # url = "localhost:4020/dg"
   open_doc = '3TableGroups.json'
   file = File.absolute_path(File.join(Dir.pwd, open_doc))
   puts "file is #{file}, open_doc is #{open_doc}"
