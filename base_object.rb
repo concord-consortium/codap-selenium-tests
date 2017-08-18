@@ -98,6 +98,10 @@ class CodapBaseObject
     expect(@@driver.title).to include(title)
   end
 
+  def get_page_title
+    return @@driver.title
+  end
+
   def find(locator)
     @@driver.find_element locator
   end
