@@ -32,12 +32,32 @@ def write_result_file(doc_name)
 end
 
 CHECKBOX_LOCATOR = {css: '.checkbox'}
-INPUT_FIELD_LOCATOR = {css: "input.field"}
+FORMULA_DIALOG ={css: '.dg-formula-dialog'}
+INPUT_FIELD_LOCATOR = {xpath: "//div[contains(@class,'dg-formula-dialog-input-field')]/div/div/div/textarea"}
+FORMULA_DIALOG_APPLY_BUTTON = {css: '.dg-formula-dialog-apply'}
 LABEL_LOCATOR = {xpath: '//input[contains(@class,"field")]/ancestor::div/div[contains(@class, "sc-label-view")]'}
 GRAPH_CLOSE = {css: ".dg-close-view"}
 GRAPH_TITLE_BAR = {css: '.dg-titlebar-selected'}
 GRAPH_TILE = {css: '.dg-graph-view'}
 
+
+def input_formula(type, kcodap)
+  sleep(1)
+  formula_dialog = kcodap.find(FORMULA_DIALOG)
+  puts "Found formula dialog at #{formula_dialog}"
+  formula_dialog.click
+  input_field = kcodap.find(INPUT_FIELD_LOCATOR)
+  puts "Found input field  at #{input_field}"
+  if type=="Plotted Value"
+    puts "sending keys"
+    kcodap.type(INPUT_FIELD_LOCATOR,'10')
+  end
+  if type == 'Plotted Function'
+    kcodap.type(INPUT_FIELD_LOCATOR,'x*x/10')
+  end
+  puts "applying formula"
+  kcodap.click_on(FORMULA_DIALOG_APPLY_BUTTON)
+end
 
 def click_on_checkboxes(kcodap, state)
 #Turn on checkboxes
@@ -54,38 +74,20 @@ def click_on_checkboxes(kcodap, state)
   sleep(3)
   checkbox_list.each do |checkbox|
     # puts checkbox.text
-    if checkbox.text == 'Plotted Value'
-      plotted_value = true
+    checkbox.click
+    if state=="on"
+      if checkbox.text == 'Plotted Value'
+        input_formula("Plotted Value", kcodap)
+      end
+      if checkbox.text == 'Plotted Function'
+        input_formula("Plotted Function", kcodap)
+      end
     end
-    if checkbox.text == 'Plotted Function'
-      plotted_function = true
-    end
-
-    if plotted_value && plotted_function
-      $close_graph = true;
-    end
+    # if plotted_value && plotted_function
+    #   $close_graph = true;
+    # end
     checkbox_texts +=checkbox.text
-    (checkbox).click
     i -=1
-  end
-  if state == 'on'
-    index=0
-    input_field_list = kcodap.find_all(INPUT_FIELD_LOCATOR)
-    label_list = kcodap.find_all(LABEL_LOCATOR)
-    while i<input_field_list.length
-        # label_list.each do |label|
-          puts "label is #{label_list[i].text}"
-          input_field_list[i].clear
-          case (label_list[i].text)
-            when "value ="
-              input_field_list[i].send_keys('10')
-            when "y ="
-              input_field_list[i].send_keys('x*x/10')
-          end
-        # end
-        i +=1
-
-    end
   end
   return checkbox_texts
 end
@@ -93,10 +95,11 @@ end
 begin
   attempt = 0
   max_attempts = 25
-  
+
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
-  url = "https://codap.concord.org/releases/staging/"
+  # url = "https://codap.concord.org/releases/staging/"
+  url = "localhost:4020/dg"
   open_doc = '3TableGroups.json'
   file = File.absolute_path(File.join(Dir.pwd, open_doc))
   puts "file is #{file}, open_doc is #{open_doc}"
@@ -150,7 +153,9 @@ begin
       $close_graph=false
     end
   end
+
   codap.teardown
+
 
 rescue => e
   puts '::ERROR::'
