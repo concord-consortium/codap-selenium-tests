@@ -41,25 +41,34 @@ GRAPH_TITLE_BAR = {css: '.dg-titlebar-selected'}
 GRAPH_TILE = {css: '.dg-graph-view'}
 
 
-def input_formula(type, kcodap)
-  sleep(1)
-  formula_dialog = kcodap.find(FORMULA_DIALOG)
-  puts "Found formula dialog at #{formula_dialog}"
-  formula_dialog.click
-  input_field = kcodap.find(INPUT_FIELD_LOCATOR)
-  puts "Found input field  at #{input_field}"
-  if type=="Plotted Value"
-    puts "sending keys"
-    kcodap.type(INPUT_FIELD_LOCATOR,'10')
+def first_time(counter)
+  if counter<=0
+    return true
+  else
+    return false
   end
-  if type == 'Plotted Function'
-    kcodap.type(INPUT_FIELD_LOCATOR,'x*x/10')
-  end
-  puts "applying formula"
-  kcodap.click_on(FORMULA_DIALOG_APPLY_BUTTON)
 end
 
-def click_on_checkboxes(kcodap, state)
+def input_formula(type, kcodap)
+  sleep(1)
+    formula_dialog = kcodap.find(FORMULA_DIALOG)
+    puts "Found formula dialog at #{formula_dialog}"
+    formula_dialog.click
+    input_field = kcodap.find(INPUT_FIELD_LOCATOR)
+    puts "Found input field  at #{input_field}"
+    if type=="Plotted Value"
+      puts "sending keys"
+      kcodap.type(INPUT_FIELD_LOCATOR,'10')
+    end
+    if type == 'Plotted Function'
+      kcodap.type(INPUT_FIELD_LOCATOR,'x*x/10')
+    end
+    puts "applying formula"
+    kcodap.click_on(FORMULA_DIALOG_APPLY_BUTTON)
+
+end
+
+def click_on_checkboxes(kcodap, state, pvcounter, pfcounter)
 #Turn on checkboxes
   plotted_value = false
   plotted_function = false
@@ -77,15 +86,19 @@ def click_on_checkboxes(kcodap, state)
     checkbox.click
     if state=="on"
       if checkbox.text == 'Plotted Value'
-        input_formula("Plotted Value", kcodap)
+          if first_time(pvcounter)
+            input_formula("Plotted Value", kcodap)
+            pvcounter+=1
+          end
       end
       if checkbox.text == 'Plotted Function'
-        input_formula("Plotted Function", kcodap)
+        if first_time(pfcounter)
+          input_formula("Plotted Function", kcodap)
+          pfcounter+=1
+        end
       end
     end
-    # if plotted_value && plotted_function
-    #   $close_graph = true;
-    # end
+
     checkbox_texts +=checkbox.text
     i -=1
   end
@@ -98,8 +111,8 @@ begin
 
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
-  # url = "https://codap.concord.org/releases/staging/"
-  url = "localhost:4020/dg"
+  url = "https://codap.concord.org/releases/staging/"
+  #url = "localhost:4020/dg"
   open_doc = '3TableGroups.json'
   file = File.absolute_path(File.join(Dir.pwd, open_doc))
   puts "file is #{file}, open_doc is #{open_doc}"
@@ -108,7 +121,7 @@ begin
                     {:attribute=>'BCAT1', :axis=>'x'},
                     {:attribute=>'ANUM1', :axis=>'x'},
                     {:attribute=>'BNUM1', :axis=>'y'},
-                    {:attribute=>'BNUM1', :axis=>'x'},
+                    {:attribute=>'BCAT1', :axis=>'x'},
                     {:attribute=>'CCAT1', :axis=>'y'},
                     {:attribute=>'CNUM1', :axis=>'x'},
                     {:attribute=>'BNUM1', :axis=>'y'},
@@ -132,31 +145,31 @@ begin
   codap.wait_for{codap.displayed? (GRAPH_TILE) }
 
 #Change axes by attribute, axis
+  pvcounter=0 # Boolean for checking to see if first time plotted value is checked
+  pfcounter=0 # Boolean for checking to see if first time plotted function is checked
+
   array_of_plots.each do |hash|
     sleep(2)
     codap.drag_attribute(hash[:attribute], hash[:axis])
     sleep(2)
-    checkbox_texts = click_on_checkboxes(codap,'on') #Turn on checkboxes
+    checkbox_texts = click_on_checkboxes(codap,'on', pvcounter, pfcounter) #Turn on checkboxes
     sleep(2)
     codap.write_log_file('./', open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis], prev_attr, prev_axis, checkbox_texts)
-    checkbox_texts = click_on_checkboxes(codap,'off') #Turn off checkboxes
+    checkbox_texts = click_on_checkboxes(codap,'off', pvcounter, pfcounter) #Turn off checkboxes
     prev_attr = hash[:attribute]
     prev_axis = hash[:axis]
 
     #After having both value and function plotted on graph, two input fields are present in DOM even if only one input field is visible. So if both value and function have been plotted, we close the existing graph and open a new one.
-    if $close_graph==true
-      title_bar = codap.find(GRAPH_TITLE_BAR)
-      codap.close_component(title_bar)
-      codap.click_button('graph')
-      codap.wait_for{codap.displayed? (GRAPH_TILE) }
-      $close_graph=false
-    end
+    # if $close_graph==true
+    #   title_bar = codap.find(GRAPH_TITLE_BAR)
+    #   codap.close_component(title_bar)
+    #   codap.click_button('graph')
+    #   codap.wait_for{codap.displayed? (GRAPH_TILE) }
+    #   $close_graph=false
+    # end
+
   end
-
-  codap.teardown
-
-
 rescue => e
   puts '::ERROR::'
   puts e
@@ -165,6 +178,10 @@ rescue => e
     puts "RETRYING (#{attempt})..."
     retry
   end
+
+
+  codap.teardown
+
 end
 
 `rm -rf ~/Sites/plot_ruler_results/test_screenshots`
