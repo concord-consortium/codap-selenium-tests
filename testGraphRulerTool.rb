@@ -41,6 +41,7 @@ GRAPH_TITLE_BAR = {css: '.dg-titlebar-selected'}
 GRAPH_TILE = {css: '.dg-graph-view'}
 
 
+# Not sure if this actually does anything
 def first_time(counter)
   if counter<=0
     return true
