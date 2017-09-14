@@ -48,6 +48,18 @@ class CODAPObject < CodapBaseObject
   TILE_MENU_ITEM = {css: 'a.menu-item'}
   HELP_PAGE_TITLE = {id: '#page-title'}
   DISPLAY_WEBSITE = {id: 'dg-optionMenuItem-view_webpage'}
+  SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
+  SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
+  SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
+  GRAPH_TILE = {css: '.dg-graph-view'}
+  GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
+  GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
+  GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
+  GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
+  GRAPH_LEGEND = {css: '.dg-legend-view'}
+  MAP_VIEW = {css: '.leaflet-map-pane'}
+  MAP_lEGEND = {css: '.dg-legend-view'}
+  IFRAME = {tag_name: 'iframe'}
 
   CONCORD_LOGO = {id: 'brand'}
 
@@ -142,6 +154,24 @@ class CODAPObject < CodapBaseObject
   def click_toolshelf
     #@codap_base.click_on(TOOLSHELF_BACK)
     @@driver.find_element(TOOLSHELF_BACK).click
+  end
+
+  def drag_attribute(source_element, target_element)
+    #drag_scroller
+    #drag_scroller_right
+    source_loc = get_column_header(source_element)
+    case (target_element)
+      when 'x'
+        target_loc = find(GRAPH_H_AXIS)
+      when 'y'
+        target_loc = find(GRAPH_V_AXIS)
+      when 'graph_legend'
+        target_loc = find(GRAPH_PLOT_VIEW)
+        wait_for { displayed?(GRAPH_LEGEND)}
+      when 'map_legend'
+        target_loc = find(MAP_LEGEND)
+    end
+    @@driver.action.drag_and_drop(source_loc, target_loc).perform
   end
 
   def goto_table

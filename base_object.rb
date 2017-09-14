@@ -4,18 +4,6 @@ include RSpec::Matchers
 require '~/development/codap-selenium-tests/LogReporter'
 
 class CodapBaseObject
-  SINGLE_TEXT_DIALOG_TEXTFIELD = {css: '.dg-single-text-dialog-textfield'}
-  SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
-  SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
-  GRAPH_TILE = {css: '.dg-graph-view'}
-  GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
-  GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
-  GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
-  GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
-  GRAPH_LEGEND = {css: '.dg-legend-view'}
-  MAP_VIEW = {css: '.leaflet-map-pane'}
-  MAP_lEGEND = {css: '.dg-legend-view'}
-  IFRAME = {tag_name: 'iframe'}
 
   def setup_one(browser)
     @@driver = Selenium::WebDriver.for browser
@@ -25,46 +13,46 @@ class CodapBaseObject
       exit
   end
 
-  def setup_caps(platform, browser)
-    puts "In setup_caps #{platform}, #{browser}"
-    caps = Selenium::WebDriver::Remote::Capabilities.new
-    if browser == "iPad"
-      caps['appiumVersion'] = '1.6.3'
-      caps['deviceName'] = 'iPad Simulator'
-      caps['platformName'] = 'iOS'
-      caps['platformVersion'] = '9.3'
-      caps['deviceOrientation'] = 'landscape'
-      caps['browserName'] = 'Safari'
-      caps['rotatable'] = true
-    elsif browser == "Android" #Need an Android Emulator that runs Chrome instead of generic Browser
-      caps['appiumVersion'] = '1.6.3'
-      caps['platformName'] = 'Android'
-      caps['platformVersion'] = '6.0'
-      caps['browserName'] ='Chrome'
-      caps['deviceName'] = 'Android Emulator'
-      caps['deviceOrientation'] = 'landscape'
-      caps['nativeWebScreenshot'] = true
-      caps['rotatable'] = true
-    else
-      caps['platform'] = platform
-      caps['browserName'] = browser
-      caps['logging_prefs'] = {:browser => "ALL"}
-    end
-    puts "Caps are #{caps}"
-    return caps
-  end
-
-  #does not work for tests that need to open a CODAP file
-  def setup_remote(caps)
-    puts "in setup_remote #{caps}"
-    @@driver = Selenium::WebDriver.for(:remote,
-                                       :url => "http://eireland:b64ffb1e-a71d-40db-a73c-67a8b43620b6@ondemand.saucelabs.com:80/wd/hub",
-                                       :desired_capabilities => caps)
-    rescue Exception => e
-      puts e.message
-      puts "Could not start driver #{@@driver}"
-      exit
-  end
+  # def setup_caps(platform, browser)
+  #   puts "In setup_caps #{platform}, #{browser}"
+  #   caps = Selenium::WebDriver::Remote::Capabilities.new
+  #   if browser == "iPad"
+  #     caps['appiumVersion'] = '1.6.3'
+  #     caps['deviceName'] = 'iPad Simulator'
+  #     caps['platformName'] = 'iOS'
+  #     caps['platformVersion'] = '9.3'
+  #     caps['deviceOrientation'] = 'landscape'
+  #     caps['browserName'] = 'Safari'
+  #     caps['rotatable'] = true
+  #   elsif browser == "Android" #Need an Android Emulator that runs Chrome instead of generic Browser
+  #     caps['appiumVersion'] = '1.6.3'
+  #     caps['platformName'] = 'Android'
+  #     caps['platformVersion'] = '6.0'
+  #     caps['browserName'] ='Chrome'
+  #     caps['deviceName'] = 'Android Emulator'
+  #     caps['deviceOrientation'] = 'landscape'
+  #     caps['nativeWebScreenshot'] = true
+  #     caps['rotatable'] = true
+  #   else
+  #     caps['platform'] = platform
+  #     caps['browserName'] = browser
+  #     caps['logging_prefs'] = {:browser => "ALL"}
+  #   end
+  #   puts "Caps are #{caps}"
+  #   return caps
+  # end
+  #
+  # #does not work for tests that need to open a CODAP file
+  # def setup_remote(caps)
+  #   puts "in setup_remote #{caps}"
+  #   @@driver = Selenium::WebDriver.for(:remote,
+  #                                      :url => "http://eireland:b64ffb1e-a71d-40db-a73c-67a8b43620b6@ondemand.saucelabs.com:80/wd/hub",
+  #                                      :desired_capabilities => caps)
+  #   rescue Exception => e
+  #     puts e.message
+  #     puts "Could not start driver #{@@driver}"
+  #     exit
+  # end
   #
   # def setup_grid(caps)
   #   puts "in setup_remote #{caps}"
@@ -87,8 +75,7 @@ class CodapBaseObject
     @@driver.manage.window.size = target_size
   end
 
-  def visit(url)
-    puts "IN VISIT"
+  def visit(url='/')
     @@driver.get(url)
     manage_window_size
   end
@@ -120,6 +107,19 @@ class CodapBaseObject
 
   def click_on(locator)
     find(locator).click
+  end
+
+  def click_with_offset(locator,xoffset, yoffset)
+    puts "in click with offset"
+    element = find(locator)
+    @@driver.action.move_to(element, xoffset, yoffset).click.perform
+  end
+
+  def click_hold(locator,duration)
+    element = @@driver.find(locator)
+    @@driver.action.click_and_hold(element).perform
+    sleep(duration)
+    @@driver.action.release(element).perform
   end
 
   def hover(locator)
@@ -188,14 +188,22 @@ class CodapBaseObject
     @@driver.action.send_keys(locator, input).perform
   end
 
-
   def move_to(locator)
     @@driver.action.move_to(locator).perform
   end
 
-  def switch_to_dialog(dialog)
-    puts "In switch to dialog"
+  def switch_to_main()
+    puts "in switch to main"
+    @@driver.switch_to.default_content()
+  end
+
+  def switch_to_alert()
+    puts "In switch to alert"
     @@driver.switch_to.alert()
+  end
+
+  def switch_to_modal()
+    @@driver.switch_to.active_element()
   end
 
   def switch_to_iframe(locator)
@@ -210,11 +218,6 @@ class CodapBaseObject
   def switch_to_tab(handle)
     puts "in switch to tab"
     @@driver.switch_to.window(handle)
-  end
-
-  def switch_to_main()
-    puts "in switch to main"
-    @@driver.switch_to.default_content
   end
 
   def switch_to_first_tab()
@@ -238,12 +241,10 @@ class CodapBaseObject
     @@driver.close
   end
 
-  # def select_menu_item(menu, menu_item)
-  #   puts 'in select_menu_item'
-  #   find(menu)
-  #   wait_for {displayed? (menu_item)}
-  #   click_on(menu_item)
-  # end
+
+  def switch_to_last_window()
+    @@driver.switch_to.window(@@driver.window_handles.last)
+  end
 
   def select_menu_item(menu_item_text)
     puts 'in select_menu_item'
@@ -253,21 +254,28 @@ class CodapBaseObject
   end
 
   def drag_attribute(source_element, target_element)
-    #drag_scroller
-    #drag_scroller_right
-    source_loc = get_column_header(source_element)
-    case (target_element)
-      when 'x'
-        target_loc = find(GRAPH_H_AXIS)
-      when 'y'
-        target_loc = find(GRAPH_V_AXIS)
-      when 'graph_legend'
-        target_loc = find(GRAPH_PLOT_VIEW)
-        wait_for { displayed?(GRAPH_LEGEND)}
-      when 'map_legend'
-        target_loc = find(MAP_LEGEND)
-    end
+    source_loc = find(source_element)
+    target_loc = find(target_element)
     @@driver.action.drag_and_drop(source_loc, target_loc).perform
+  end
+
+  def chrome_print(type)
+    print_save_button =  {css: '#print-header > div > button.print.default'}
+    change_destination = {css: '#destination-settings > div.right-column > button'}
+    pdf = {xpath: '//ul/li/span/span[contains(@title,"Save as PDF")]'}
+
+    case (type)
+      when "pdf"
+        destination = pdf
+    end
+    switch_to_last_window
+    click_on(change_destination)
+    sleep(2)
+    click_on(destination)
+    click_on(print_save_button)
+    sleep(1)
+    keys = 'return'
+    system('osascript -e \'tell application "System Events" to keystroke ' + keys + "'")
   end
 
   def compare_images(path_a, path_b)
@@ -277,7 +285,6 @@ class CodapBaseObject
     a.resize!(b.columns, b.rows) if a.columns != b.columns || a.rows != b.rows
     a.compare_channel(b, Magick::RootMeanSquaredErrorMetric)[1] * 100
   end
-
 
   def compare_file_sizes(dir_a, dir_b)
     file_mismatch = []
@@ -291,15 +298,15 @@ class CodapBaseObject
       file = dir_a_files[0]
       # puts "File is #{file}. File size test is #{File.size("#{dir_a}/#{file}")}"
       # puts "Expected file is #{dir_b}/#{file}. File size expected is #{File.size("#{dir_b}/#{file}")}"
-    if File.exists?("#{dir_b}/#{file}")
-      if File.size("#{dir_a}/#{file}") != File.size("#{dir_b}/#{file}")
-        if file!= '.'
-          file_mismatch.push(file)
+      if File.exists?("#{dir_b}/#{file}")
+        if File.size("#{dir_a}/#{file}") != File.size("#{dir_b}/#{file}")
+          if file!= '.'
+            file_mismatch.push(file)
+          end
         end
+      else
+        missing_expected_files.push(file)
       end
-    else
-      missing_expected_files.push(file)
-    end
       dir_a_files.shift
       puts ("After shift dir_a_files is #{dir_a_files}")
     end
