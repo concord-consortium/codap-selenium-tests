@@ -254,6 +254,20 @@ class CodapBaseObject
     click_on(menu_item)
   end
 
+  def select_from_dropdown(dropdown, dropdown_locator, item)
+    puts "In select from dropdown"
+    dropdown_loc = find(dropdown)
+    puts "Found dropdown_loc at #{dropdown_loc}"
+    click_on(dropdown)
+    sleep(3)
+    list_item = {xpath: "#{dropdown_locator}ul/li/a[contains(text(),'#{item}')]"}#templatePulldown>span>ul>li
+    click_on(list_item)
+  end
+
+  def get_link(page_locator)
+    return page_locator.attribute('href')
+  end
+
   def drag_attribute(source_element, target_element)
     source_loc = find(source_element)
     target_loc = find(target_element)
