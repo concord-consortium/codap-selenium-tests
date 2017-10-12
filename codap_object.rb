@@ -23,6 +23,7 @@ class CODAPObject < CodapBaseObject
   SLIDER_BUTTON = {css: '.dg-slider-button' }
   CALC_BUTTON = {css: '.dg-calc-button' }
   TEXT_BUTTON = {css: '.dg-text-button' }
+  PLUGIN_BUTTON = {css: '.dg-plugin-button'}
   UNDO_BUTTON = {css: '.dg-undo-button' }
   REDO_BUTTON = {css: '.dg-redo-button' }
   TILE_LIST_BUTTON ={css: '.dg-tilelist-button' }
@@ -99,6 +100,8 @@ class CODAPObject < CodapBaseObject
         element = CALC_BUTTON
       when 'text'
         element = TEXT_BUTTON
+      when 'plugin'
+        element = PLUGIN_BUTTON
       when 'tilelist'
         element = TILE_LIST_BUTTON
       when 'option'
