@@ -106,9 +106,6 @@ def click_on_checkboxes(kcodap, state, pvcounter, pfcounter)
   return checkbox_texts
 end
 
-begin
-  attempt = 0
-  max_attempts = 25
 
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
@@ -149,7 +146,11 @@ begin
   pvcounter=0 # Boolean for checking to see if first time plotted value is checked
   pfcounter=0 # Boolean for checking to see if first time plotted function is checked
 
-  array_of_plots.each do |hash|
+array_of_plots.each do |hash|
+  begin
+    attempt = 0
+    max_attempts = 5
+
     sleep(2)
     codap.drag_attribute(hash[:attribute], hash[:axis])
     sleep(2)
@@ -161,6 +162,15 @@ begin
     prev_attr = hash[:attribute]
     prev_axis = hash[:axis]
 
+  rescue => e
+    puts '::ERROR::'
+    puts e
+    attempt +=1
+    if attempt< max_attempts
+      puts "RETRYING (#{attempt})..."
+      retry
+    end
+
     #After having both value and function plotted on graph, two input fields are present in DOM even if only one input field is visible. So if both value and function have been plotted, we close the existing graph and open a new one.
     # if $close_graph==true
     #   title_bar = codap.find(GRAPH_TITLE_BAR)
@@ -171,14 +181,7 @@ begin
     # end
 
   end
-rescue => e
-  puts '::ERROR::'
-  puts e
-  attempt +=1
-  if attempt< max_attempts
-    puts "RETRYING (#{attempt})..."
-    retry
-  end
+
 
 
   codap.teardown
