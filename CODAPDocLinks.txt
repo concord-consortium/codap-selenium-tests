@@ -1,9 +1,3 @@
-https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=22580
-https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14699
-https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14006
-https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14007
-https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14009
-https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14010
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14011
 https://concord.org/sites/default/files/codap/embed/centers.html
 https://concord.org/sites/default/files/codap/embed/numbers.html
@@ -16,6 +10,12 @@ https://concord.org/sites/default/files/codap/embed/elements.html
 https://concord.org/sites/default/files/codap/embed/heatingCooling.html
 https://concord.org/sites/default/files/codap/embed/presidents.html
 https://concord.org/sites/default/files/codap/embed/time_series.html
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=22580
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14699
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14006
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14007
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14009
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14010
 http://blog.concord.org/data-science-education-technology-conference-ready-to-welcome-100-thought-leaders
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14360
@@ -57,3 +57,4 @@ https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?document
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?documentServer=https://document-store.concord.org/&di=https://concord-consortium.github.io/codap-data-interactives/TerraPopInteractive/TPI.html&recordid=12018
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14565
 https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#file=https://concord-consortium.github.io/codap-data//Climate_Change/Climate-Change-A.codap
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html#shared=14011

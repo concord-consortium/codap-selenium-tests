@@ -10,11 +10,11 @@ def openMiscLinks(screenshot_dir)
   attempt=0
   max_attempts = 5
 
-  begin
+  # begin
     urls = File.readlines('CODAPDocLinks.txt')
     while urls.length>0
+      begin
       url = urls[0]
-      # File.open('CODAPDocLinks.txt').each do |url|
       codap = CODAPObject.new()
       codap.setup_one(:chrome)
       codap.visit(url)
@@ -32,23 +32,23 @@ def openMiscLinks(screenshot_dir)
       codap.save_screenshot(screenshot_dir, page_source)
       codap.write_log_file(screenshot_dir, page_source)
       codap.teardown
+      rescue => e
+        puts "::ERROR::"
+        puts e
+        attempt += 1
+        if attempt < max_attempts
+          puts "RETRYING (#{attempt})..."
+          retry
+        end
+      end
       urls.shift
     end
-  rescue => e
-    puts "::ERROR::"
-    puts e
-    attempt += 1
-    if attempt < max_attempts
-      puts "RETRYING (#{attempt})..."
-      retry
-    end
-  end
 end
 
 def openPluginLinks(screenshot_dir)
   pluginURL = "https://concord-consortium.github.io/codap-data-interactives/"
   attempt=0
-  max_attempts = 25
+  max_attempts = 10
 
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
@@ -88,7 +88,7 @@ end
 def openSampleDocLinks(screenshot_dir)
   sampleDocURL = "https://concord-consortium.github.io/codap-data/"
   attempt=0
-  max_attempts = 25
+  max_attempts = 10
 
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
