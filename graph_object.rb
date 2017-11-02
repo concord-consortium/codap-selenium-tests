@@ -36,6 +36,8 @@ module GraphObject
   GRAPH_POINT_COLOR_PICKER = {css: '.dg-graph-point-color'}
   GRAPH_STROKE_COLOR_PICKER = {css: '.graph-stroke-color'}
   GRAPH_TRANSPARENT = {css: '.dg-graph-transparent-check'}
+  GRAPH_SCREENSHOT_MENU = {css: '.dg-display-show-image-popup'}
+  GRAPH_SCREENSHOT_MENU_EXPORT_IMAGE = {xpath: '//div[contains(@class,"sc-menu-item")]/a/span[contains(text(),"Export Image")]'}
   GRAPH_SCREENSHOT_DOWNLOAD = {css: '.buttons>a'}
   GRAPH_SCREENSHOT_INPUT_FILENAME = {css: '.localFileSave>input'}
   GRAPH_SCREENSHOT_DIALOG_TITLE = {css: '.modal-dialog-title'}
@@ -68,6 +70,8 @@ module GraphObject
     end
     click_on(GRAPH_SCREENSHOT)
     puts "clicked on graph_screenshot"
+    wait_for{displayed? (GRAPH_SCREENSHOT_MENU)}
+    click_on(GRAPH_SCREENSHOT_MENU_EXPORT_IMAGE)
     wait_for{ displayed?(GRAPH_SCREENSHOT_DIALOG_TITLE) }
      screenshot_popup = find(GRAPH_SCREENSHOT_INPUT_FILENAME)
      puts "Found screenshot_popup at #{screenshot_popup}"
