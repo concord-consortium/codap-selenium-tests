@@ -34,7 +34,7 @@ end
 
 begin
   attempt = 0
-  max_attempts = 25
+  max_attempts = 5
 
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
