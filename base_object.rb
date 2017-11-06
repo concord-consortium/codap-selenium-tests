@@ -144,7 +144,7 @@ class CodapBaseObject
 
   def save_screenshot(dir,page_title)
     puts "in get_screenshot"
-    file_name = page_title.gsub(/[\/\s]/, '_')
+    file_name = page_title.gsub(/[?\/\s]/, '_')
     @@driver.save_screenshot "#{dir}/#{file_name}.png"
   end
 
