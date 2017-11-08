@@ -92,19 +92,19 @@ def create_graph(plugin, context_name, graph_name,y_attr='',x_attr='',legend_att
   plugin.checkResponse
 end
 # graph_types =[{graph name, y-axis attr, x-axis attr, legend attr, y2-axis attr}] all elements in string
-graph_types = [{'Cat Legend','','','Eyes',''},
-               {'Cat X','','YesNo','',''},
-               {'Cat Y','YesNo','','',''},
-               {'Num X','','Weight','',''},
-               {'Num Y','Height','','',''},
-               {'Num X Num Y Num Legend','Height','Weight','Sample',''},
-               {'Cat X Cat Y Num Legend','NumCat','Eyes','Sample',''},
-               {'Cat X Cat Y Cat Legend','Eyes','NumCat','WinLose',''},
-               {'Num X Num Y Cat Legend','Height','Weight','Eyes',''},
-               {'Num X Cat Y','Sample','Eyes','',''},
-               {'Cat X Num Y','Weight','Eyes','',''},
-               {'Num X 2Num Y','Height','Sample','','Weight'},
-]
+graph_types = [{:name=>'Cat Legend', :y_attr=>'',:x_attr=>'',:legend_attr=>'Eyes',:y2_attr=>''},
+               {:name=>'Cat X',:y_attr=>'',:x_attr=>'YesNo',:legend_attr=>'',:y2_attr=>''},
+               {:name=>'Cat Y',:y_attr=>'YesNo',:x_attr=>'',:legend_attr=>'',:y2_attr=>''},
+               {:name=>'Num X',:y_attr=>'',:x_attr=>'Weight',:legend_attr=>'',:y2_attr=>''},
+               {:name=>'Num Y',:y_attr=>'Height',:x_attr=>'',:legend_attr=>'',:y2_attr=>''},
+               {:name=>'Num X Num Y Num Legend',:y_attr=>'Height',:x_attr=>'Weight',:legend_attr=>'Sample',:y2_attr=>''},
+               {:name=>'Cat X Cat Y Num Legend',:y_attr=>'NumCat',:x_attr=>'Eyes',:legend_attr=>'Sample',:y2_attr=>''},
+               {:name=>'Cat X Cat Y Cat Legend',:y_attr=>'Eyes',:x_attr=>'NumCat',:legend_attr=>'WinLose',:y2_attr=>''},
+               {:name=>'Num X Num Y Cat Legend',:y_attr=>'Height',:x_attr=>'Weight',:legend_attr=>'Eyes',:y2_attr=>''},
+               {:name=>'Num X Cat Y',:y_attr=>'Sample',:x_attr=>'Eyes',:legend_attr=>'',:y2_attr=>''},
+               {:name=>'Cat X Num Y',:y_attr=>'Weight',:x_attr=>'Eyes',:legend_attr=>'',:y2_attr=>''},
+               {:name=>'Num X 2Num Y',:y_attr=>'Height',:x_attr=>'Sample',:legend_attr=>'',:y2_attr=>'Weight'}
+              ]
 
 
 data_context = "SmokeTestData"
@@ -122,7 +122,10 @@ codap.switch_to_iframe(PLUGIN_API_TESTER_FRAME)
 create_data_context(plugin, data_context)
 create_collection_with_attributes(plugin, data_file, data_context)
 
-create_graph(plugin, data_context,"num_x cat_legend","","Height","Eyes")
+graph_types.each do |hash|
+  create_graph(plugin, data_context, hash[:name],hash[:y_attr],hash[:x_attr],hash[:legend_attr],hash[:y2_attr])
+  sleep(0.5)
+end
 sleep(3)
 
 
