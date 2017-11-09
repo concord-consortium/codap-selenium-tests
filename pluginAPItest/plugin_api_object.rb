@@ -37,6 +37,14 @@ class PluginAPIObject< CodapBaseObject
     click_on(SEND_BUTTON)
   end
 
+  def sendMessage(message)
+    puts "in sendMessage"
+
+    clear(MESSAGE_AREA)
+    type(MESSAGE_AREA,message)
+    click_on(SEND_BUTTON)
+  end
+
   def checkResponse
     puts "in checkResponse"
     puts text_of(RESPONSE_AREA)
