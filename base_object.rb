@@ -211,8 +211,8 @@ class CodapBaseObject
 
   def switch_to_iframe(locator)
     puts "In switch to iframe"
-    iframe = find(locator)
-    @@driver.switch_to.frame(iframe)
+    # iframe = find(locator)
+    @@driver.switch_to.frame(locator)
   end
 
   def get_tab_handles

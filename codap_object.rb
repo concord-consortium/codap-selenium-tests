@@ -65,7 +65,10 @@ class CODAPObject < CodapBaseObject
   CASE_TABLE_TILE = {css: '.dg-case-table-view'}
   PLUGIN_SAMPLER_MENU_ITEM = {id: 'dg-pluginMenuItem-Sampler'}
   PLUGIN_DRAW_TOOL_MENU_ITEN = {id: 'dg-pluginMenuItem-Draw Tool'}
-  CONCORD_LOGO = {id: 'brand'}
+  SAMPLER_WEBVIEW = {xpath: '//iframe[contains(@src,"TP-Sampler"'}
+  DRAW_TOOL_WEBVIEW = {xpath: '//iframe[contains(@src,"DrawTool"'}
+  LEARN_WEBVIEW = {xpath: '//iframe[contains(@src,"learn.concord.org")]'}
+  CONCORD_LOGO = {css: '.concord-logo'}
 
   def initialize()
     puts "Initializing"
@@ -252,10 +255,10 @@ class CODAPObject < CodapBaseObject
         click_on(DISPLAY_WEBSITE)
         wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
         input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
-        pop_up_type(input_field,"https://concord.org")
+        pop_up_type(input_field,"https://learn.concord.org")
         wait_for {displayed? (SINGLE_TEXT_DIALOG_OK_BUTTON)}
         pop_up_click(find(SINGLE_TEXT_DIALOG_OK_BUTTON))
-        webview = find(IFRAME)
+        webview = find(LEARN_WEBVIEW)
         sleep(5)
         switch_to_iframe(webview)
         wait_for {displayed? (CONCORD_LOGO)}
