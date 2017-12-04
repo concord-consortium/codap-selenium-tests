@@ -34,9 +34,9 @@ class CODAPObject < CodapBaseObject
   LOGIN_USER = {css: '.navBar-status'}
   H_SCROLLER = {css: '.sc-horizontal, .sc-scroller-view'}
   SCROLL_H_RIGHT = {css: '.thumb'}
-  SLIDER_TILE = {css: '.slider-label'}
+  SLIDER_TILE = {css: '.dg-slider-label'}
   TEXT_TILE = {css: '.text-area'}
-  CALC_TILE = {css: '.calculator'}
+  CALC_TILE = {css: '.dg-calculator'}
 #  OPEN_NEW_BUTTON = {id: 'dg-user-entry-new-doc-button'}
   OPEN_DOC_BUTTON = {id: 'dg-user-entry-open-doc-button'}
   AUTHORIZE_STARTUP_BUTTON = {id: 'dg-user-entry-authorize-startup-button'}
@@ -61,7 +61,10 @@ class CODAPObject < CodapBaseObject
   MAP_VIEW = {css: '.leaflet-map-pane'}
   MAP_lEGEND = {css: '.dg-legend-view'}
   IFRAME = {tag_name: 'iframe'}
-
+  NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]/a/span[contains(text(),"new")]'}
+  CASE_TABLE_TILE = {css: '.dg-case-table-view'}
+  PLUGIN_SAMPLER_MENU_ITEM = {id: 'dg-pluginMenuItem-Sampler'}
+  PLUGIN_DRAW_TOOL_MENU_ITEN = {id: 'dg-pluginMenuItem-Draw Tool'}
   CONCORD_LOGO = {id: 'brand'}
 
   def initialize()
@@ -89,7 +92,9 @@ class CODAPObject < CodapBaseObject
 
     case (button)
       when 'table'
-        element = TABLE_BUTTON
+        click_on(TABLE_BUTTON)
+        sleep(1)
+        element = NEW_TABLE
       when 'graph'
         element = GRAPH_BUTTON
       when 'map'
@@ -128,10 +133,21 @@ class CODAPObject < CodapBaseObject
         element = DISPLAY_WEBSITE
       when 'codap_site'
         element = OPEN_CODAP_WEBSITE
+      when 'sampler'
+        click_on(PLUGIN_BUTTON)
+        element = PLUGIN_SAMPLER_MENU_ITEM
+      when 'draw tool'
+        click_on(PLUGIN_BUTTON)
+        element = PLUGIN_DRAW_TOOL_MENU_ITEN
     end
 
     puts "button is #{button}, element is #{element}"
+    wait_for {displayed?(element)}
     click_on(element)
+    case (button) #additional dropdown menu from the toolshelf button
+      when 'table'
+        click_on(NEW_TABLE)
+    end
     if verifiable.include? button
       puts "#{button} Button is in verifiable"
       verify_tile(element)
@@ -252,6 +268,10 @@ class CODAPObject < CodapBaseObject
         puts "Guide button clicked"
       when OPEN_CODAP_WEBSITE
         puts "CODAP website clicked"
+      when PLUGIN_SAMPLER_MENU_ITEM
+        puts "sampler clicked"
+      when PLUGIN_DRAW_TOOL_MENU_ITEN
+        puts "draw tool clicked"
     end
   end
 
@@ -273,6 +293,24 @@ class CODAPObject < CodapBaseObject
     @@driver.action.move_to(locator).move_by(137,0).click.perform
   end
 
+  def open_new_table
+    puts "In open new table"
+    click_on(TABLE_BUTTON)
+    click_on(NEW_TABLE)
+    verify_tile('table')
+  end
+
+  def open_plugin(plugin)
+    puts "In open plugin"
+    click_on(PLUGIN_BUTTON)
+    case (plugin)
+      when 'sampler'
+        click_on(PLUGIN_SAMPLER)
+      when 'draw tool'
+        click_on(PLUGIN_DRAW_TOOL)
+
+    end
+  end
 end
 
 
