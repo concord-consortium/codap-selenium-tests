@@ -170,23 +170,9 @@ array_of_plots.each do |hash|
       puts "RETRYING (#{attempt})..."
       retry
     end
-
-    #After having both value and function plotted on graph, two input fields are present in DOM even if only one input field is visible. So if both value and function have been plotted, we close the existing graph and open a new one.
-    # if $close_graph==true
-    #   title_bar = codap.find(GRAPH_TITLE_BAR)
-    #   codap.close_component(title_bar)
-    #   codap.click_button('graph')
-    #   codap.wait_for{codap.displayed? (GRAPH_TILE) }
-    #   $close_graph=false
-    # end
-
   end
-
-
-
-  codap.teardown
-
 end
+codap.teardown
 
 `rm -rf ~/Sites/plot_ruler_results/test_screenshots`
 `mkdir -p ~/Sites/plot_ruler_results/test_screenshots`
