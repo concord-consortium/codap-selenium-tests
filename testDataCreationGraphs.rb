@@ -151,7 +151,8 @@ def graph_test_by_item(url, data_context, data_file, attributes, types, graph_ty
   codap.setup_one(:chrome)
   codap.visit(url)
   sleep(2)
-  codap.switch_to_iframe(PLUGIN_API_TESTER_FRAME)
+  plugin_iframe = codap.find(PLUGIN_API_TESTER_FRAME)
+  codap.switch_to_iframe(plugin_iframe)
   create_data_context(plugin, data_context)
   create_collection_with_attributes(plugin, attributes, types, data_context)
 
