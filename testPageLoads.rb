@@ -98,7 +98,7 @@ def openSampleDocLinks(screenshot_dir)
   codap.setup_one(:chrome)
   codap.visit(sampleDocURL)
   codap.submit_form(CODAP_URL_TEXTFIELD, CODAP_URL)
-  cleep(2)
+  sleep(2)
   sample_docs = codap.find_all(LISTING)
   begin
   if sample_docs.length == 0
