@@ -142,6 +142,13 @@ class CodapBaseObject
     @@driver.title
   end
 
+  def submit_form(locator, input)
+    puts "in submit form"
+      clear(locator)
+      find(locator).send_keys input
+      find(locator).send_keys :return
+  end
+
   def save_screenshot(dir,page_title)
     puts "in get_screenshot"
     file_name = page_title.gsub(/[?\/\s]/, '_')

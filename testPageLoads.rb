@@ -1,8 +1,10 @@
 require './codap_object.rb'
 
 LISTING = {css: ".listing-title"}
+CODAP_URL_TEXTFIELD = {id: 'codap-url'}
 expected_screenshot_dir = "#{Dir.home}/Sites/doc_screenshot_results/expected_screenshots/"
 test_screenshot_dir = "#{Dir.home}/Sites/doc_screenshot_results/test_screenshots/"
+CODAP_URL = "https://codap.concord.org/releases/staging/"
 `rm -rf #{test_screenshot_dir}`
 `mkdir -p #{test_screenshot_dir}`
 
@@ -53,6 +55,8 @@ def openPluginLinks(screenshot_dir)
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
   codap.visit(pluginURL)
+  codap.submit_form(CODAP_URL_TEXTFIELD, CODAP_URL)
+  sleep(2)
   plugins = codap.find_all(LISTING)
   begin
     if plugins.length == 0
@@ -93,6 +97,8 @@ def openSampleDocLinks(screenshot_dir)
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
   codap.visit(sampleDocURL)
+  codap.submit_form(CODAP_URL_TEXTFIELD, CODAP_URL)
+  cleep(2)
   sample_docs = codap.find_all(LISTING)
   begin
   if sample_docs.length == 0
