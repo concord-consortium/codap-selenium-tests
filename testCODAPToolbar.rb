@@ -9,6 +9,7 @@ codap = CODAPObject.new()
 codap.setup_one(:chrome)
 codap.start_codap(url)
 codap.user_entry_start_new_doc
+sleep(3)
 components.each do |component|
   codap.click_button(component)
   sleep(2)
