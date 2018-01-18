@@ -11,7 +11,7 @@ class CODAPObject < CodapBaseObject
   include MapObject
 
   SPLASHSCREEN = {css: '.focus'}
-  BACKGROUND = {css: 'menu-bar'}
+  BACKGROUND = {css: '.toolshelf-background'}
   DATA_INTERACTIVE = { css: 'iframe'}
   DOC_TITLE = {css: '.menu-bar-content-filename'}
   DOC_FILE_STATUS = {css: 'span.menu-bar-file-status-alert'}
@@ -61,7 +61,8 @@ class CODAPObject < CodapBaseObject
   MAP_VIEW = {css: '.leaflet-map-pane'}
   MAP_lEGEND = {css: '.dg-legend-view'}
   IFRAME = {tag_name: 'iframe'}
-  NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]/a/span[contains(text(),"new")]'}
+  # NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]/a[contains(@class,"menu-item")]/span[contains(text(),"new")]'}
+  NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]'}
   CASE_TABLE_TILE = {css: '.dg-case-table-view'}
   PLUGIN_SAMPLER_MENU_ITEM = {id: 'dg-pluginMenuItem-Sampler'}
   PLUGIN_DRAW_TOOL_MENU_ITEN = {id: 'dg-pluginMenuItem-Draw Tool'}
@@ -145,12 +146,33 @@ class CODAPObject < CodapBaseObject
     end
 
     puts "button is #{button}, element is #{element}"
-    wait_for {displayed?(element)}
-    click_on(element)
-    case (button) #additional dropdown menu from the toolshelf button
+    case (button)
       when 'table'
-        click_on(NEW_TABLE)
+        new_menu_item = find(NEW_TABLE)
+        puts "new menu item is #{new_menu_item}"
+        sleep(3)
+        puts "The menu item is #{text_of(NEW_TABLE)}"
+        # click_on(NEW_TABLE)
+        new_menu_item.click
+        sleep(5)
+        click_on(BACKGROUND)
+        # select_menu_item("new")
+      # when 'sampler'
+      #   select_menu_item("Sampler")
+      # when 'draw tool'
+      #   select_menu_item("Draw Tool")
+      else
+        wait_for {displayed?(element)}
+        sleep(2)
+        click_on(element)
     end
+    # wait_for {displayed?(element)}
+    # sleep(5)
+    # click_on(element)
+    # case (button) #additional dropdown menu from the toolshelf button
+    #   when 'table'
+    #     click_on(NEW_TABLE)
+    # end
     if verifiable.include? button
       puts "#{button} Button is in verifiable"
       verify_tile(element)
@@ -217,7 +239,13 @@ class CODAPObject < CodapBaseObject
     # noinspection RubyInterpreter
     case (button)
       when TABLE_BUTTON
-        wait_for { displayed?(CASE_TABLE_TILE) }
+        # if wait_for { displayed?(CASE_TABLE_TILE) }
+        #   puts "not visible"
+        # end
+        puts "visible? #{displayed?(CASE_TABLE_TILE)}"
+        if !(displayed?(CASE_TABLE_TILE))
+          puts "not visible"
+        end
       when GRAPH_TILE
         wait_for { displayed?(GRAPH_TILE) }
       when MAP_BUTTON
@@ -240,11 +268,6 @@ class CODAPObject < CodapBaseObject
           text = element.text
           puts "Page elements are #{text}"
         end
-        # wait_for { displayed?(HELP_PAGE_TITLE) }
-        # page_title = find(HELP_PAGE_TITLE)
-        # if (page_title.text == "CODAP Help")
-        #   puts "found Help page"
-        # end
         switch_to_main
       when TILE_LIST_BUTTON
         select_menu_item("Calculator")
