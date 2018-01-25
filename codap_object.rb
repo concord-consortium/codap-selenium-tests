@@ -65,7 +65,7 @@ class CODAPObject < CodapBaseObject
   NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]'}
   CASE_TABLE_TILE = {css: '.dg-case-table-view'}
   PLUGIN_SAMPLER_MENU_ITEM = {id: 'dg-pluginMenuItem-Sampler'}
-  PLUGIN_DRAW_TOOL_MENU_ITEN = {id: 'dg-pluginMenuItem-Draw Tool'}
+  PLUGIN_DRAW_TOOL_MENU_ITEN = {id: 'dg-pluginMenuItem-Draw-Tool'}
   SAMPLER_WEBVIEW = {xpath: '//iframe[contains(@src,"TP-Sampler"'}
   DRAW_TOOL_WEBVIEW = {xpath: '//iframe[contains(@src,"DrawTool"'}
   LEARN_WEBVIEW = {xpath: '//iframe[contains(@src,"learn.concord.org")]'}
