@@ -7,7 +7,6 @@ class CodapBaseObject
 
   def setup_one(browser)
     @@driver = Selenium::WebDriver.for browser
-    @@browser = browser
     rescue Exception => e
       puts e.message
       puts "Could not start driver #{@@driver}"
@@ -157,8 +156,7 @@ class CodapBaseObject
   end
 
   def write_log_file(dir_path, filename)
-    puts "In write log file. Browser is #{@@browser}"
-    log = @@driver.manage.logs.get(@@browser)
+    log = @@driver.manage.logs.get(:browser)
     messages = ""
     log.each {|item| messages += item.message + "\n"}
 
