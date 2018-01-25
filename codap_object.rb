@@ -146,22 +146,16 @@ class CODAPObject < CodapBaseObject
     end
 
     puts "button is #{button}, element is #{element}"
-    case (button)
-      when 'table'
-        new_menu_item = find(NEW_TABLE)
+    if (button=="table") || (button=="sampler") || (button=="draw tool") || (button=="option")
+        new_menu_item = find(element)
         puts "new menu item is #{new_menu_item}"
         sleep(3)
-        puts "The menu item is #{text_of(NEW_TABLE)}"
+        puts "The menu item is #{text_of(element)}"
         # click_on(NEW_TABLE)
         new_menu_item.click
         sleep(5)
         click_on(BACKGROUND)
-        # select_menu_item("new")
-      # when 'sampler'
-      #   select_menu_item("Sampler")
-      # when 'draw tool'
-      #   select_menu_item("Draw Tool")
-      else
+    else
         wait_for {displayed?(element)}
         sleep(2)
         click_on(element)
@@ -239,9 +233,6 @@ class CODAPObject < CodapBaseObject
     # noinspection RubyInterpreter
     case (button)
       when TABLE_BUTTON
-        # if wait_for { displayed?(CASE_TABLE_TILE) }
-        #   puts "not visible"
-        # end
         puts "visible? #{displayed?(CASE_TABLE_TILE)}"
         if !(displayed?(CASE_TABLE_TILE))
           puts "not visible"
@@ -274,21 +265,41 @@ class CODAPObject < CodapBaseObject
         wait_for {displayed? (CALC_TILE)}
         sleep(3)
       when OPTION_BUTTON
-        wait_for {displayed? (DISPLAY_WEBSITE)}
-        click_on(DISPLAY_WEBSITE)
-        wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
-        input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
-        pop_up_type(input_field,"https://learn.concord.org")
-        wait_for {displayed? (SINGLE_TEXT_DIALOG_OK_BUTTON)}
-        pop_up_click(find(SINGLE_TEXT_DIALOG_OK_BUTTON))
-        webview = find(LEARN_WEBVIEW)
-        sleep(5)
-        switch_to_iframe(webview)
-        wait_for {displayed? (CONCORD_LOGO)}
-        if displayed? (CONCORD_LOGO)
-          puts "Found Concord Logo"
+        puts "visible? #{displayed?(DISPLAY_WEBSITE)}"
+        if !(displayed?(DISPLAY_WEBSITE))
+          puts "not visible"
+        else
+          wait_for {displayed? (DISPLAY_WEBSITE)}
+          click_on(DISPLAY_WEBSITE)
+          wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
+          input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
+          pop_up_type(input_field,"https://learn.concord.org")
+          wait_for {displayed? (SINGLE_TEXT_DIALOG_OK_BUTTON)}
+          pop_up_click(find(SINGLE_TEXT_DIALOG_OK_BUTTON))
+          webview = find(LEARN_WEBVIEW)
+          sleep(5)
+          switch_to_iframe(webview)
+          wait_for {displayed? (CONCORD_LOGO)}
+          if displayed? (CONCORD_LOGO)
+            puts "Found Concord Logo"
+          end
+          switch_to_main
         end
-        switch_to_main
+        # wait_for {displayed? (DISPLAY_WEBSITE)}
+        # click_on(DISPLAY_WEBSITE)
+        # wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
+        # input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
+        # pop_up_type(input_field,"https://learn.concord.org")
+        # wait_for {displayed? (SINGLE_TEXT_DIALOG_OK_BUTTON)}
+        # pop_up_click(find(SINGLE_TEXT_DIALOG_OK_BUTTON))
+        # webview = find(LEARN_WEBVIEW)
+        # sleep(5)
+        # switch_to_iframe(webview)
+        # wait_for {displayed? (CONCORD_LOGO)}
+        # if displayed? (CONCORD_LOGO)
+        #   puts "Found Concord Logo"
+        # end
+        # switch_to_main
       # puts "Option button clicked"
       when GUIDE_BUTTON
         puts "Guide button clicked"
