@@ -214,9 +214,7 @@ graph_types = [{:name=>'Cat Legend', :y_attr=>'',:x_attr=>'',:legend_attr=>'Eyes
                {:name=>'Cat X Num Y',:y_attr=>'Weight',:x_attr=>'Eyes',:legend_attr=>'',:y2_attr=>''},
                {:name=>'Num X Num YR',:y_attr=>'Height',:x_attr=>'Sample',:legend_attr=>'',:y2_attr=>'Weight'},
                {:name=>'Num X 2Num Y',:y_attr=>'[\'Height\',\'Weight\']',:x_attr=>'Sample',:legend_attr=>'',:y2_attr=>''}
-
 ]
-
 
 data_context = "SmokeTestData"
 data_file = getData(data_filename)
@@ -224,7 +222,34 @@ data_file = getData(data_filename)
 attributes = data_file[0] #assumes first line of csv file has the attribute names
 types = data_file[1] #assumes second line of csv file has the type of the attribute
 
-graph_test_by_item(url, data_context,data_file, attributes, types, graph_types)
+begin
+  attempt = 0
+  max_attempts = 5
+
+  graph_test_by_item(url, data_context,data_file, attributes, types, graph_types)
+rescue => e
+  puts '::ERROR::'
+  puts e
+  attempt +=1
+  if attempt< max_attempts
+    puts "RETRYING (#{attempt})..."
+    retry
+  end
+end
+
+begin
+  attempt = 0
+  max_attempts = 5
+
 graph_test_by_case(url, data_context,data_file, attributes, types, graph_types)
+rescue => e
+  puts '::ERROR::'
+  puts e
+  attempt +=1
+  if attempt< max_attempts
+    puts "RETRYING (#{attempt})..."
+    retry
+  end
+end
 
 sleep(3)
