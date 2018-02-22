@@ -50,7 +50,7 @@ end
 def openPluginLinks(screenshot_dir)
   pluginURL = "https://concord-consortium.github.io/codap-data-interactives/"
   attempt=0
-  max_attempts = 10
+  max_attempts = 5
 
   codap = CODAPObject.new()
   codap.setup_one(:chrome)
