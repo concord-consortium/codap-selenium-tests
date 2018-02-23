@@ -83,7 +83,6 @@ def click_on_checkboxes(kcodap, state, pvcounter, pfcounter)
   puts "num of checkboxes is: #{num_of_checkboxes}"
   sleep(3)
   checkbox_list.each do |checkbox|
-    # puts checkbox.text
     checkbox.click
     if state=="on"
       if checkbox.text == 'Plotted Value'
