@@ -276,7 +276,6 @@ class CodapBaseObject
   def select_from_dropdown(dropdown, dropdown_locator, item)
     puts "In select from dropdown"
     dropdown_loc = find(dropdown)
-    puts "Found dropdown_loc at #{dropdown_loc}"
     click_on(dropdown)
     sleep(3)
     list_item = {xpath: "#{dropdown_locator}ul/li/a[contains(text(),'#{item}')]"}#templatePulldown>span>ul>li
@@ -330,8 +329,6 @@ class CodapBaseObject
 
     while dir_a_files.length > 0
       file = dir_a_files[0]
-      # puts "File is #{file}. File size test is #{File.size("#{dir_a}/#{file}")}"
-      # puts "Expected file is #{dir_b}/#{file}. File size expected is #{File.size("#{dir_b}/#{file}")}"
       if File.exists?("#{dir_b}/#{file}")
         if File.size("#{dir_a}/#{file}") != File.size("#{dir_b}/#{file}")
           if file!= '.'
@@ -342,7 +339,6 @@ class CodapBaseObject
         missing_expected_files.push(file)
       end
       dir_a_files.shift
-      puts ("After shift dir_a_files is #{dir_a_files}")
     end
 
     if file_mismatch.length == 0 && missing_expected_files.length == 0
