@@ -1,0 +1,3 @@
+https://codap.concord.org/releases/staging/static/dg/en/cert/index.html?url=https://concord-consortium.github.io/codap-data/SampleDocs/Science/Biology/four-seals/Four_Seals.codap - Refused to display 'https://oceantracks.org/codap-test/getting-started' in a frame because it set 'X-Frame-Options' to 'sameorigin'.
+https://oceantracks.org/codap-test/getting-started - Failed to load resource: net::ERR_BLOCKED_BY_RESPONSE
+https://codap.concord.org/releases/staging/static/dg/en/cert/javascript-packed.js 24:196629 "Unnamed document: 12"
