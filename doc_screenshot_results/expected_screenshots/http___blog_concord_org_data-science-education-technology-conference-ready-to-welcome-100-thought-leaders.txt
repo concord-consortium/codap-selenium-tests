@@ -1,0 +1,4 @@
+http://blog.concord.org/data-science-education-technology-conference-ready-to-welcome-100-thought-leaders - The SSL certificate used to load resources from https://s7.addthis.com will be distrusted in M70. Once distrusted, users will be prevented from loading these resources. See https://g.co/chrome/symantecpkicerts for more information.
+https://codap.concord.org/releases/latest/static/dg/en/cert/javascript-packed.js 24 Use of the Application Cache is deprecated on insecure origins. Support will be removed in the future. You should consider switching your application to a secure origin, such as HTTPS. See https://goo.gl/rStTGz for more details.
+https://codap.concord.org/releases/latest/static/dg/en/cert/javascript-packed.js 24:196629 "Unnamed document: 1"
+http://blog.concord.org/favicon.ico - Failed to load resource: the server responded with a status of 404 (Not Found)

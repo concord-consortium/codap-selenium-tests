@@ -1,0 +1,2 @@
+https://concord-consortium.github.io/codap-data/ 14 Mixed Content: The page at 'https://concord-consortium.github.io/codap-data/' was loaded over HTTPS, but requested an insecure image 'http://codap.concord.org/_assets/img/cc-logo.png'. This content should also be served over HTTPS.
+https://concord-consortium.github.io/favicon.ico - Failed to load resource: the server responded with a status of 404 ()
