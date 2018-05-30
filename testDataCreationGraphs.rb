@@ -148,12 +148,13 @@ end
 def graph_test_by_item(url, data_context, data_file, attributes, types, graph_types)
   codap = CODAPObject.new()
   plugin = PluginAPIObject.new()
-  codap.setup_one(:chrome)
+  codap.setup_one(:firefox)
   codap.visit(url)
   sleep(10)
   plugin_iframe = codap.find(PLUGIN_API_TESTER_FRAME)
   codap.switch_to_iframe(plugin_iframe)
   create_data_context(plugin, data_context)
+  sleep(2)
   create_collection_with_attributes(plugin, attributes, types, data_context)
 
   graph_types.each do |hash|
@@ -175,12 +176,14 @@ end
 def graph_test_by_case(url, data_context, data_file, attributes, types, graph_types)
   codap = CODAPObject.new()
   plugin = PluginAPIObject.new()
-  codap.setup_one(:chrome)
+  codap.setup_one(:firefox)
   codap.visit(url)
   sleep(10)
   plugin_iframe = codap.find(PLUGIN_API_TESTER_FRAME)
   codap.switch_to_iframe(plugin_iframe)
+  sleep(2)
   create_data_context(plugin, data_context)
+  sleep(2)
   create_collection_with_attributes(plugin, attributes, types, data_context)
 
   graph_types.each do |hash|
