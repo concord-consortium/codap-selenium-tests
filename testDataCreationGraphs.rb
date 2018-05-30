@@ -33,7 +33,7 @@ def create_data_context(plugin, context_name)
 }
 }"
   json_message = message.gsub(/[']/,'"') #JSON needs to be in double quotes
-  puts "message is: #{json_message}"
+  # puts "message is: #{json_message}"
   plugin.sendMessage(json_message)
   plugin.checkResponse
 end
@@ -63,7 +63,7 @@ def create_collection_with_attributes(plugin, attributes, types, context_name)
     i=i+1
   end
   json_message = json_message.gsub(/[']/,'"') #JSON needs to be in double quotes
-  puts "collection with attribute message is: #{json_message}"
+  # puts "collection with attribute message is: #{json_message}"
   plugin.sendMessage(json_message)
   plugin.checkResponse
 end
@@ -92,7 +92,7 @@ def create_graph(plugin, context_name, graph_name,y_attr='',x_attr='',legend_att
   json_message = message.gsub(/[']/,'"') #JSON needs to be in double quotes
   json_message = json_message.gsub('"[','[')
   json_message = json_message.gsub(']"',']')
-  puts "collection with attribute message is: #{json_message}"
+  # puts "collection with attribute message is: #{json_message}"
   plugin.sendMessage(json_message)
   plugin.checkResponse
 end
@@ -115,7 +115,7 @@ def add_data_by_item(plugin, context_name, item )
       'NumCat':'#{item[7]}'
   }]}"
   json_message = message.gsub(/[']/,'"') #JSON needs to be in double quotes
-  puts "collection with attribute message is: #{json_message}"
+  # puts "collection with attribute message is: #{json_message}"
   plugin.sendMessage(json_message)
   plugin.checkResponse
 end
@@ -140,7 +140,7 @@ def add_data_by_case(plugin, context_name, item )
          }}]}"
 
   json_message = message.gsub(/[']/,'"') #JSON needs to be in double quotes
-  puts "collection with attribute message is: #{json_message}"
+  # puts "collection with attribute message is: #{json_message}"
   plugin.sendMessage(json_message)
   plugin.checkResponse
 end
