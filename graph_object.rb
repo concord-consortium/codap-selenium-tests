@@ -1,5 +1,5 @@
 module GraphObject
-
+  # Overall graph
   GRAPH_TILE = {css: '.dg-graph-view'}
   GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
   GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
@@ -7,13 +7,16 @@ module GraphObject
   GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
   GRAPH_LEGEND = {css: '.dg-legend-view>svg>text.dg-axis-label'}
   AXIS_MENU_REMOVE = {xpath: '//div/a[contains(@class,"menu-item")]/span[contains(text(),"Remove")]'}
+  # Graph tool palette
   GRAPH_RESCALE = {css: '.dg-display-rescale'}
   GRAPH_HIDESHOW = {css: '.dg-display-hideshow'}
-  GRAPH_TRASH = {css: '.dg-display-trash'}
+  GRAPH_TRASH = {css: '.dg-display-trash'} # may not exist anymore
   GRAPH_RULER = {css: '.dg-display-values'}
+  GRAPH_BAR_GRAPH = {css: '.dg-display-configuration'}
   GRAPH_STYLES = {css: '.dg-display-styles'}
   GRAPH_SCREENSHOT = {css: '.dg-display-camera'}
-  GRAPH_INSPECTOR_PICKER_PANEL = {css: '.dg-inspector-picker'}
+  GRAPH_INSPECTOR_PICKER_PANEL = {css: '.dg-inspector-picker'} # Tool palette menu panel
+  # Ruler tool palette
   GRAPH_COUNT = {css: '.dg-graph-count-check'}
   GRAPH_PERCENT = {css: '.dg-graph-percent-check'}
   GRAPH_PERCENT_ROW = {css: '.dg.radio-0'}
@@ -27,21 +30,26 @@ module GraphObject
   GRAPH_MEAN = {css: '.dg-graph-plottedMean-check'}
   GRAPH_MEDIAN = {css: '.dg-graph-plottedMedian-check'}
   GRAPH_STD_DEV = {css: '.dg-graph-plottedStdDev-check'}
-  # GRAPH_INTERQUARTILE = {css: '.graph-plottedIQR-check'}
+   # GRAPH_INTERQUARTILE = {css: '.graph-plottedIQR-check'}
   GRAPH_PLOTTED_VALUE = {css: '.dg-graph-plottedValue-check'}
   GRAPH_PLOTTED_FUNCTION = {css: '.dg-graph-plottedFunction-check'}
   GRAPH_SQUARES = {css: '.dg-graph-squares-check'}
   GRAPH_BOX_PLOT = {css: '.dg-graph-plottedBoxPlot-check'}
+  # Brush tool palette
   GRAPH_POINT_SIZE_SLIDER = {css: '.dg-graph-pointSize-slider'}
   GRAPH_POINT_COLOR_PICKER = {css: '.dg-graph-point-color'}
-  GRAPH_STROKE_COLOR_PICKER = {css: '.graph-stroke-color'}
+  GRAPH_STROKE_COLOR_PICKER = {css: '.dg-graph-stroke-color'}
+  GRAPH_BACKGROUND_COLOR_PICKER = {css: '.dg-graph-background-color'}
   GRAPH_TRANSPARENT = {css: '.dg-graph-transparent-check'}
+  # Camera tool palette
   GRAPH_SCREENSHOT_MENU = {css: '.dg-display-show-image-popup'}
   GRAPH_SCREENSHOT_MENU_EXPORT_IMAGE = {xpath: '//div[contains(@class,"sc-menu-item")]/a/span[contains(text(),"Export Image")]'}
   GRAPH_SCREENSHOT_DOWNLOAD = {css: '.buttons>a'}
   GRAPH_SCREENSHOT_INPUT_FILENAME = {css: '.localFileSave>input'}
   GRAPH_SCREENSHOT_DIALOG_TITLE = {css: '.modal-dialog-title'}
   GRAPH_COUNT_PERCENTAGE = {xpath: '//div[contains(@class,"dg-plot-view")]/svg/text[contains(@class,"dg-graph-adornment-count"]/tspan'}
+  # Bar graph tool palette
+  GRAPH_MAKE_BAR_GRAPH = {css: '.dg-graph-bar-chart-check'}
 
   def remove_graph_attribute(graph_target)
     puts "In remove_graph_attribute"
@@ -177,5 +185,13 @@ module GraphObject
     end
     click_on(GRAPH_PERCENT_ROW)
     puts "clicked on graph percent column #{GRAPH_PERCENT_ROW}"
+  end
+
+  def change_to_bar_graph()
+    puts 'in change to bar graph'
+    click_on(GRAPH_TILE)
+    click_on(GRAPH_BAR_GRAPH)
+    wait_for{ displayed? (GRAPH_MAKE_BAR_GRAPH)}
+    click_on(GRAPH_MAKE_BAR_GRAPH)
   end
 end
