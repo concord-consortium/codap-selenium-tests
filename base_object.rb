@@ -74,9 +74,9 @@ class CodapBaseObject
   end
 
   def manage_window_size
-    target_size = Selenium::WebDriver::Dimension.new(1680,1023)
-    @@driver.manage.window.size = target_size
-    # @@driver.manage.window.maximize
+    # target_size = Selenium::WebDriver::Dimension.new(1680,1023)
+    # @@driver.manage.window.size = target_size
+    @@driver.manage.window.maximize
   end
 
   def visit(url='/')
@@ -112,10 +112,12 @@ class CodapBaseObject
   end
 
   def type(locator, input)
+    wait_for{displayed?(locator)}
     find(locator).send_keys input
   end
 
   def click_on(locator)
+    wait_for {displayed?(locator)}
     find(locator).click
   end
 
@@ -144,6 +146,7 @@ class CodapBaseObject
   end
 
   def text_of(locator)
+    wait_for {displayed?(locator)}
     find(locator).text
   end
 
