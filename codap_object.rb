@@ -37,9 +37,6 @@ class CODAPObject < CodapBaseObject
   SLIDER_TILE = {css: '.dg-slider-label'}
   TEXT_TILE = {css: '.text-area'}
   CALC_TILE = {css: '.dg-calculator'}
-#  OPEN_NEW_BUTTON = {id: 'dg-user-entry-new-doc-button'}
-  OPEN_DOC_BUTTON = {id: 'dg-user-entry-open-doc-button'}
-  AUTHORIZE_STARTUP_BUTTON = {id: 'dg-user-entry-authorize-startup-button'}
   TILE_ICON_SLIDER = {css: '.tile-icon-slider'}
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert")]/div/div/div[contains(@label,"Close")]'}
@@ -53,16 +50,10 @@ class CODAPObject < CodapBaseObject
   SINGLE_TEXT_DIALOG_OK_BUTTON = {css: '.dg-single-text-dialog-ok'} #Graph Screenshot, Display Webpage
   SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
   GRAPH_TILE = {css: '.dg-graph-view'}
-  GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
-  GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
-  GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
-  GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
-  GRAPH_LEGEND = {css: '.dg-legend-view'}
-  MAP_VIEW = {css: '.leaflet-map-pane'}
-  MAP_lEGEND = {css: '.dg-legend-view'}
   IFRAME = {tag_name: 'iframe'}
-  # NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]/a[contains(@class,"menu-item")]/span[contains(text(),"new")]'}
-  NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]'}
+   # NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu") and (@class,"focus")]/div[contains(@class, "sc-menu-scroll-view")]/div[contains(@class,"sc-container-view")]/div[contains(@class,"sc-view")]/div[contains(@class,"sc-menu-item")]/a[contains(@class,"menu-item")]/span[contains(text(),"new")]'}
+  NEW_TABLE = {css: '.sc-menu > .sc-menu-scroll-view >  .sc-container-view > .sc-view > .sc-menu-item > .menu-item span'}
+  # NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]'} #sc4619 > a > span
   CASE_TABLE_TILE = {css: '.dg-case-table-view'}
   PLUGIN_SAMPLER_MENU_ITEM = {id: 'dg-pluginMenuItem-Sampler'}
   PLUGIN_DRAW_TOOL_MENU_ITEN = {id: 'dg-pluginMenuItem-Draw-Tool'}
@@ -70,6 +61,16 @@ class CODAPObject < CodapBaseObject
   DRAW_TOOL_WEBVIEW = {xpath: '//iframe[contains(@src,"DrawTool"'}
   LEARN_WEBVIEW = {xpath: '//iframe[contains(@src,"learn.concord.org")]'}
   CONCORD_LOGO = {css: '.concord-logo'}
+  TILE_LIST_LAST_ITEM = {css: '.menu > .sc-menu-scroll-view > .sc-container-view > .sc-small > .sc-menu-item:last'}
+# These are here for dragging elements across tiles
+  GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
+  GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
+  GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
+  GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
+  GRAPH_LEGEND = {css: '.dg-legend-view'}
+  MAP_VIEW = {css: '.leaflet-map-pane'}
+  MAP_lEGEND = {css: '.dg-legend-view'}
+
 
   def initialize()
     puts "Initializing"
@@ -112,9 +113,13 @@ class CODAPObject < CodapBaseObject
       when 'plugin'
         element = PLUGIN_BUTTON
       when 'tilelist'
-        element = TILE_LIST_BUTTON
+        click_on(TILE_LIST_BUTTON)
+        sleep(1)
+        element = TILE_LIST_LAST_ITEM
       when 'option'
-        element = OPTION_BUTTON
+        click_on(OPTION_BUTTON)
+        sleep(1)
+        element = DISPLAY_WEBSITE
       when 'guide'
         element = GUIDE_BUTTON
       when 'help'
@@ -133,8 +138,6 @@ class CODAPObject < CodapBaseObject
         element = OPEN_GOOGLE_DRIVE
       when 'local'
         element = OPEN_LOCAL_FILE
-      when 'display_website'
-        element = DISPLAY_WEBSITE
       when 'codap_site'
         element = OPEN_CODAP_WEBSITE
       when 'sampler'
@@ -146,27 +149,21 @@ class CODAPObject < CodapBaseObject
     end
 
     puts "button is #{button}, element is #{element}"
-    if (button=="table") || (button=="sampler") || (button=="draw tool") || (button=="option")
-        new_menu_item = find(element)
-        puts "new menu item is #{new_menu_item}"
-        sleep(3)
+    if (button=="table") || (button=="sampler") || (button=="draw tool") || (button=="option" || (button=="tile"))
+        menu_item = find(element)
+        puts "menu item is #{menu_item}"
+        sleep(2)
         puts "The menu item is #{text_of(element)}"
-        # click_on(NEW_TABLE)
-        new_menu_item.click
-        sleep(5)
-        click_on(BACKGROUND)
+        menu_item.click
+        sleep(2)
+        # to close menu item
     else
         wait_for {displayed?(element)}
         sleep(2)
         click_on(element)
     end
-    # wait_for {displayed?(element)}
-    # sleep(5)
-    # click_on(element)
-    # case (button) #additional dropdown menu from the toolshelf button
-    #   when 'table'
-    #     click_on(NEW_TABLE)
-    # end
+
+
     if verifiable.include? button
       puts "#{button} Button is in verifiable"
       verify_tile(element)
@@ -230,7 +227,7 @@ class CODAPObject < CodapBaseObject
   end
 
   def verify_tile(button)
-    # noinspection RubyInterpreter
+    puts "In verify tile"
     case (button)
       when TABLE_BUTTON
         puts "visible? #{displayed?(CASE_TABLE_TILE)}"
@@ -266,11 +263,11 @@ class CODAPObject < CodapBaseObject
         sleep(3)
       when OPTION_BUTTON
         puts "visible? #{displayed?(DISPLAY_WEBSITE)}"
-        if !(displayed?(DISPLAY_WEBSITE))
-          puts "not visible"
-        else
-          wait_for {displayed? (DISPLAY_WEBSITE)}
-          click_on(DISPLAY_WEBSITE)
+        # if !(displayed?(DISPLAY_WEBSITE))
+        #   puts "not visible"
+        # else
+        #   wait_for {displayed? (DISPLAY_WEBSITE)}
+        #   click_on(DISPLAY_WEBSITE)
           wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
           input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
           pop_up_type(input_field,"https://learn.concord.org")
@@ -284,7 +281,7 @@ class CODAPObject < CodapBaseObject
             puts "Found Concord Logo"
           end
           switch_to_main
-        end
+        # end
         # wait_for {displayed? (DISPLAY_WEBSITE)}
         # click_on(DISPLAY_WEBSITE)
         # wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
@@ -335,6 +332,14 @@ class CODAPObject < CodapBaseObject
     click_on(TABLE_BUTTON)
     click_on(NEW_TABLE)
     verify_tile('table')
+  end
+
+  def display_website
+    puts "in display website"
+    click_on(OPTION_BUTTON)
+    element = DISPLAY_WEBSITE
+    menu_item = find(element)
+    menu_item.click
   end
 
   def open_plugin(plugin)
