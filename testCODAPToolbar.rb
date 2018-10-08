@@ -6,7 +6,7 @@ url = 'https://codap.concord.org/releases/staging/'
 components = ['table','graph','map','slider','calc','text','sampler','draw tool','option','tilelist', 'help']
 
 codap = CODAPObject.new()
-codap.setup_one(:firefox)
+codap.setup_one(:chrome)
 codap.start_codap(url)
 codap.user_entry_start_new_doc
 sleep(3)
