@@ -41,6 +41,7 @@ class CODAPObject < CodapBaseObject
   ALERT_DIALOG = {xpath: '//div[contains(@role, "alertdialog")]'}
   NOT_SAVED_CLOSE_BUTTON = {xpath: '//div[contains(@class, "sc-alert")]/div/div/div[contains(@label,"Close")]'}
   OPTION_MENU_SEPARATOR ={css: '.menu-item.disabled'}
+  OPEN_HELP_WEBSITE = {id:'dg-optionMenuItem-help-website'}
   OPEN_CODAP_WEBSITE = {id: 'dg-optionMenuItem-codap-website'}
   WEBVIEW_FRAME = {css: '.dg-web-view'}
   TILE_MENU_ITEM = {css: 'a.menu-item'}
@@ -56,7 +57,9 @@ class CODAPObject < CodapBaseObject
   PLUGIN_SAMPLER_MENU_ITEM = {id: 'dg-pluginMenuItem-Sampler'}
   PLUGIN_DRAW_TOOL_MENU_ITEN = {id: 'dg-pluginMenuItem-Draw-Tool'}
   SAMPLER_WEBVIEW = {xpath: '//iframe[contains(@src,"TP-Sampler"'}
+  SAMPLER = {css: '#sampler'}
   DRAW_TOOL_WEBVIEW = {xpath: '//iframe[contains(@src,"DrawTool"'}
+  DRAW_TOOL_PALETTE = {css: '#drawing-tool > .dt-container > .dt-tools'}
   LEARN_WEBVIEW = {xpath: '//iframe[contains(@src,"learn.concord.org")]'}
   CONCORD_LOGO = {css: '.concord-logo'}
   TILE_LIST_LAST_ITEM = {css: '.menu > .sc-menu-scroll-view > .sc-container-view > .sc-view > .sc-menu-item'}
@@ -91,7 +94,7 @@ class CODAPObject < CodapBaseObject
   end
 
   def click_button(button)
-    verifiable = ['table','graph','map','slider','calc','text','option', 'tilelist', 'help']
+    verifiable = ['table','graph','map','slider','calc','text','option', 'tilelist', 'help','codap_site']
 
     case (button)
       when 'table'
@@ -121,7 +124,7 @@ class CODAPObject < CodapBaseObject
       when 'guide'
         element = GUIDE_BUTTON
       when 'help'
-        element = HELP_BUTTON
+        element=HELP_BUTTON
       when 'toolshelf'
         element = TOOLSHELF_BACK
       when 'background'
@@ -137,6 +140,8 @@ class CODAPObject < CodapBaseObject
       when 'local'
         element = OPEN_LOCAL_FILE
       when 'codap_site'
+        click_on(HELP_BUTTON)
+        sleep(1)
         element = OPEN_CODAP_WEBSITE
       when 'sampler'
         click_on(PLUGIN_BUTTON)
@@ -147,7 +152,7 @@ class CODAPObject < CodapBaseObject
     end
 
     puts "button is #{button}, element is #{element}"
-    if ((button=="table") || (button=="sampler") || (button=="draw tool") || (button=="tilelist"))
+    if ((button=="table") || (button=="sampler") || (button=="draw tool") || (button=="tilelist") || (button=="codap_site"))
         menu_item = find(element)
         puts "menu item is #{menu_item}"
         sleep(2)
@@ -248,14 +253,17 @@ class CODAPObject < CodapBaseObject
         puts "Help button clicked."
         select_menu_item("Help")
         sleep(3)
-        switch_to_last_tab
-        locator = {tag_name: 'h1'}
-        page_elements = find_all(locator)
-        page_elements.each do |element|
-          text = element.text
-          puts "Page elements are #{text}"
+        tab_handle = switch_to_last_tab
+        sleep(1)
+        url = get_url
+        if(url.include? "help")
+          puts"Went to help site"
+        else
+          puts "went to wrong site"
         end
-        switch_to_main
+        close_tab(tab_handle)
+        switch_to_first_tab
+        sleep(2)
       when TILE_LIST_BUTTON
         wait_for {displayed? (CASE_TABLE_TILE)} #Assumes that the first tile in the list is the first table created
         sleep(3)
@@ -272,11 +280,29 @@ class CODAPObject < CodapBaseObject
       when GUIDE_BUTTON
         puts "Guide button clicked"
       when OPEN_CODAP_WEBSITE
-        puts "CODAP website clicked"
+        puts "verify CODAP website presence"
+        sleep(1)
+        tab_handle=switch_to_last_tab
+        url = get_url
+        if(url.include? "codap")
+          puts"Went to codap site"
+        else
+          puts "went to wrong site"
+        end
+        close_tab(tab_handle)
+        switch_to_first_tab
       when PLUGIN_SAMPLER_MENU_ITEM
-        puts "sampler clicked"
+        puts "sampler verification"
+        webview = find(SAMPLER_WEBVIEW)
+        sleep(3)
+        switch_to_iframe(webview)
+        wait_for {displayed? (Sam)}
       when PLUGIN_DRAW_TOOL_MENU_ITEN
-        puts "draw tool clicked"
+        puts "draw tool verification"
+        webview = find(DRAW_TOOL_WEBVIEW)
+        sleep(3)
+        switch_to_iframe(webview)
+        wait_for {displayed? (DRAW_TOOL_PALETTE)}
     end
   end
 
