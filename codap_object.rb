@@ -51,9 +51,7 @@ class CODAPObject < CodapBaseObject
   SINGLE_TEXT_DIALOG_CANCEL_BUTTON = {css: '.dg-single-text-dialog-cancel'}
   GRAPH_TILE = {css: '.dg-graph-view'}
   IFRAME = {tag_name: 'iframe'}
-   # NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu") and (@class,"focus")]/div[contains(@class, "sc-menu-scroll-view")]/div[contains(@class,"sc-container-view")]/div[contains(@class,"sc-view")]/div[contains(@class,"sc-menu-item")]/a[contains(@class,"menu-item")]/span[contains(text(),"new")]'}
   NEW_TABLE = {css: '.sc-menu > .sc-menu-scroll-view >  .sc-container-view > .sc-view > .sc-menu-item > .menu-item span'}
-  # NEW_TABLE = {xpath: '//div[contains(@class,"sc-menu-item")]'} #sc4619 > a > span
   CASE_TABLE_TILE = {css: '.dg-case-table-view'}
   PLUGIN_SAMPLER_MENU_ITEM = {id: 'dg-pluginMenuItem-Sampler'}
   PLUGIN_DRAW_TOOL_MENU_ITEN = {id: 'dg-pluginMenuItem-Draw-Tool'}
@@ -61,7 +59,7 @@ class CODAPObject < CodapBaseObject
   DRAW_TOOL_WEBVIEW = {xpath: '//iframe[contains(@src,"DrawTool"'}
   LEARN_WEBVIEW = {xpath: '//iframe[contains(@src,"learn.concord.org")]'}
   CONCORD_LOGO = {css: '.concord-logo'}
-  TILE_LIST_LAST_ITEM = {css: '.menu > .sc-menu-scroll-view > .sc-container-view > .sc-small > .sc-menu-item:last'}
+  TILE_LIST_LAST_ITEM = {css: '.menu > .sc-menu-scroll-view > .sc-container-view > .sc-view > .sc-menu-item'}
 # These are here for dragging elements across tiles
   GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
   GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
@@ -149,14 +147,24 @@ class CODAPObject < CodapBaseObject
     end
 
     puts "button is #{button}, element is #{element}"
-    if (button=="table") || (button=="sampler") || (button=="draw tool") || (button=="option" || (button=="tile"))
+    if ((button=="table") || (button=="sampler") || (button=="draw tool") || (button=="tilelist"))
         menu_item = find(element)
         puts "menu item is #{menu_item}"
         sleep(2)
         puts "The menu item is #{text_of(element)}"
         menu_item.click
         sleep(2)
-        # to close menu item
+    elsif (button=="option")
+        menu_item = find(element)
+        puts "menu item is #{menu_item}"
+        sleep(2)
+        puts "The menu item is #{text_of(element)}"
+        menu_item.click
+        wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
+      input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
+      pop_up_type(input_field,"https://learn.concord.org")
+      wait_for {displayed? (SINGLE_TEXT_DIALOG_OK_BUTTON)}
+      pop_up_click(find(SINGLE_TEXT_DIALOG_OK_BUTTON))
     else
         wait_for {displayed?(element)}
         sleep(2)
@@ -168,14 +176,6 @@ class CODAPObject < CodapBaseObject
       puts "#{button} Button is in verifiable"
       verify_tile(element)
     end
-    # if button == "tilelist"
-    #   puts "#{button} "
-    #   select_menu_item("Web Page")
-    # end
-    # if button == 'help'
-    #   puts "In help if #{HELP_MENU_ITEM}"
-    #   click_on(HELP_MENU_ITEM)
-    # end
   end
 
   def undo
@@ -186,9 +186,8 @@ class CODAPObject < CodapBaseObject
     click_on(REDO_BUTTON)
   end
 
-  def click_toolshelf
+  def click_toolshelf #TODO does not work
     #@codap_base.click_on(TOOLSHELF_BACK)
-    @@driver.find_element(TOOLSHELF_BACK).click
   end
 
   def drag_attribute(source_element, target_element)
@@ -258,22 +257,11 @@ class CODAPObject < CodapBaseObject
         end
         switch_to_main
       when TILE_LIST_BUTTON
-        select_menu_item("Calculator")
-        wait_for {displayed? (CALC_TILE)}
+        wait_for {displayed? (CASE_TABLE_TILE)} #Assumes that the first tile in the list is the first table created
         sleep(3)
-      when OPTION_BUTTON
+      when DISPLAY_WEBSITE
         puts "visible? #{displayed?(DISPLAY_WEBSITE)}"
-        # if !(displayed?(DISPLAY_WEBSITE))
-        #   puts "not visible"
-        # else
-        #   wait_for {displayed? (DISPLAY_WEBSITE)}
-        #   click_on(DISPLAY_WEBSITE)
-          wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
-          input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
-          pop_up_type(input_field,"https://learn.concord.org")
-          wait_for {displayed? (SINGLE_TEXT_DIALOG_OK_BUTTON)}
-          pop_up_click(find(SINGLE_TEXT_DIALOG_OK_BUTTON))
-          webview = find(LEARN_WEBVIEW)
+          webview = find(LEARN_WEBVIEW) #Assumes that the website entered is of Learn Portal
           sleep(5)
           switch_to_iframe(webview)
           wait_for {displayed? (CONCORD_LOGO)}
@@ -281,23 +269,6 @@ class CODAPObject < CodapBaseObject
             puts "Found Concord Logo"
           end
           switch_to_main
-        # end
-        # wait_for {displayed? (DISPLAY_WEBSITE)}
-        # click_on(DISPLAY_WEBSITE)
-        # wait_for { displayed? SINGLE_TEXT_DIALOG_TEXTFIELD}
-        # input_field = find(SINGLE_TEXT_DIALOG_TEXTFIELD)
-        # pop_up_type(input_field,"https://learn.concord.org")
-        # wait_for {displayed? (SINGLE_TEXT_DIALOG_OK_BUTTON)}
-        # pop_up_click(find(SINGLE_TEXT_DIALOG_OK_BUTTON))
-        # webview = find(LEARN_WEBVIEW)
-        # sleep(5)
-        # switch_to_iframe(webview)
-        # wait_for {displayed? (CONCORD_LOGO)}
-        # if displayed? (CONCORD_LOGO)
-        #   puts "Found Concord Logo"
-        # end
-        # switch_to_main
-      # puts "Option button clicked"
       when GUIDE_BUTTON
         puts "Guide button clicked"
       when OPEN_CODAP_WEBSITE
