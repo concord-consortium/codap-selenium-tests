@@ -138,6 +138,10 @@ class CodapBaseObject
     @@driver.action.move_to(locator).perform
   end
 
+  def drag_and_drop(source_loc, target_loc) #source_loc and target_loc have to be Selenium locators alread. Find both locs first
+    @@driver.action.drag_and_drop(source_loc, target_loc).perform
+  end
+
   def displayed?(locator)
     @@driver.find_element(locator).displayed?
     true
@@ -287,12 +291,6 @@ class CodapBaseObject
 
   def get_link(page_locator)
     return page_locator.attribute('href')
-  end
-
-  def drag_attribute(source_element, target_element)
-    source_loc = find(source_element)
-    target_loc = find(target_element)
-    @@driver.action.drag_and_drop(source_loc, target_loc).perform
   end
 
   def chrome_print(type)

@@ -195,7 +195,7 @@ class CODAPObject < CodapBaseObject
     #@codap_base.click_on(TOOLSHELF_BACK)
   end
 
-  def drag_attribute(source_element, target_element)
+  def add_attribute_to_graph(source_element, target_element)
     #drag_scroller
     #drag_scroller_right
     source_loc = get_column_header(source_element)
@@ -210,7 +210,7 @@ class CODAPObject < CodapBaseObject
       when 'map_legend'
         target_loc = find(MAP_LEGEND)
     end
-    @@driver.action.drag_and_drop(source_loc, target_loc).perform
+    drag_and_drop(source_loc, target_loc)
   end
 
   def goto_table

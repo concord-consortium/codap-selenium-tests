@@ -114,8 +114,8 @@ end
   file = File.absolute_path(File.join(Dir.pwd, open_doc))
   puts "file is #{file}, open_doc is #{open_doc}"
 
-  array_of_plots = [{:attribute=>'ACAT1', :axis=>'y'},
-                    {:attribute=>'BCAT1', :axis=>'x'},
+  array_of_plots = [{:attribute=>'ACAT1', :axis=>'x'},
+                    {:attribute=>'BCAT1', :axis=>'y'},
                     {:attribute=>'ANUM1', :axis=>'x'},
                     {:attribute=>'BNUM1', :axis=>'y'},
                     {:attribute=>'BCAT1', :axis=>'x'},
@@ -144,18 +144,18 @@ end
 #Change axes by attribute, axis
   pvcounter=0 # Boolean for checking to see if first time plotted value is checked
   pfcounter=0 # Boolean for checking to see if first time plotted function is checked
+attempt = 0
 
 array_of_plots.each do |hash|
   begin
-    attempt = 0
     max_attempts = 5
 
     sleep(2)
-    codap.drag_attribute(hash[:attribute], hash[:axis])
+    codap.add_attribute_to_graph(hash[:attribute], hash[:axis])
     sleep(2)
     checkbox_texts = click_on_checkboxes(codap,'on', pvcounter, pfcounter) #Turn on checkboxes
     sleep(2)
-    codap.write_log_file('./', open_doc)
+    # codap.write_log_file('./', open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis], prev_attr, prev_axis, checkbox_texts)
     checkbox_texts = click_on_checkboxes(codap,'off', pvcounter, pfcounter) #Turn off checkboxes
     prev_attr = hash[:attribute]
