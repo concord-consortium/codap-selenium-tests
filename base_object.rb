@@ -6,9 +6,17 @@ require '~/development/codap-selenium-tests/LogReporter'
 class CodapBaseObject
 
   def setup_one(browser)
+    if browser == :chrome
+      puts 'browser is chrome'
+      options = Selenium::WebDriver::Chrome::Options.new
+      options.add_argument('start-maximized')
+      @@driver = Selenium::WebDriver.for browser, options: options
+      puts "driver is #{@@driver}"
+    else
     @@driver = Selenium::WebDriver.for browser
-    if browser!=:safari
-      manage_window_size
+      if browser!=:safari
+        manage_window_size
+      end
     end
   rescue Exception => e
     puts e.message
