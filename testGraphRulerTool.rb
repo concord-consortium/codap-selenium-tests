@@ -39,6 +39,8 @@ LABEL_LOCATOR = {xpath: '//input[contains(@class,"field")]/ancestor::div/div[con
 GRAPH_CLOSE = {css: ".dg-close-view"}
 GRAPH_TITLE_BAR = {css: '.dg-titlebar-selected'}
 GRAPH_TILE = {css: '.dg-graph-view'}
+BACKGROUND = {css: '.toolshelf-background'}
+
 
 
 # Not sure if this actually does anything
@@ -66,7 +68,7 @@ def input_formula(type, kcodap)
     end
     puts "applying formula"
     kcodap.click_on(FORMULA_DIALOG_APPLY_BUTTON)
-
+    puts "formula applied"
 end
 
 def click_on_checkboxes(kcodap, state, pvcounter, pfcounter)
@@ -74,24 +76,57 @@ def click_on_checkboxes(kcodap, state, pvcounter, pfcounter)
   plotted_value = false
   plotted_function = false
   input_field_list=[]
+  checkbox_texts=''
 
   kcodap.open_ruler_tool
+  checkbox_texts = kcodap.get_list_of_ruler_checkboxes
   checkbox_list = kcodap.find_all(CHECKBOX_LOCATOR) #get list of checkboxes
   num_of_checkboxes = checkbox_list.length
   i = num_of_checkboxes
-  checkbox_texts=''
   puts "num of checkboxes is: #{num_of_checkboxes}"
   sleep(3)
   checkbox_list.each do |checkbox|
     checkbox.click
     if state=="on"
       if checkbox.text == 'Plotted Value'
+          puts 'in plotted value if statement'
+          puts "pvcounter: #{pvcounter}"
           if first_time(pvcounter)
+            if pfcounter>0
+              pv_text_field = {css: '.dg-graph-view > .sc-text-field-view > div > input.field:nth-child(2)'}
+            else
+              pv_text_field = {css: '.dg-graph-view > .sc-text-field-view > div > input.field'}
+            end
+            puts "text field: #{pv_text_field}"
+            kcodap.click_on(BACKGROUND)
+            kcodap.click_on(pv_text_field)
+
+            input_formula("Plotted Value", kcodap)
+            pvcounter+=1
+          else
+            if pfcounter>0
+              pv_text_field = {css: '.dg-graph-view > .sc-text-field-view > div > input.field:nth-child(2)'}
+            else
+              pv_text_field = {css: '.dg-graph-view > .sc-text-field-view > div > input.field'}
+            end
+            puts "text field: #{pv_text_field}"
+            kcodap.click_on(BACKGROUND)
+            kcodap.click_on(pv_text_field)
             input_formula("Plotted Value", kcodap)
             pvcounter+=1
           end
       end
+      puts "before plotted function if statement"
       if checkbox.text == 'Plotted Function'
+        puts 'in plotted function if statement'
+        puts "pfcounter: #{pfcounter}"
+        # if pfcounter>0
+          pf_text_field = {css: '.dg-graph-view > .sc-text-field-view > div > input.field'}
+        # else
+        #   pf_text_field = {css: '.dg-graph-view > sc-text-field-view > div > input.field'}
+        # end
+        kcodap.click_on(BACKGROUND)
+        kcodap.click_on(pf_text_field)
         if first_time(pfcounter)
           input_formula("Plotted Function", kcodap)
           pfcounter+=1
@@ -99,7 +134,7 @@ def click_on_checkboxes(kcodap, state, pvcounter, pfcounter)
       end
     end
 
-    checkbox_texts +=checkbox.text
+    # checkbox_texts +=checkbox.text
     i -=1
   end
   return checkbox_texts
@@ -153,10 +188,14 @@ array_of_plots.each do |hash|
     sleep(2)
     codap.add_attribute_to_graph(hash[:attribute], hash[:axis])
     sleep(2)
+    # checkbox_texts = codap.get_list_of_ruler_checkboxes
+    # click_on_checkboxes(codap,'on', pvcounter, pfcounter) #Turn on checkboxes
     checkbox_texts = click_on_checkboxes(codap,'on', pvcounter, pfcounter) #Turn on checkboxes
     sleep(2)
     # codap.write_log_file('./', open_doc)
+
     codap.take_screenshot(hash[:attribute],hash[:axis], prev_attr, prev_axis, checkbox_texts)
+    puts "Turn off checkboxes"
     checkbox_texts = click_on_checkboxes(codap,'off', pvcounter, pfcounter) #Turn off checkboxes
     prev_attr = hash[:attribute]
     prev_axis = hash[:axis]
@@ -179,6 +218,3 @@ codap.teardown
 
 size_compare_result = codap.compare_file_sizes(staging_screenshots_dir, expected_screenshots_dir)
 puts ("#{size_compare_result}")
-
-
-

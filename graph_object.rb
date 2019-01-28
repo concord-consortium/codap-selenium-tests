@@ -16,7 +16,9 @@ module GraphObject
   GRAPH_STYLES = {css: '.dg-display-styles'}
   GRAPH_SCREENSHOT = {css: '.dg-display-camera'}
   GRAPH_INSPECTOR_PICKER_PANEL = {css: '.dg-inspector-picker'} # Tool palette menu panel
+  GRAPH_FORMULA_INPUT = {css: '.dg-graph-view > sc-text-field-view > div > input.field'}
   # Ruler tool palette
+  CHECKBOX_LOCATOR = {css: '.checkbox'}
   GRAPH_COUNT = {css: '.dg-graph-count-check'}
   GRAPH_PERCENT = {css: '.dg-graph-percent-check'}
   GRAPH_PERCENT_ROW = {css: '.dg.radio-0'}
@@ -193,5 +195,16 @@ module GraphObject
     click_on(GRAPH_BAR_GRAPH)
     wait_for{ displayed? (GRAPH_MAKE_BAR_GRAPH)}
     click_on(GRAPH_MAKE_BAR_GRAPH)
+  end
+
+  def get_list_of_ruler_checkboxes
+    puts 'in get list of ruler checkbox'
+    checkbox_list = find_all(CHECKBOX_LOCATOR)
+    checkbox_texts=''
+    checkbox_list.each do |checkbox|
+      checkbox_texts +=checkbox.text
+    end
+    puts "checkbox_texts: #{checkbox_texts}"
+    return checkbox_texts
   end
 end
