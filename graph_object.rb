@@ -52,6 +52,8 @@ module GraphObject
   GRAPH_COUNT_PERCENTAGE = {xpath: '//div[contains(@class,"dg-plot-view")]/svg/text[contains(@class,"dg-graph-adornment-count"]/tspan'}
   # Bar graph tool palette
   GRAPH_MAKE_BAR_GRAPH = {css: '.dg-graph-bar-chart-check'}
+  #Graph Adornments
+  GRAPH_COUNT_ADORNMENT = {css: '.dg-plot-view > svg > .dg-graph-adornment-count > tspan'}
 
   def remove_graph_attribute(graph_target)
     puts "In remove_graph_attribute"
@@ -70,6 +72,27 @@ module GraphObject
     sleep(5)
     select_menu_item("Remove")
     # click_on(AXIS_MENU_REMOVE)
+  end
+
+  def change_axis_attribute(graph_target, attribute, collection=nil)
+    puts "in change axis attribute"
+    puts "collection is #{collection} graph target is #{graph_target} attribute is #{attribute}"
+
+    case (graph_target)
+      when 'x'
+        target_loc = GRAPH_H_AXIS
+      when 'y'
+        target_loc = GRAPH_V_AXIS
+      when 'graph legend'
+        target_loc = GRAPH_LEGEND
+    end
+    click_on(target_loc)
+    if !(collection==nil)
+      select_menu_item(collection)
+      select_menu_item(attribute)
+    else
+      select_menu_item(attribute)
+    end
   end
 
   def take_screenshot(attribute,location,other_attr="", other_axis="", checkboxes=[])
@@ -195,6 +218,25 @@ module GraphObject
     click_on(GRAPH_BAR_GRAPH)
     wait_for{ displayed? (GRAPH_MAKE_BAR_GRAPH)}
     click_on(GRAPH_MAKE_BAR_GRAPH)
+  end
+
+  def verify_count_adornment
+    puts "in verify count adornment"
+    if wait_for{displayed?(GRAPH_COUNT_ADORNMENT)}
+      return true
+    else
+      return false
+    end
+  end
+
+  def verify_percentage_adornment
+    puts "in verify count adornment"
+    text = text_of(GRAPH_COUNT_ADORNMENT)
+    if text.include? "%"
+      return true
+    else
+      return false
+    end
   end
 
   def get_list_of_ruler_checkboxes

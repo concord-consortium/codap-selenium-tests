@@ -1,6 +1,7 @@
 #testGraphToolPalette test graph tool palette values transitions and take graph screenshots of each transition. The data file 3TableGroups.json need to be in the same directory as the test. Plot transitions screenshots are saved separately by plot transition name. The test will run on latest version of CODAP in Mac OS X Chrome, Firefox and Safari, and Windows 8.1 Chrome, Firefox and Internet Explorer 11.
 
 require './codap_object'
+require './graph_object'
 
 expected_screenshots_dir = "#{Dir.home}/Sites/plot_ruler_results/expected_screenshots/"
 staging_screenshots_dir = "#{Dir.home}/Sites/plot_ruler_results/test_screenshots/"
@@ -37,10 +38,15 @@ INPUT_FIELD_LOCATOR = {xpath: "//div[contains(@class,'dg-formula-dialog-input-fi
 FORMULA_DIALOG_APPLY_BUTTON = {css: '.dg-formula-dialog-apply'}
 LABEL_LOCATOR = {xpath: '//input[contains(@class,"field")]/ancestor::div/div[contains(@class, "sc-label-view")]'}
 GRAPH_CLOSE = {css: ".dg-close-view"}
-GRAPH_TITLE_BAR = {css: '.dg-titlebar-selected'}
+GRAPH_TITLE_BAR = {css: '.dg-titlebar~.dg-graph-view'}
 GRAPH_TILE = {css: '.dg-graph-view'}
 BACKGROUND = {css: '.toolshelf-background'}
 
+GRAPH_H_AXIS = {css: '.dg-axis-view.dg-h-axis'}
+GRAPH_V_AXIS = {css: '.dg-axis-view.dg-v-axis'}
+GRAPH_V2_AXIS = {css: '.dg-v2-axis'}
+GRAPH_PLOT_VIEW = {css: '.dg-plot-view'}
+GRAPH_LEGEND = {css: '.dg-legend-view'}
 
 
 # Not sure if this actually does anything
@@ -88,6 +94,12 @@ def click_on_checkboxes(kcodap, state, pvcounter, pfcounter)
   checkbox_list.each do |checkbox|
     checkbox.click
     if state=="on"
+      if checkbox.text == 'Count'
+        puts ("count adormnent is #{kcodap.verify_count_adornment}")
+        if !(kcodap.verify_count_adornment)
+          puts 'count adornment is missing'
+        end
+      end
       if checkbox.text == 'Plotted Value'
           puts 'in plotted value if statement'
           puts "pvcounter: #{pvcounter}"
@@ -149,44 +161,48 @@ end
   file = File.absolute_path(File.join(Dir.pwd, open_doc))
   puts "file is #{file}, open_doc is #{open_doc}"
 
-  array_of_plots = [{:attribute=>'ACAT1', :axis=>'x'},
-                    {:attribute=>'BCAT1', :axis=>'y'},
-                    {:attribute=>'ANUM1', :axis=>'x'},
-                    {:attribute=>'BNUM1', :axis=>'y'},
-                    {:attribute=>'BCAT1', :axis=>'x'},
-                    {:attribute=>'CCAT1', :axis=>'y'},
-                    {:attribute=>'CNUM1', :axis=>'x'},
-                    {:attribute=>'BNUM1', :axis=>'y'},
-                    {:attribute=>'CCAT2', :axis=>'x'},
-                    {:attribute=>'BCAT1', :axis=>'y'},
-                    {:attribute=>'ACAT2', :axis=>'y'},
-                    {:attribute=>'BCAT1', :axis=>'graph_legend'},
-                    {:attribute=>'CNUM1', :axis=>'graph_legend'},
-                    {:attribute=>'CNUM2', :axis=>'y'}]
+  array_of_plots = [{:attribute=>'ACAT1', :axis=>'y', :collection=>'Table A'},
+                    {:attribute=>'BCAT1', :axis=>'x', :collection=>'Table B'},
+                    {:attribute=>'ANUM1', :axis=>'x', :collection=>'Table A'},
+                    {:attribute=>'BNUM1', :axis=>'y', :collection=>'Table B'},
+                    {:attribute=>'BCAT1', :axis=>'x', :collection=>'Table B'},
+                    {:attribute=>'CCAT1', :axis=>'y', :collection=>'Table C'},
+                    {:attribute=>'CNUM1', :axis=>'x', :collection=>'Table C'},
+                    {:attribute=>'BNUM1', :axis=>'y', :collection=>'Table B'},
+                    {:attribute=>'CCAT2', :axis=>'x', :collection=>'Table C'},
+                    {:attribute=>'BCAT1', :axis=>'y', :collection=>'Table B'},
+                    {:attribute=>'ACAT2', :axis=>'y', :collection=>'Table A'},
+                    {:attribute=>'BCAT1', :axis=>'graph_legend', :collection=>'Table B'},
+                    {:attribute=>'CNUM1', :axis=>'graph_legend', :collection=>'Table C'},
+                    {:attribute=>'CNUM2', :axis=>'y', :collection=>'Table C'}]
 
   codap.start_codap(url)
 # Open CODAP document
   codap.user_entry_open_doc
   codap.open_local_doc(file)
-  sleep(2)
+  sleep(1)
   open_doc.slice! '.json'
   codap.verify_doc_title(open_doc)
 
 #Open a graph
   codap.click_button('graph')
   codap.wait_for{codap.displayed? (GRAPH_TILE) }
-
+  sleep(5)
 #Change axes by attribute, axis
   pvcounter=0 # Boolean for checking to see if first time plotted value is checked
   pfcounter=0 # Boolean for checking to see if first time plotted function is checked
+  # sleep(3)
 attempt = 0
 
 array_of_plots.each do |hash|
   begin
+    attempt = 0
     max_attempts = 5
 
     sleep(2)
-    codap.add_attribute_to_graph(hash[:attribute], hash[:axis])
+    # codap.add_attribute_to_graph(hash[:attribute], hash[:axis])
+    # codap.change_axis_attribute(hash[:axis], hash[:attribute], hash[:collection])
+    codap.drag_attribute_to_graph(hash[:attribute], hash[:axis])
     sleep(2)
     # checkbox_texts = codap.get_list_of_ruler_checkboxes
     # click_on_checkboxes(codap,'on', pvcounter, pfcounter) #Turn on checkboxes
@@ -194,6 +210,7 @@ array_of_plots.each do |hash|
     sleep(2)
     # codap.write_log_file('./', open_doc)
 
+    # codap.write_log_file('./', open_doc)
     codap.take_screenshot(hash[:attribute],hash[:axis], prev_attr, prev_axis, checkbox_texts)
     puts "Turn off checkboxes"
     checkbox_texts = click_on_checkboxes(codap,'off', pvcounter, pfcounter) #Turn off checkboxes

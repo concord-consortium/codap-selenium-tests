@@ -9,7 +9,9 @@ class CodapBaseObject
     if browser == :chrome
       puts 'browser is chrome'
       options = Selenium::WebDriver::Chrome::Options.new
+      Selenium::WebDriver.logger.level = :debug
       options.add_argument('start-maximized')
+      # options.add_argument(log_level: :trace)
       @@driver = Selenium::WebDriver.for browser, options: options
       puts "driver is #{@@driver}"
     else
@@ -82,9 +84,9 @@ class CodapBaseObject
   end
 
   def manage_window_size
-    # target_size = Selenium::WebDriver::Dimension.new(1680,1023)
-    # @@driver.manage.window.size = target_size
-    @@driver.manage.window.maximize
+    target_size = Selenium::WebDriver::Dimension.new(1680,1023)
+    @@driver.manage.window.size = target_size
+    # @@driver.manage.window.maximize
   end
 
   def visit(url='/')
@@ -299,6 +301,18 @@ class CodapBaseObject
 
   def get_link(page_locator)
     return page_locator.attribute('href')
+  end
+
+  def drag_and_drop_element(source_element, target_element)
+    source_loc = find(source_element)
+    target_loc = find(target_element)
+    @@driver.action.drag_and_drop(source_loc, target_loc).perform
+  end
+
+  def move_element(source_element, offset_x, offset_y)
+    puts 'in move element'
+    source_loc = find(source_element)
+    @@driver.action.drag_and_drop_by(source_loc, offset_x, offset_y).perform
   end
 
   def chrome_print(type)

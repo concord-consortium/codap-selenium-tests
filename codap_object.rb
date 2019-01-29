@@ -209,12 +209,22 @@ class CODAPObject < CodapBaseObject
         wait_for { displayed?(GRAPH_LEGEND)}
       when 'map_legend'
         target_loc = find(MAP_LEGEND)
+      when 'plot view'
+        target_loc = find(GRAPH_PLOT_VIEW)
     end
-    drag_and_drop(source_loc, target_loc)
+    @@driver.action.drag_and_drop(source_loc, target_loc).perform
   end
 
   def goto_table
     click_on(CASE_TABLE)
+  end
+
+  def select_menu_item(menu_item_text)
+    puts 'in select_menu_item'
+    menu_item = {xpath: "//div/a[contains(@class,'menu-item')]/span[contains(text(),'#{menu_item_text}')]"}
+    puts "Menu item is #{menu_item}"
+    # wait_for {displayed? (menu_item)}
+    click_on(menu_item)
   end
 
   def drag_scroller
